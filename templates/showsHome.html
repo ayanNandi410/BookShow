@@ -1,0 +1,79 @@
+{% extends "baseTemplate.html" %}
+
+{% block title %}Shows Dashboard{% endblock %}
+
+{% block head %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+<style>
+.ratings{
+    margin-left:10px;
+    color:#cecece;
+    font-size:16px;
+}
+
+.rating-color{
+    color:#fbc634;
+}
+</style>
+{% endblock %}
+
+{% block searchBar %}
+<form class="d-md-flex" role="search">
+  <input class="form-control me-2" type="search" placeholder="Search for shows" aria-label="Search">
+  <button class="btn btn-outline-success" type="submit">Search</button>
+</form>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 8%;margin-bottom: 10%;">
+    {% if firstPage is defined %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <strong>Hello {{ user.name }}</strong> ,here are all the shows for all venues...
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+    <h2>Shows</h2><hr/><br/>
+    <div class="d-flex flex-row-reverse">
+      <button type="button" class="btn btn-success">+ Add Show</button>
+    </div>
+  
+    <br/><br/>
+    <div class="row row-cols-md-3 row-cols-sm-6 row-cols-1 g-3">    
+    {% for show in shows %}
+        <div class="col">
+          <div class="card p-3" style="width: 18rem; margin-right: 20px;">
+            <img src="{{ url_for('static',filename='hall.png')}}" class="card-img-top" height="200px" width="30px" alt="...">
+            <div class="card-body">
+              <h5 class="card-title">{{ show['name'] }}</h5>
+              <p class="card-text">
+                <div class="ratings">
+                  {% for i in range(1,6) %}
+                    {% if(i <= (show['rating']|int)) %}
+                      <i class="fa fa-star rating-color"></i>
+                    {% else %}
+                      <i class="fa fa-star"></i>
+                    {% endif %}
+                  {% endfor %}
+              </div>
+                <br/>Ticket Price : &nbsp;&#8377;{{ show['ticketPrice'] }}<br/>
+                Tags : 
+                {% for tag in show['tags'] %}
+                <span class="badge bg-secondary">{{ tag['name'] }}</span>&nbsp;
+    {% endfor %}
+                </p>
+              <a href="#" class="btn btn-primary">Buy Tickets</a>
+            </div>
+            <div class="card-footer text-muted">
+              <a href="#" class="card-link">Delete</a>
+              <a href="#" class="card-link">Update</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}

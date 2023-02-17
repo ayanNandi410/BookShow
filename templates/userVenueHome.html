@@ -1,0 +1,60 @@
+{% extends "baseTemplate.html" %}
+
+{% block title %}User Home{% endblock %}
+
+{% block head %}
+<style>
+    .offcanvas{
+        min-height: 80%;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5 col-8" id="body">
+    <h1 class="display-5 fw-bold">{{ venue['name'] }}</h1>
+    <p class="col-md-8 fs-4">Using a series of utilities, you can create this jumbotron, just like the one in previous versions of Bootstrap. Check out the examples below for how you can remix and restyle it to your liking.</p>
+    <button class="btn btn-primary btn-md" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">View all shows</button>
+</div>
+<div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasBottomLabel">Available shows</h5>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div class="row row-cols-md-3 row-cols-sm-6 row-cols-1 g-3">    
+        {% for show in shows %}
+            <div class="col">
+              <div class="card p-3" style="width: 18rem; margin-right: 20px;">
+                <img src="{{ url_for('static',filename='hall.png')}}" class="card-img-top" height="200px" width="30px" alt="...">
+                <div class="card-body">
+                  <h5 class="card-title">{{ show['name'] }}</h5>
+                  <p class="card-text">
+                    <div class="ratings">
+                      {% for i in range(1,6) %}
+                        {% if(i <= (show['rating']|int)) %}
+                          <i class="fa fa-star rating-color"></i>
+                        {% else %}
+                          <i class="fa fa-star"></i>
+                        {% endif %}
+                      {% endfor %}
+                  </div>
+                    <br/>Ticket Price : &nbsp;&#8377;{{ show['ticketPrice'] }}<br/>
+                    Tags : 
+                    {% for tag in show['tags'] %}
+                    <span class="badge bg-secondary">{{ tag['name'] }}</span>&nbsp;
+        {% endfor %}
+                    </p>
+                  <a href="#" class="btn btn-primary">Buy Tickets</a>
+                </div>
+                <div class="card-footer text-muted">
+                  <a href="#" class="card-link">Delete</a>
+                  <a href="#" class="card-link">Update</a>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+  </div>
+</div>
+{% endblock %}

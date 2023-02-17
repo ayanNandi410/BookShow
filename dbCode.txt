@@ -1,0 +1,33 @@
+    with app.app_context():
+        db.drop_all()
+        db.create_all()
+        db.session.add(Venue(name='Inox Highland Park',place='Dharmatala, Kolkata',capacity=320))
+        db.session.add(Venue(name='Inox Rangoli Mall',place='Belur, Howrah',capacity=540))
+        db.session.add(Venue(name='Inox Forum Mall',place='Rabindra Sadan, Kolkata',capacity=340))
+        db.session.add(Venue(name='Inox RD Mall',place='Liluah, Howrah',capacity=200))
+
+        amq = Show(name='Ant Man: Quantamania',rating=3,ticketPrice=234)
+        amw = Show(name='Ant Man and the Wasp',rating=2,ticketPrice=334)
+        mr = Show(name='Mishhor Rahasya',rating=4,ticketPrice=400)
+        pt = Show(name='Pathaan',rating=1,ticketPrice=134)
+
+        action = Tag(name='Action')
+        thriller = Tag(name='Thriller')
+
+        amq.tags.append(action)
+        amq.tags.append(thriller)
+        amw.tags.append(action)
+        mr.tags.append(action)
+        pt.tags.append(action)
+        pt.tags.append(thriller)
+
+        db.session.add(amq)
+        db.session.add(amw)
+        db.session.add(mr)
+        db.session.add(pt)
+
+        db.session.add(action)
+        db.session.add(thriller)
+
+        db.session.add(User(name='admin',email='admin@gmail.com',password=generate_password_hash('admin123', method='sha256'),access=1))
+        db.session.commit()
