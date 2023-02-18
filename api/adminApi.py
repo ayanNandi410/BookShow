@@ -7,7 +7,7 @@ venue_output_fields = {
     "id" : fields.Integer,
     "name" : fields.String,
     "place" : fields.String,
-    "capacity" : fields.Float
+    "capacity" : fields.Integer
 }
 
 create_venue_parser = reqparse.RequestParser()

@@ -1,0 +1,91 @@
+{% extends "baseTemplate.html" %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block head %}
+<style>
+    .divider:after,
+    .divider:before {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: #eee;
+    }
+    .h-custom {
+        height: calc(100% - 73px);
+    }
+    @media (max-width: 450px) {
+        .h-custom {
+            height: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="body" style="margin-top: 10%; margin-bottom: 10%;">
+
+    <div class="container h-custom">
+        <h2>Add new Venue</h2><hr/><br/>
+      <div class="d-flex justify-content-center align-items-center h-100">
+        
+          {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+            <p class="alert alert-warning" role="alert" style="padding: 10px 20px;">{{ message }}</p>
+            {% endfor %}
+          {% endif %}
+          {% endwith %}
+
+          <form class="mt-4" action="admin/venue/add" method="post" enctype=multipart/form-data>  
+            <!-- Name input -->
+            <div class="row mb-3">
+                <div class="col-12 col-sm-6">
+                    <div class="input-group input-group-lg mb-3">
+                        <span class="input-group-text" id="venueName">Venue Name</span>
+                        <input type="text" class="form-control" placeholder="Allen Hall" aria-label="venueName">
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6">
+                    <div class="input-group input-group-lg mb-3">
+                        <span class="input-group-text" id="venueLocation">Venue Location</span>
+                        <input type="text" class="form-control" placeholder="Beleghata, Kolkata" aria-label="venueLocation">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="input-group input-group-lg">
+                    <input type="file" class="form-control" id="venueImage">
+                    <label class="input-group-text" for="venueImage">Upload Image</label>
+                  </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-4">
+                    <div class="input-group input-group-lg mb-3">
+                        <span class="input-group-text" id="venueCapacity">Venue Capacity</span>
+                        <input type="number" class="form-control" placeholder="450" aria-label="venueCapacity">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="input-group input-group-lg mb-3">
+                    <span class="input-group-text">Venue Description</span>
+                    <textarea class="form-control" id="venueDescription" aria-label="With textarea"></textarea>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-4 offset-5">
+                    <button type="submit" class="btn btn-primary btn-lg"
+                    style="padding-left: 2.5rem; padding-right: 2.5rem;">Register Venue</button>
+                </div>
+            </div>
+  
+          </form>
+      </div>
+    </div>
+</div>
+{% endblock %}

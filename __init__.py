@@ -13,8 +13,11 @@ def create_app():
     app = Flask(__name__)
     apiV = Api(app)
 
+    UPLOAD_FOLDER = '/uploads/'
+
     app.config['SECRET_KEY'] = 'ABCD12345'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ticketdb.sqlite'
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
     # blueprint for authentication routes
     app.register_blueprint(userAuth)
