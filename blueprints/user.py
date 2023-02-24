@@ -24,9 +24,10 @@ def userVenues():
 def userVenueHome(name):
     venueCall = requests.get(BASE_URL+'/api/venue/'+name)
     venue = venueCall.json()
-
+    venue_id = venue['id']
+    cur_venue = Venue.query.filter(Venue.id == venue_id).first()
     #venue = Venue.query.filter_by(name = name).first()
     # all shows here
-    shows = Show.query.all()
+    print(cur_venue.avShows)
 
-    return render_template('userVenueHome.html',venue=venue,shows=shows, user=current_user)
+    return render_template('userVenueHome.html',venue=cur_venue, user=current_user)

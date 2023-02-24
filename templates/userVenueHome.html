@@ -13,7 +13,7 @@
 {% block content %}
 <div class="container py-5 col-8" id="body">
     <h1 class="display-5 fw-bold">{{ venue['name'] }}</h1>
-    <p class="col-md-8 fs-4">Using a series of utilities, you can create this jumbotron, just like the one in previous versions of Bootstrap. Check out the examples below for how you can remix and restyle it to your liking.</p>
+    <p class="col-md-8 fs-4">{{ venue['description'] }}</p>
     <button class="btn btn-primary btn-md" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">View all shows</button>
 </div>
 <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">
@@ -23,7 +23,7 @@
   </div>
   <div class="offcanvas-body">
     <div class="row row-cols-md-3 row-cols-sm-6 row-cols-1 g-3">    
-        {% for show in shows %}
+        {% for show in venue['avShows'] %}
             <div class="col">
               <div class="card p-3" style="width: 18rem; margin-right: 20px;">
                 <img src="{{ url_for('static',filename='hall.png')}}" class="card-img-top" height="200px" width="30px" alt="...">
@@ -46,10 +46,6 @@
         {% endfor %}
                     </p>
                   <a href="#" class="btn btn-primary">Buy Tickets</a>
-                </div>
-                <div class="card-footer text-muted">
-                  <a href="#" class="card-link">Delete</a>
-                  <a href="#" class="card-link">Update</a>
                 </div>
               </div>
             </div>

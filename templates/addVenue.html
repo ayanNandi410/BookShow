@@ -24,48 +24,47 @@
 
 {% block content %}
 <div class="body" style="margin-top: 10%; margin-bottom: 10%;">
-
+    {% if response is defined %}
+        {% if response == 'Success' %}
+            <p class="alert alert-warning" role="alert" style="padding: 10px 20px;">Successfully added</p>
+        {% else %}
+            <p class="alert alert-warning" role="alert" style="padding: 10px 20px;">{{ response['error_code'] }} , 
+                {{ response['error_message'] }}</p>
+        {% endif %}
+    {% endif %}
     <div class="container h-custom">
         <h2>Add new Venue</h2><hr/><br/>
       <div class="d-flex justify-content-center align-items-center h-100">
-        
-          {% with messages = get_flashed_messages() %}
-          {% if messages %}
-            {% for message in messages %}
-            <p class="alert alert-warning" role="alert" style="padding: 10px 20px;">{{ message }}</p>
-            {% endfor %}
-          {% endif %}
-          {% endwith %}
 
-          <form class="mt-4" action="admin/venue/add" method="post" enctype=multipart/form-data>  
+          <form class="mt-4" action="{{ url_for('admin.addVenue')}}" method="post" enctype=multipart/form-data>  
             <!-- Name input -->
             <div class="row mb-3">
                 <div class="col-12 col-sm-6">
                     <div class="input-group input-group-lg mb-3">
-                        <span class="input-group-text" id="venueName">Venue Name</span>
-                        <input type="text" class="form-control" placeholder="Allen Hall" aria-label="venueName">
+                        <span class="input-group-text" name="venueName">Venue Name</span>
+                        <input type="text" class="form-control" name="venueName" id="venueName" placeholder="Allen Hall" aria-label="venueName">
                     </div>
                 </div>
                 <div class="col-12 col-sm-6">
                     <div class="input-group input-group-lg mb-3">
-                        <span class="input-group-text" id="venueLocation">Venue Location</span>
-                        <input type="text" class="form-control" placeholder="Beleghata, Kolkata" aria-label="venueLocation">
+                        <span class="input-group-text">Venue Location</span>
+                        <input type="text" class="form-control" name="venueLocation" id="venueLocation" placeholder="Beleghata, Kolkata" aria-label="venueLocation">
                     </div>
                 </div>
             </div>
-
+            <!--
             <div class="row mb-3">
                 <div class="input-group input-group-lg">
-                    <input type="file" class="form-control" id="venueImage">
+                    <input type="file" class="form-control" id="venueImage" name="venueImage">
                     <label class="input-group-text" for="venueImage">Upload Image</label>
                   </div>
             </div>
-
+            -->
             <div class="row mb-3">
                 <div class="col-4">
                     <div class="input-group input-group-lg mb-3">
-                        <span class="input-group-text" id="venueCapacity">Venue Capacity</span>
-                        <input type="number" class="form-control" placeholder="450" aria-label="venueCapacity">
+                        <span class="input-group-text" >Venue Capacity</span>
+                        <input type="number" class="form-control" name="venueCapacity" id="venueCapacity" placeholder="450" aria-label="venueCapacity">
                     </div>
                 </div>
             </div>
@@ -73,7 +72,7 @@
             <div class="row mb-3">
                 <div class="input-group input-group-lg mb-3">
                     <span class="input-group-text">Venue Description</span>
-                    <textarea class="form-control" id="venueDescription" aria-label="With textarea"></textarea>
+                    <textarea class="form-control" name="venueDescription" id="venueDescription" aria-label="With textarea"></textarea>
                 </div>
             </div>
 

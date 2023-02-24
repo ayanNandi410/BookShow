@@ -31,3 +31,67 @@
 
         db.session.add(User(name='admin',email='admin@gmail.com',password=generate_password_hash('admin123', method='sha256'),access=1))
         db.session.commit()
+
+
+        with app.app_context():
+        db.drop_all()
+        db.create_all()
+
+        inoxHighland = Venue(name='Inox Highland Park',img_name='IHP',description='Again 1 of the Topmost Multiplex in Kolkata. As I am a Movie Buff, watching 4-5 Movies in a month, there is hardly any Good Multiplex or Cinema Hall in Central Kolkata and nearby, where I haven`t been.',location='Dharmatala, Kolkata',capacity=320)
+        inoxRangoli = Venue(name='Inox Rangoli Mall',img_name='IRM',description='Again 1 of the Topmost Multiplex in Kolkata. As I am a Movie Buff, watching 4-5 Movies in a month, there is hardly any Good Multiplex or Cinema Hall in Central Kolkata and nearby, where I haven`t been.',location='Belur, Howrah',capacity=540)
+        inoxForum = Venue(name='Inox Forum Mall',img_name='IFM',description='Again 1 of the Topmost Multiplex in Kolkata. As I am a Movie Buff, watching 4-5 Movies in a month, there is hardly any Good Multiplex or Cinema Hall in Central Kolkata and nearby, where I haven`t been.',location='Rabindra Sadan, Kolkata',capacity=340)
+        inoxRD = Venue(name='Inox RD Mall',img_name='IRDM',description='Again 1 of the Topmost Multiplex in Kolkata. As I am a Movie Buff, watching 4-5 Movies in a month, there is hardly any Good Multiplex or Cinema Hall in Central Kolkata and nearby, where I haven`t been.',location='Liluah, Howrah',capacity=200)
+
+
+        amq = Show(name='Ant Man: Quantamania',img_name='AMQ',rating=3,ticketPrice=234)
+        amw = Show(name='Ant Man and the Wasp',img_name='ANW',rating=2,ticketPrice=334)
+        mr = Show(name='Mishhor Rahasya',img_name='MR',rating=4,ticketPrice=400)
+        pt = Show(name='Pathaan',img_name='PT',rating=1,ticketPrice=134)
+
+        action = Tag(name='Action')
+        thriller = Tag(name='Thriller')
+        drama = Tag(name='Drama')
+        fantasy = Tag(name='Fantasy')
+        horror = Tag(name='Horror')
+        mystery = Tag(name='Mystery')
+
+        amq.tags.append(action)
+        amq.tags.append(fantasy)
+        amw.tags.append(mystery)
+        mr.tags.append(drama)
+        pt.tags.append(horror)
+        pt.tags.append(thriller)
+
+        inoxHighland.avShows.append(amq)
+        inoxHighland.avShows.append(amw)
+        inoxRangoli.avShows.append(mr)
+        inoxRangoli.avShows.append(pt)
+        inoxForum.avShows.append(amq)
+        inoxForum.avShows.append(pt)
+        inoxRD.avShows.append(amw)
+        inoxRD.avShows.append(pt)
+        
+
+        db.session.add(action)
+        db.session.add(thriller)
+        db.session.add(horror)
+        db.session.add(mystery)
+        db.session.add(fantasy)
+        db.session.add(drama)
+        db.session.add_all([amq,amw,mr,pt])
+        db.session.add_all([inoxRangoli,inoxForum,inoxHighland,inoxRD])
+
+        db.session.add(User(name='admin',email='admin@gmail.com',password=generate_password_hash('admin123', method='sha256'),access=1))
+        db.session.commit()
+
+
+from ..db import db
+
+class Image(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    data = db.Column(db.String())
+    name = db.Column(db.String(50), unique=True)
+    type = db.Column(db.String(20), unique=True)
+
+    def __repr__(self):
+        return "<Image File : "+self.name

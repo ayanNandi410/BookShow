@@ -2,9 +2,12 @@ from flask import Blueprint, render_template,request, redirect, url_for, flash, 
 from flask_login import login_required, current_user
 from ..models.admin import Venue, Show
 from ..models.users import User
-from ..models.Image import Image
+#from ..models.Image import Image
 from functools import wraps
 from werkzeug.utils import secure_filename
+from ..db import db
+import requests
+from ..constants import BASE_URL
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
@@ -46,13 +49,21 @@ def showVenues():
     venues = Venue.query.all()
     return render_template('venuesHome.html',venues = venues, user=current_user)
 
+@admin.route('/showVenues/<city>')
+@admin_login_required
+def showVenuesByCity(city):
+    venues = requests.get(BASE_URL+'/api/venues/'+city)
+    for venue in venues:
+        print(venue)
+    return render_template('venuesHome.html',venues = venues,city=city, user=current_user)
+
 @admin.route('/showShows')
 @admin_login_required
 def showShows():
     shows = Show.query.all()
     return render_template('showsHome.html',shows=shows, user=current_user)
 
-@admin.route('/venue/add')
+@admin.route('/venue/add',methods=['GET','POST'])
 @admin_login_required
 def addVenue():
     if request.method == 'POST':
@@ -60,22 +71,11 @@ def addVenue():
         location = request.form.get('venueLocation')
         description = request.form.get('venueDescription')
         capacity = request.form.get('venueCapacity')
-        if 'file' not in request.files:
-            flash('No file selected')
-            return render_template('addVenue.html')
-        file = request.files['venueImage']
-        # If the user does not select a file, the browser submits an
-        # empty file without a filename.
-        if file.filename == '':
-            flash('No selected file')
-            return render_template('addVenue.html')
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            
-            img = Image(data=file,name=filename,type=file.mimetype)
-            Venue = Venue(name=name,location=location,description=description,capacity=capacity,img_name=filename)
+        venue = { 'name' : name, 'location' : location, 'description' : description, 
+        'capacity' : capacity }
 
-            
-            return redirect(url_for('download_file', name=filename))
+        res = requests.post(BASE_URL+'/api/venue', json=venue)
+        
+        return render_template('addVenue.html',response=res.json())
     else:
         return render_template('addVenue.html')

@@ -17,9 +17,9 @@
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     {% endif %}
-    <h2>Venues</h2><hr/><br/>
+    <h2>&emsp;Venues</h2><hr/><br/>
     <div class="d-flex flex-row-reverse">
-      <button type="button" class="btn btn-success">+ Add Venue</button>
+      <a href="/admin/venue/add" class="btn btn-success">+ Add Venue</a>
     </div>
   
     <br/><br/>
@@ -30,7 +30,7 @@
             <img src="{{ url_for('static',filename='hall.png')}}" class="card-img-top" height="200px" width="30px" alt="...">
             <div class="card-body">
               <h5 class="card-title">{{ venue['name'] }}</h5>
-              <p class="card-text">Place : {{ venue['place'] }} <br/>Seating Capacity : {{ venue['capacity'] }}</p>
+              <p class="card-text">Place : {{ venue['location'] }} <br/>Seating Capacity : {{ venue['capacity'] }}</p>
               <a href="#" class="btn btn-primary">Search for Shows</a>
             </div>
             <div class="card-footer text-muted">
