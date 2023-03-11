@@ -45,25 +45,14 @@ def create_app():
 
     #@app.before_first_request
     #def create_admin():
-    #    db.session.add(User(name='admin',email='admin@gmail.com',password=generate_password_hash('admin123', method='sha256'),access=1))
-    #    db.session.commit()
-
-    with app.app_context():
-        db.drop_all()
-        db.create_all()
-
-        inoxHighland = Venue(name='Inox Highland Park',description='Again 1 of the Topmost Multiplex in Kolkata. As I am a Movie Buff, watching 4-5 Movies in a month, there is hardly any Good Multiplex or Cinema Hall in Central Kolkata and nearby, where I haven`t been.',location='Dharmatala',city='Kolkata',capacity=320)
-        inoxRangoli = Venue(name='Inox Rangoli Mall',description='Again 1 of the Topmost Multiplex in Kolkata. As I am a Movie Buff, watching 4-5 Movies in a month, there is hardly any Good Multiplex or Cinema Hall in Central Kolkata and nearby, where I haven`t been.',location='Belur',city='Howrah',capacity=540)
-        inoxForum = Venue(name='Inox Forum Mall',description='Again 1 of the Topmost Multiplex in Kolkata. As I am a Movie Buff, watching 4-5 Movies in a month, there is hardly any Good Multiplex or Cinema Hall in Central Kolkata and nearby, where I haven`t been.',location='Rabindra Sadan',city='Kolkata',capacity=340)
-        inoxRD = Venue(name='Inox RD Mall',description='Again 1 of the Topmost Multiplex in Kolkata. As I am a Movie Buff, watching 4-5 Movies in a month, there is hardly any Good Multiplex or Cinema Hall in Central Kolkata and nearby, where I haven`t been.',location='Liluah',city='Howrah',capacity=200)
-
-        db.session.add_all([inoxRangoli,inoxForum,inoxHighland,inoxRD])
-
-        db.session.add(User(name='admin',email='admin@gmail.com',password=generate_password_hash('admin123', method='sha256'),access=1))
-        db.session.commit()
+        #db.session.add(User(name='admin',email='admin@gmail.com',password=generate_password_hash('admin123', method='sha256'),access=1))
+        #db.session.commit()
 
     # Api initialization
-    from .api.venueApi import VenueAPI, VenueListByCityApi
+    from .api.venueApi import VenueAPI, VenueListByCityApi, VenueListByNameApi
+    from .api.cityApi import  GetAllCitiesApi
     apiV.add_resource(VenueAPI,"/api/venue","/api/venue/<string:name>",endpoint="/venue")
-    apiV.add_resource(VenueListByCityApi,"/api/venues/<string:city>",endpoint="/venues/<city>")
+    apiV.add_resource(VenueListByCityApi,"/api/venues/byCity/<string:city>",endpoint="/venues/byCity/<city>")
+    apiV.add_resource(VenueListByNameApi,"/api/venues/byName/<string:name>",endpoint="/venues/byName/<name>")
+    apiV.add_resource(GetAllCitiesApi,"/api/city/all",endpoint="/city")
     return app, apiV

@@ -10,6 +10,24 @@
 {% endblock %}
 
 {% block content %}
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Venue Details</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="deleteModalBody">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <a href="#" id="venueDeleteBt" class="btn btn-primary">Delete Venue</a>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="container" style="margin-top: 8%;margin-bottom: 10%;">
     {% if firstPage is defined %}
     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -31,10 +49,11 @@
             <div class="card-body">
               <h5 class="card-title">{{ venue['name'] }}</h5>
               <p class="card-text">Place : {{ venue['location'] }} <br/>Seating Capacity : {{ venue['capacity'] }}</p>
-              <a href="#" class="btn btn-primary">Search for Shows</a>
+              <a href="#" class="btn btn-primary">Shows</a>
+              <a href="#" class="btn btn-primary btn-success">+ Add Show</a>
             </div>
             <div class="card-footer text-muted">
-              <a href="#" class="card-link">Delete</a>
+              <a href="#" class="card-link" onclick="setVenueName('{{ venue['name'] }}','{{ venue['location'] }}');" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</a>
               <a href="#" class="card-link">Update</a>
             </div>
           </div>
@@ -42,4 +61,15 @@
       {% endfor %}
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function setVenueName(name, loc) {
+  const modal = document.getElementById('deleteModalBody');
+  modal.innerText = " Name : "+name+"\nLocation : "+loc+"\n\nAre you sure you want to delete?";
+  const delBt = document.getElementById('venueDeleteBt');
+  delBt.href = "/admin/deleteVenue/"+name;
+  }
+</script>
 {% endblock %}

@@ -53,9 +53,17 @@ def showVenues():
 @admin_login_required
 def showVenuesByCity(city):
     venues = requests.get(BASE_URL+'/api/venues/'+city)
-    for venue in venues:
-        print(venue)
     return render_template('venuesHome.html',venues = venues,city=city, user=current_user)
+
+@admin.route('/deleteVenue/<name>')
+@admin_login_required
+def deleteVenue(name):
+    delVenueCall = requests.delete(BASE_URL+'/api/venue/'+name)
+    response = delVenueCall.json()
+    print(response)
+    return redirect(url_for('admin.showVenues'))
+
+# -------------------- Shows ---------------------
 
 @admin.route('/showShows')
 @admin_login_required
@@ -69,6 +77,24 @@ def addVenue():
     if request.method == 'POST':
         name = request.form.get('venueName')
         location = request.form.get('venueLocation')
+        city = request.form.get('venueCity')
+        description = request.form.get('venueDescription')
+        capacity = request.form.get('venueCapacity')
+        venue = { 'name' : name, 'location' : location, 'city' : city, 'description' : description, 
+        'capacity' : capacity }
+
+        res = requests.post(BASE_URL+'/api/venue', json=venue)
+        
+        return render_template('addVenue.html',response=res.json(), user=current_user)
+    else:
+        return render_template('addVenue.html', user=current_user)
+    
+@admin.route('/show/add',methods=['GET','POST'])
+@admin_login_required
+def addShow():
+    if request.method == 'POST':
+        name = request.form.get('venueName')
+        location = request.form.get('venueLocation')
         description = request.form.get('venueDescription')
         capacity = request.form.get('venueCapacity')
         venue = { 'name' : name, 'location' : location, 'description' : description, 
@@ -76,6 +102,6 @@ def addVenue():
 
         res = requests.post(BASE_URL+'/api/venue', json=venue)
         
-        return render_template('addVenue.html',response=res.json())
+        return render_template('addShow.html',response=res.json())
     else:
-        return render_template('addVenue.html')
+        return render_template('addShow.html')

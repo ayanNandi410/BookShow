@@ -45,6 +45,9 @@
 
                 {% if user is defined and user.is_user() %}
                 <li class="nav-item">
+                  <a class="nav-link active" aria-current="page" href="/user/userHome">Home</a>
+                </li>
+                <li class="nav-item">
                   <a class="nav-link" href="/user/venues">Venues</a>
                 </li>
                 {% endif %}
@@ -55,7 +58,7 @@
                   </a>
                   <ul class="dropdown-menu">
                     {% if user is defined %}
-                    <li><a class="dropdown-item" href="/userProfile">Profile</a></li>
+                    <li><a class="dropdown-item" href="/user/userProfile">Profile</a></li>
                     <li>
                       <hr class="dropdown-divider">
                     </li>

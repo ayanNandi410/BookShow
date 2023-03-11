@@ -1,0 +1,35 @@
+{% extends "baseTemplate.html" %}
+
+{% block title %}Venue Home{% endblock %}
+
+{% block head %}
+<style>
+    .offcanvas{
+        min-height: 80%;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!--Choose City Modal -->
+<div class="modal fade in" tabindex="-1" id="cityModal" data-bs-backdrop="static">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Choose City</h5>
+        </div>
+        <div class="modal-body">
+          {% for c in cities %}
+            <a href="/user/venuesByCity/{{ c['city'] }}" class="btn btn-primary">{{ c['city'] }}</a>&emsp;
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+</div>
+
+<div class="container py-5 col-8" id="body">
+    <h1 class="display-5 fw-bold">Welcome {{ user['name'] }}</h1>
+    <button class="btn btn-primary btn-md" type="button" data-bs-toggle="modal" data-bs-target="#cityModal">View venues by City</button>
+</div>
+{% endblock %}

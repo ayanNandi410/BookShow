@@ -1,6 +1,6 @@
 {% extends "baseTemplate.html" %}
 
-{% block title %}Add Venue{% endblock %}
+{% block title %}Add Show{% endblock %}
 
 {% block head %}
 <style>
@@ -33,29 +33,23 @@
         {% endif %}
     {% endif %}
     <div class="container h-custom">
-        <h2>Add new Venue</h2><hr/><br/>
+        <h2>Add new Show</h2><hr/><br/>
       <div class="d-flex justify-content-center align-items-center h-100">
 
-          <form class="mt-4" action="{{ url_for('admin.addVenue')}}" method="post" enctype=multipart/form-data>  
+          <form class="mt-4" action="{{ url_for('admin.addShow')}}" method="post" enctype=multipart/form-data>  
             <!-- Name input -->
             <div class="row mb-3">
                 <div class="col-12 col-sm-6">
                     <div class="input-group input-group-lg mb-3">
-                        <span class="input-group-text" name="venueName">Venue Name</span>
-                        <input type="text" class="form-control" name="venueName" id="venueName" placeholder="Allen Hall" aria-label="venueName">
+                        <span class="input-group-text" name="venueName">Show Name</span>
+                        <input type="text" class="form-control" name="showName" id="showName" placeholder="Movie Name" aria-label="venueName">
                     </div>
                 </div>
                 <div class="col-12 col-sm-6">
                     <div class="input-group input-group-lg mb-3">
-                        <span class="input-group-text">Venue Location</span>
-                        <input type="text" class="form-control" name="venueLocation" id="venueLocation" placeholder="Beleghata" aria-label="venueLocation">
+                        <span class="input-group-text">Choose Initial Rating</span>
+                        <input type="text" class="form-control" name="showRating" id="showRating" placeholder="10" aria-label="venueLocation">
                     </div>
-                </div>
-            </div>
-            <div class="col-12 col-sm-6">
-                <div class="input-group input-group-lg mb-3">
-                    <span class="input-group-text">Venue City</span>
-                    <input type="text" class="form-control" name="venueCity" id="venueCity" placeholder="Kolkata" aria-label="venueCity">
                 </div>
             </div>
             <!--
@@ -69,23 +63,16 @@
             <div class="row mb-3">
                 <div class="col-4">
                     <div class="input-group input-group-lg mb-3">
-                        <span class="input-group-text" >Venue Capacity</span>
-                        <input type="number" class="form-control" name="venueCapacity" id="venueCapacity" placeholder="450" aria-label="venueCapacity">
+                        <span class="input-group-text" >Ticket Price</span>
+                        <input type="number" class="form-control" name="showTicketPrice" id="showTicketPrice" placeholder="450" aria-label="venueCapacity">
                     </div>
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="input-group input-group-lg mb-3">
-                    <span class="input-group-text">Venue Description</span>
-                    <textarea class="form-control" name="venueDescription" id="venueDescription" aria-label="With textarea"></textarea>
                 </div>
             </div>
 
             <div class="row mb-3">
                 <div class="col-4 offset-5">
                     <button type="submit" class="btn btn-primary btn-lg"
-                    style="padding-left: 2.5rem; padding-right: 2.5rem;">Register Venue</button>
+                    style="padding-left: 2.5rem; padding-right: 2.5rem;">Register Show</button>
                 </div>
             </div>
   
