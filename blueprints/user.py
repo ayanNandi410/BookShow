@@ -3,8 +3,8 @@ import requests
 from datetime import datetime,timedelta
 from flask import render_template
 from flask_login import login_required, current_user
-from ..models.admin import Venue, Show
-from ..constants import BASE_URL
+from models.admin import Venue, Show
+from constants import BASE_URL
 
 user = Blueprint('user', __name__,url_prefix='/user')
 

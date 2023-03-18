@@ -1,9 +1,9 @@
 from flask_restful import Resource, fields, marshal_with, reqparse, inputs
 import json
-from ..models.admin import Show, Venue
+from models.admin import Show, Venue
 from sqlalchemy import select,join
-from ..db import db
-from ..validation import NotFoundError, BusinessValidationError
+from db import db
+from validation import NotFoundError, BusinessValidationError
 
 tag_output_fields = {
     "id" : fields.Integer,

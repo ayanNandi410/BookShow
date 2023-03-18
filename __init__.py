@@ -1,12 +1,12 @@
 from flask import Flask, render_template
 from flask_login import LoginManager
-from .blueprints.authentication import authn as userAuth
-from .blueprints.admin import admin as adminProfile
-from .blueprints.user import user as userProfile
-from .models.users import User
-from .init_api import getConfiguredApi
-from .testData import generateTestData
-from .db import db
+from blueprints.authentication import authn as userAuth
+from blueprints.admin import admin as adminProfile
+from blueprints.user import user as userProfile
+from models.users import User
+from init_api import getConfiguredApi
+from testData import generateTestData
+from db import db
 
 def create_app():
     app = Flask(__name__)

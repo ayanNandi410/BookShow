@@ -1,9 +1,9 @@
 from flask_restful import Resource, fields, marshal_with
 from flask import request, jsonify
 from datetime import date, timedelta
-from ..models.admin import Venue, Allocation, Show, Venue
-from ..db import db
-from ..validation import NotFoundError, BusinessValidationError
+from models.admin import Venue, Allocation, Show, Venue
+from db import db
+from validation import NotFoundError, BusinessValidationError
 from sqlalchemy import desc
 
 timeslot_output_fields = {

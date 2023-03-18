@@ -1,14 +1,14 @@
 from flask import Blueprint, render_template,request, redirect, url_for, flash, session
 from flask_login import login_required, current_user
 from datetime import datetime
-from ..models.admin import Venue, Show
-from ..models.users import User
+from models.admin import Venue, Show
+from models.users import User
 #from ..models.Image import Image
 from functools import wraps
 from werkzeug.utils import secure_filename
-from ..db import db
+from db import db
 import requests
-from ..constants import BASE_URL
+from constants import BASE_URL
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 

@@ -1,5 +1,5 @@
-from .models.admin import Show,Tag,Venue,tags,Language,Allocation, BookTicket
-from .models.users import User
+from models.admin import Show,Tag,Venue,tags,Language,Allocation, BookTicket
+from models.users import User
 from werkzeug.security import generate_password_hash
 from datetime import date, time, datetime
 from flask_login import current_user
@@ -106,7 +106,13 @@ def generateTestData(app,db):
         db.session.add(allocDetails10)
         db.session.add(allocDetails11)
 
-        bookT1 = BookTicket(user_email=current_user.email,allocSeats=3,totPrice=345.50,timestamp=datetime.now())
+        bookT1 = BookTicket(user_email='test@gmail.com',allocSeats=3,totPrice=345.50,timestamp=datetime.now())
+        bookT1.allocShow = allocDetails1
+        db.session.add(bookT1)
+        bookT1 = BookTicket(user_email='test@gmail.com',allocSeats=7,totPrice=1200.50,timestamp=datetime.now())
+        bookT1.allocShow = allocDetails1
+        db.session.add(bookT1)
+
 
         db.session.add(User(name='Admin User',email='admin@gmail.com',password=generate_password_hash('admin123', method='sha256'),access=1))
         db.session.add(User(name='Test User',email='test@gmail.com',password=generate_password_hash('1234', method='sha256'),access=0))

@@ -1,4 +1,4 @@
-from ..db import db
+from db import db
 from sqlalchemy.sql import func
 
 tags = db.Table('tags',

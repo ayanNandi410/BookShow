@@ -1,9 +1,9 @@
 # Api initialization
 from flask_restful import Resource, Api
-from .api.venueApi import VenueAPI, VenueListByCityApi, VenueListByNameApi
-from .api.showApi import ShowAPI, ListShowByNameApi, ListShowByVenueApi
-from .api.cityApi import  GetAllCitiesApi
-from .api.timeslotApi import TimeSlotAPI
+from api.venueApi import VenueAPI, VenueListByCityApi, VenueListByNameApi
+from api.showApi import ShowAPI, ListShowByNameApi, ListShowByVenueApi
+from api.cityApi import  GetAllCitiesApi
+from api.timeslotApi import TimeSlotAPI
     
 def getConfiguredApi(app):
     apiV = Api(app)
