@@ -89,6 +89,7 @@ class VenueAPI(Resource):
         db.session.delete(venue)
         db.session.commit()
         return "Succesfully Deleted", 200
+
     
 class VenueListByCityApi(Resource):
 

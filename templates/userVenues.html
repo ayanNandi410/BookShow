@@ -3,9 +3,9 @@
 {% block title %}Venues Dashboard{% endblock %}
 
 {% block searchBar %}
-<form class="d-md-flex" role="search" action="/user/searchVenueByName" method="post">
-  <input class="form-control me-2" name="searchVenueName" type="search" placeholder="Search for venues" aria-label="Search">
-  <button class="btn btn-outline-success" type="submit">Search</button>
+<form class="d-md-flex" role="search" action="/user/searchVenueByName" method="post" style="margin: 4px auto;">
+  <input class="form-control form-control-sm me-2" name="searchVenueName" type="search" placeholder="Search for venues" aria-label="Search">
+  <button class="btn btn-sm btn-outline-success" type="submit">Search</button>
 </form>
 {% endblock %}
 
@@ -28,18 +28,22 @@
 
     <div class="row row-cols-md-3 row-cols-sm-6 row-cols-1 g-3">    
     {% for venue in venues %}
-        <div class="col">
-          <div class="card p-3" style="width: 18rem; margin-right: 20px;">
-            <img src="{{ url_for('static',filename='hall.png')}}" class="card-img-top" height="200px" width="30px" alt="...">
-            <div class="card-body">
-              <h5 class="card-title">{{ venue['name'] }}</h5>
-              <p class="card-text">Place : {{ venue['location'] }} <br/>Seating Capacity : {{ venue['capacity'] }}</p>
-              <a href="/user/venueHome/{{ venue['name'] }}" class="btn btn-primary">Explore</a>
-            </div>
-          </div>
+    <div class="col">
+      <div class="card p-3" style="width: 18rem; margin-right: 20px;">
+        <div class="card-img-caption d-flex flex-row-reverse">
+          <span class="card-text badge rounded-pill bg-primary">{{ venue['capacity'] }}</span>
+          <img src="{{ url_for('static',filename='movieHall.png')}}" class="card-img-top blurImage" height="200px" width="30px" alt="...">
         </div>
-      {% endfor %}
+        <div class="card-body">
+          <h5 class="card-title">{{ venue['name'] }}</h5>
+          <p class="card-text">
+            <span class="badge rounded-pill bg-secondary" style="padding: 8px 10px;">{{ venue['location'] }}</span>
+          </p>   
+          <a href="/user/venueHome/{{ venue['name'] }}" class="btn btn-primary">Explore</a>
+        </div>
+      </div>
     </div>
+    {% endfor %}
 </div>
 {% endblock %}
 

@@ -109,3 +109,30 @@ class Image(db.Model):
 
         db.session.add(User(name='admin',email='admin@gmail.com',password=generate_password_hash('admin123', method='sha256'),access=1))
         db.session.commit()
+
+
+
+
+
+
+
+<div class="card-body">
+              <h5 class="card-title">{{ show['name'] }}</h5>
+              <p class="card-text">
+                <div class="ratings">
+                  {% for i in range(1,6) %}
+                    {% if(i <= (show['rating']/2)) %}
+                      <i class="fa fa-star rating-color"></i>
+                    {% else %}
+                      <i class="fa fa-star"></i>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+                <!-- <br/>Ticket Price : &nbsp;&#8377;{{ show['ticketPrice'] }}<br/>  -->
+                Tags : 
+                {% for tagItem in show['tags'] %}
+                <span class="badge bg-secondary">{{ tagItem['name'] }}</span>&nbsp;
+                {% endfor %}
+                </p>
+              <a href="#" class="btn btn-primary">Buy Tickets</a>
+            </div>

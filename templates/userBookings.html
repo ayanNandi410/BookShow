@@ -1,0 +1,78 @@
+{% extends "baseTemplate.html" %}
+
+{% block title %}Venues Dashboard{% endblock %}
+
+{% block searchBar %}
+<form class="d-md-flex" role="search" action="/user/searchVenueByName" method="post" style="margin: 4px auto;">
+  <input class="form-control form-control-sm me-2" name="searchVenueName" type="search" placeholder="Search for venues" aria-label="Search">
+  <button class="btn btn-sm btn-outline-success" type="submit">Search</button>
+</form>
+{% endblock %}
+
+{% block content %}
+
+<div class="container" style="margin-top: 8%;margin-bottom: 10%;">
+
+    {% if firstPage is defined %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <strong>Hello {{ user.name }}</strong> ,here are all the venues...
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+    {% if name is not defined %}
+      <h2>Venues {% if city is defined %}<span class="badge bg-secondary bg-success">in {{ city }}</span>{% endif %}</h2><hr/><br/>
+    {% else %}
+      <h2>Search Results for {{ name }}:</h2>
+    {% endif %}
+    <br/><br/>
+
+    <div class="container-fluid">    
+        <div class="list-group">
+            <a href="#" class="list-group-item list-group-item-action active" aria-current="true">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">List group item heading</h5>
+                <small>3 days ago</small>
+              </div>
+              <p class="mb-1">Some placeholder content in a paragraph.</p>
+              <small>And some small print.</small>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">List group item heading</h5>
+                <small class="text-muted">3 days ago</small>
+              </div>
+              <p class="mb-1">Some placeholder content in a paragraph.</p>
+              <small class="text-muted">And some muted small print.</small>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">List group item heading</h5>
+                <small class="text-muted">3 days ago</small>
+              </div>
+              <p class="mb-1">Some placeholder content in a paragraph.</p>
+              <small class="text-muted">And some muted small print.</small>
+            </a>
+          </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  var myModal = new bootstrap.Modal(document.getElementById('cityModal'), {})
+  //myModal.toggle()
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

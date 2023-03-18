@@ -1,11 +1,17 @@
 from flask import Blueprint, request
 import requests
+from datetime import datetime,timedelta
 from flask import render_template
 from flask_login import login_required, current_user
 from ..models.admin import Venue, Show
 from ..constants import BASE_URL
 
 user = Blueprint('user', __name__,url_prefix='/user')
+
+@user.route('/')
+@login_required
+def index():
+    pass
 
 @user.route('/userHome')
 @login_required
@@ -53,8 +59,75 @@ def userVenueHome(name):
     venue = venueCall.json()
     venue_id = venue['id']
     cur_venue = Venue.query.filter(Venue.id == venue_id).first()
-    #venue = Venue.query.filter_by(name = name).first()
-    # all shows here
-    #print(cur_venue.avShows)
 
-    return render_template('userVenueHome.html',venue=cur_venue, user=current_user)
+    showsByVenueCall = requests.get(BASE_URL+'/api/shows/byVenue/'+name)
+    shows = showsByVenueCall.json()
+
+    if showsByVenueCall.status_code == 404 and shows['error_code'] == "SW008":
+        return render_template('userVenueHome.html',venue=cur_venue,showListEmpty=True, user=current_user)
+    else:
+        return render_template('userVenueHome.html',venue=cur_venue,shows=shows, user=current_user)
+    
+
+@user.route('/bookTimeslot/')
+@login_required
+def bookTimeslot():
+    show = request.args.get('show')
+    venue = request.args.get('venue')
+
+    query = {'show': show, 'venue': venue}
+    timeslotsCall = requests.get(BASE_URL+'/api/getTimeslots',params=query)
+    timeslots = timeslotsCall.json()
+
+    slots = {}
+
+    for item in timeslots:
+        if item['date'] in slots.keys() :
+            if item['avSeats'] == 0:
+                slots[item['date']].append((item['timeslot'],item['avSeats'],item['price']))
+            else:
+                slots[item['date']].append((item['timeslot'],item['avSeats'],item['price']))
+        else:
+            slots[item['date']] = []
+            if item['avSeats'] == 0:
+                slots[item['date']].append((item['timeslot'],item['avSeats'],item['price']))
+            else:
+                slots[item['date']].append((item['timeslot'],item['avSeats'],item['price']))
+
+    print(slots)
+
+    dateList, dayList = [],[]
+    from datetime import date
+    curdate = date.today()
+    for i in range(7): 
+        dateList.append(curdate)
+        dayList.append(curdate.strftime("%A"))
+        curdate += timedelta(days=1)
+
+    for date in dateList:
+        if str(date) not in slots.keys():
+            slots[str(date)] = []
+
+    print(slots)
+    print(dayList)
+
+    return render_template("bookTimeslot.html", dayList=dayList,show=show,venue=venue,slotsDict=slots, user=current_user)
+
+
+@user.route('/bookTicket/')
+@login_required
+def bookTicket():
+    show = request.args.get('show')
+    venue = request.args.get('venue') 
+    date = request.args.get('date')
+    time = request.args.get('time')
+    price = request.args.get('price')
+
+    details = { "show": show, "venue": venue, "date": date, "time": time,"price": float(price), "email": current_user.email}
+
+    return render_template('bookTicket.html',details=details,user=current_user)
+
+@user.route('/bookings/')
+@login_required
+def showBookings():
+    return render_template('userBookings.html',user=current_user)

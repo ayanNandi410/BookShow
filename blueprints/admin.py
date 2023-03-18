@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template,request, redirect, url_for, flash, session
 from flask_login import login_required, current_user
+from datetime import datetime
 from ..models.admin import Venue, Show
 from ..models.users import User
 #from ..models.Image import Image
@@ -35,7 +36,7 @@ def admin_login_required(view):
 @admin.route('/')
 @admin_login_required
 def index():
-    return 'Index'
+    return render_template('adminHome.html',user=current_user)
 
 
 @admin.route('/profile')
@@ -46,8 +47,9 @@ def profile():
 @admin.route('/showVenues')
 @admin_login_required
 def showVenues():
-    venues = Venue.query.all()
-    return render_template('venuesHome.html',venues = venues, user=current_user)
+    page = request.args.get('page', 1, type=int)
+    paginationVenue = Venue.query.order_by(Venue.name).paginate(page=page, per_page=20)
+    return render_template('venuesHome.html',pagination=paginationVenue, user=current_user)
 
 @admin.route('/showVenues/<city>')
 @admin_login_required
@@ -68,8 +70,9 @@ def deleteVenue(name):
 @admin.route('/showShows')
 @admin_login_required
 def showShows():
-    shows = Show.query.all()
-    return render_template('showsHome.html',shows=shows, user=current_user)
+    page = request.args.get('page', 1, type=int)
+    paginationShow = Show.query.order_by(Show.timestamp).paginate(page=page, per_page=20)
+    return render_template('showsHome.html',pagination=paginationShow, user=current_user)
 
 @admin.route('/venue/add',methods=['GET','POST'])
 @admin_login_required
@@ -83,25 +86,34 @@ def addVenue():
         venue = { 'name' : name, 'location' : location, 'city' : city, 'description' : description, 
         'capacity' : capacity }
 
-        res = requests.post(BASE_URL+'/api/venue', json=venue)
+        resV = requests.post(BASE_URL+'/api/venue', json=venue)
         
-        return render_template('addVenue.html',response=res.json(), user=current_user)
+        return render_template('addVenue.html',response=resV.json(), user=current_user)
     else:
         return render_template('addVenue.html', user=current_user)
     
-@admin.route('/show/add',methods=['GET','POST'])
+@admin.route('/showFor/<vname>/add',methods=['GET','POST'])
 @admin_login_required
-def addShow():
+def addShow(vname):
     if request.method == 'POST':
-        name = request.form.get('venueName')
-        location = request.form.get('venueLocation')
-        description = request.form.get('venueDescription')
-        capacity = request.form.get('venueCapacity')
-        venue = { 'name' : name, 'location' : location, 'description' : description, 
-        'capacity' : capacity }
+        name = request.form.get('showName')
+        venue = request.form.get('venueName')
+        tags = request.form.getlist('tags')
+        languages = request.form.getlist('languages')
+        rating = request.form.get('showRating')
+        rlDate = request.form.get('showReleaseDate')
+        rlTime = request.form.get('showReleaseTime')
+        duration = request.form.get('showDuration')
+        ticketPrice = request.form.get('showTicketPrice',type=float)
 
-        res = requests.post(BASE_URL+'/api/venue', json=venue)
+        showWithAllocation = { 'name' : name, 'vname' : venue, 'tags' : tags, 'languages' : languages,
+                 'rating' : int(rating), 'releaseDate' : rlDate, 'releaseTime' : rlTime, 'duration' : duration,
+                  'price' : ticketPrice }
+        print(showWithAllocation)
+
+        resS = requests.post(BASE_URL+'/api/show', json=showWithAllocation)
         
-        return render_template('addShow.html',response=res.json())
+        return render_template('addShow.html',venue_name=vname,response=resS.json(),user=current_user), 201
     else:
-        return render_template('addShow.html')
+
+        return render_template('addShow.html',venue_name=vname,user=current_user)

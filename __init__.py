@@ -1,17 +1,15 @@
-from flask import Flask
-from flask_restful import Resource, Api
+from flask import Flask, render_template
 from flask_login import LoginManager
 from .blueprints.authentication import authn as userAuth
 from .blueprints.admin import admin as adminProfile
 from .blueprints.user import user as userProfile
-from werkzeug.security import generate_password_hash
 from .models.users import User
-from .models.admin import Show,Tag,Venue,tags
+from .init_api import getConfiguredApi
+from .testData import generateTestData
 from .db import db
 
 def create_app():
     app = Flask(__name__)
-    apiV = Api(app)
 
     UPLOAD_FOLDER = '/uploads/'
 
@@ -39,20 +37,12 @@ def create_app():
     def load_user(user_id):
         # since the user_id is just the primary key of our user table, use it in the query for the user
         return User.query.get(int(user_id))
+    
+    @app.errorhandler(404)
+    def page_not_found(e):
+        return render_template('NotFound.html',errorMessage=e), 404
 
-       #db.drop_all()
-        #db.create_all()
+    generateTestData(app,db)
 
-    #@app.before_first_request
-    #def create_admin():
-        #db.session.add(User(name='admin',email='admin@gmail.com',password=generate_password_hash('admin123', method='sha256'),access=1))
-        #db.session.commit()
-
-    # Api initialization
-    from .api.venueApi import VenueAPI, VenueListByCityApi, VenueListByNameApi
-    from .api.cityApi import  GetAllCitiesApi
-    apiV.add_resource(VenueAPI,"/api/venue","/api/venue/<string:name>",endpoint="/venue")
-    apiV.add_resource(VenueListByCityApi,"/api/venues/byCity/<string:city>",endpoint="/venues/byCity/<city>")
-    apiV.add_resource(VenueListByNameApi,"/api/venues/byName/<string:name>",endpoint="/venues/byName/<name>")
-    apiV.add_resource(GetAllCitiesApi,"/api/city/all",endpoint="/city")
-    return app, apiV
+    api = getConfiguredApi(app)
+    return app, api

@@ -19,8 +19,8 @@
 
 {% block searchBar %}
 <form class="d-md-flex" role="search">
-  <input class="form-control me-2" type="search" placeholder="Search for shows" aria-label="Search">
-  <button class="btn btn-outline-success" type="submit">Search</button>
+  <input class="form-control form-control-sm me-2 mt-2 mb-2" type="search" placeholder="Search for shows" aria-label="Search">
+  <button class="btn btn-sm btn-outline-success mt-2 mb-2" type="submit">Search</button>
 </form>
 {% endblock %}
 
@@ -32,35 +32,81 @@
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     {% endif %}
-    <h2>Shows</h2><hr/><br/>
+    
+    <div class="row">
+      <div class="col-12 col-sm-4"><h2>&emsp;Shows</h2></div>
+      <div class="col-12 col-sm-8 d-flex flex-row-reverse">
+        <nav aria-label="Page navigation example">
+          <ul class="pagination">
+  
+              {% if pagination.has_prev %}
+              <li class="page-item">
+                  <a class='page-link' href="{{ url_for('admin.showShows', page=pagination.prev_num) }}">
+                  Previous</a>
+              </li>
+              {% endif %}
+  
+              {% for number in pagination.iter_pages() %}
+              {% if number %}
+              {% if pagination.page != number %}
+              <li class="page-item">
+                  <a  class='page-link'
+                      href="{{ url_for('admin.showShows', page=number) }}">
+                      {{ number }}
+                  </a>
+              </li>
+              {% else %}
+                  <li class="page-item"><a href="#" class='page-link active' aria-disabled="true">{{ number }}</a></li>
+              {% endif %}
+              {% else %}
+              <li class="page-item"><a href="#" class='page-link' aria-disabled="true">...</a></li>
+              {% endif %}
+              {% endfor %}
+  
+              {% if pagination.has_next %}
+              <li class="page-item">
+                  <a  class='page-link'
+                      href="{{ url_for('admin.showShows', page=pagination.next_num) }}">
+                      Next
+                  </a>
+              </li>
+          {% endif %}
+          </ul>
+          </nav>
+      </div>
+    </div>
+    
+    <hr/><br/>
     <div class="d-flex flex-row-reverse">
       <a class="btn btn-success" href="/admin/show/add">+ Add Show</a>
     </div>
   
     <br/><br/>
     <div class="row row-cols-md-3 row-cols-sm-6 row-cols-1 g-3">    
-    {% for show in shows %}
+    {% for show in pagination.items %}
         <div class="col">
           <div class="card p-3" style="width: 18rem; margin-right: 20px;">
-            <img src="{{ url_for('static',filename='hall.png')}}" class="card-img-top" height="200px" width="30px" alt="...">
-            <div class="card-body">
-              <h5 class="card-title">{{ show['name'] }}</h5>
-              <p class="card-text">
+            <div class="card-img-caption d-flex flex-row-reverse">
+              <span class="card-text badge rounded-pill badge-custom">
                 <div class="ratings">
                   {% for i in range(1,6) %}
                     {% if(i <= (show['rating']|int)/2) %}
                       <i class="fa fa-star rating-color"></i>
                     {% else %}
-                      <i class="fa fa-star"></i>
+                      <i class="fa fa-star-o"></i>
                     {% endif %}
                   {% endfor %}
-              </div>
-                Tags : 
+                </div>
+              </span>
+              <img src="{{ url_for('static',filename='show.png')}}" class="card-img-top blurImage" height="200px" width="30px" alt="...">
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">{{ show['name'] }}</h5>
+              <div class="card-text">
                 {% for tag in show['tags'] %}
-                <span class="badge bg-secondary">{{ tag['name'] }}</span>&nbsp;
-    {% endfor %}
-                </p>
-              <a href="#" class="btn btn-primary">Buy Tickets</a>
+                <span class="badge bg-success">{{ tag['name'] }}</span>&nbsp;
+                {% endfor %}
+              </div><br/>
             </div>
             <div class="card-footer text-muted">
               <a href="#" class="card-link">Delete</a>

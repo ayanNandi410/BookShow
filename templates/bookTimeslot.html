@@ -1,0 +1,59 @@
+{% extends "baseTemplate.html" %}
+
+{% block title %}Ticket Show{% endblock %}
+
+{% block content %}
+<div class="body container" style="margin-top: 6%; padding-bottom: 25%;">
+  <div class="row text-center">
+    <h4>Choose your timeslot</h4>`<br/>
+  </div>
+    <div class="row text-center">
+      <div class="col-12 col-sm-6">
+        <h5 class="alert alert-success">Show: {{ show }}</h5>
+      </div>
+      <div class="col-12 col-sm-6">
+        <h5 class="alert alert-success">Venue: {{ venue }}</h5>
+      </div>
+    </div><hr/>
+    <div class="card text-center" style="width: fit-content; margin: auto;">
+        <div class="card-header" style="background-color: #1f87c8;">
+          <p class="card-text text-white">Choose Day from below</p>
+          <ul class="nav nav-tabs card-header-tabs" id="timeNavbar">
+            {% for day in dayList %}
+            <li class="nav-item">
+              {% if loop.index == 1 %}
+              <a class=" nav-link text-white" data-bs-toggle="collapse" href="#{{ day | string }}" role="button" aria-expanded="false" aria-controls="{{ day | string }}">{{day}}(Today)</a>
+              {% else %}
+              <a class=" nav-link text-white" data-bs-toggle="collapse" href="#{{ day | string }}" role="button" aria-expanded="false" aria-controls="{{ day | string }}">{{day}}</a>
+              {% endif %}
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% for date, slots in slotsDict|dictsort %}
+        <div class="collapse" id="{{ dayList[loop.index-1] | string }}">
+          <div class="card card-body">
+            <h5 class="card-title" style="margin-bottom: 10px;">{{ date }} ({{ dayList[loop.index-1] | string }})</h5>
+            <div class="card-text">
+              {% if (slots | length) == 0 %}
+                <p class="alert alert-sm alert-primary" style="width: 40%; margin: auto;">No shows</p>
+              {% else %}
+              {% for timeslot in slots %}
+                {% if timeslot[1] == 0 %}
+                <button class="btn btn-danger position-relative" disabled>{{ timeslot[0][:5] | string }}
+                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
+                  {{ timeslot[1] | string }}</span></button>&emsp14;
+                {% else %}
+                  <a class="btn btn-success position-relative" 
+                  href="/user/bookTicket?show={{show}}&venue={{venue}}&date={{date}}&time={{timeslot[0][:5]}}&price={{timeslot[2]}}">{{ timeslot[0][:5] | string }}
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">{{ timeslot[1] | string }}</span></a>&emsp14;
+                {% endif %}
+              {% endfor %}
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+</div>
+{% endblock %}

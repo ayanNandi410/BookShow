@@ -1,18 +1,57 @@
 .ratings{
-    margin-left:15px;
+    margin : 4px 4px;
 }
 
 .ratings{
     
-    color:#cecece;
-    font-size:16px;
+    color:#ffffff;
+    font-size:8px;
+    background-color: #1687d8;
+    width: fit-content;
+    border-radius: 5px;
 }
 
 .rating-color{
-    color:#fbc634;
+    color:#fbc52f;
 }
 
 #body{
     margin-top: 8%;
-    margin-bottom: 10%;
+    margin-bottom: 20%;
+    height: 100%;
 }
+
+footer{
+    bottom:0;
+    width: 100%;
+    margin-top: 10%;
+    margin-bottom: 0px;
+    margin-left: 0px;
+}
+
+.badge-custom{
+    background-color: #1687d8;
+}
+
+.blurImage{
+    filter: blur(3px);
+    -webkit-filter: blur(3px);
+}
+
+.card-img-caption {
+    border-top-left-radius: calc(.25rem - 1px);
+    border-top-right-radius: calc(.25rem - 1px);
+  }
+    
+  .card-img-caption .card-img-top {
+    z-index: 0;
+  }
+      
+  .card-img-caption .card-text {
+    text-align: center;
+    width: fit-content;
+    position: absolute;
+    z-index: 1;
+    text-decoration: solid;
+    padding: 5px 10px;
+  }

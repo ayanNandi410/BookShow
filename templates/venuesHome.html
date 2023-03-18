@@ -4,8 +4,8 @@
 
 {% block searchBar %}
 <form class="d-md-flex" role="search">
-  <input class="form-control me-2" type="search" placeholder="Search for venues" aria-label="Search">
-  <button class="btn btn-outline-success" type="submit">Search</button>
+  <input class="form-control form-control-sm me-2 mt-2 mb-2" type="search" placeholder="Search for venues" aria-label="Search">
+  <button class="btn btn-sm btn-outline-success mt-2 mb-2" type="submit">Search</button>
 </form>
 {% endblock %}
 
@@ -35,25 +35,73 @@
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     {% endif %}
-    <h2>&emsp;Venues</h2><hr/><br/>
-    <div class="d-flex flex-row-reverse">
+    <div class="row">
+      <div class="col-12 col-sm-4"><h2>&emsp;Venues</h2></div>
+      <div class="col-12 col-sm-8 d-flex flex-row-reverse">
+        <nav aria-label="Page navigation example">
+          <ul class="pagination">
+  
+              {% if pagination.has_prev %}
+              <li class="page-item">
+                  <a class='page-link' href="{{ url_for('admin.showVenues', page=pagination.prev_num) }}">
+                  Previous</a>
+              </li>
+              {% endif %}
+  
+              {% for number in pagination.iter_pages() %}
+              {% if number %}
+              {% if pagination.page != number %}
+              <li class="page-item">
+                  <a  class='page-link'
+                      href="{{ url_for('admin.showVenues', page=number) }}">
+                      {{ number }}
+                  </a>
+              </li>
+              {% else %}
+                  <li class="page-item"><a href="#" class='page-link active' aria-disabled="true">{{ number }}</a></li>
+              {% endif %}
+              {% else %}
+              <li class="page-item"><a href="#" class='page-link' aria-disabled="true">...</a></li>
+              {% endif %}
+              {% endfor %}
+  
+              {% if pagination.has_next %}
+              <li class="page-item">
+                  <a  class='page-link'
+                      href="{{ url_for('admin.showVenues', page=pagination.next_num) }}">
+                      Next
+                  </a>
+              </li>
+          {% endif %}
+          </ul>
+          </nav>
+      </div>
+    </div>
+    <hr/><br/>
+    <div class="col-12 col-md-2 offset-md-10">
       <a href="/admin/venue/add" class="btn btn-success">+ Add Venue</a>
     </div>
-  
+
+
     <br/><br/>
     <div class="row row-cols-md-3 row-cols-sm-6 row-cols-1 g-3">    
-    {% for venue in venues %}
+      {% for venue in pagination.items %}
         <div class="col">
           <div class="card p-3" style="width: 18rem; margin-right: 20px;">
-            <img src="{{ url_for('static',filename='hall.png')}}" class="card-img-top" height="200px" width="30px" alt="...">
+            <div class="card-img-caption d-flex flex-row-reverse">
+              <span class="card-text badge rounded-pill bg-primary">{{ venue['capacity'] }}</span>
+              <img src="{{ url_for('static',filename='movieHall.png')}}" class="card-img-top blurImage" height="200px" width="30px" alt="...">
+            </div>
             <div class="card-body">
               <h5 class="card-title">{{ venue['name'] }}</h5>
-              <p class="card-text">Place : {{ venue['location'] }} <br/>Seating Capacity : {{ venue['capacity'] }}</p>
+              <p class="card-text">
+                <span class="badge rounded-pill bg-secondary" style="padding: 8px 10px;">{{ venue['location'] }}</span>
+              </p>   
               <a href="#" class="btn btn-primary">Shows</a>
-              <a href="#" class="btn btn-primary btn-success">+ Add Show</a>
+              <a href="/admin/showFor/{{ venue['name'] }}/add" class="btn btn-primary btn-success">+ Add Show</a>
             </div>
             <div class="card-footer text-muted">
-              <a href="#" class="card-link" onclick="setVenueName('{{ venue['name'] }}','{{ venue['location'] }}');" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</a>
+              <a href="#" class="card-link" onclick="setVenueName('{{ venue['name'] }}','{{ venue['location'] }}' );" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</a>
               <a href="#" class="card-link">Update</a>
             </div>
           </div>

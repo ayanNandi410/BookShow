@@ -10,8 +10,14 @@
     {% block head %}{% endblock %}
 </head>
   <body>
-    <nav class="navbar navbar-default navbar-expand-lg fixed-top" style="background-color: #9acbee;">
-        <a class="navbar-brand ms-4 me-4" href="#"><img src="{{ url_for('static', filename='ticket.png') }}" width="40px" height="40px"> Show</a>
+    <nav class="navbar navbar-default navbar-expand-lg fixed-top" id="appNavbar" style="background-color: #9acbee; max-height: 9%;">
+        {% if user is defined and user.is_admin() %}
+        <a class="navbar-brand ms-4 me-4" href="{{ url_for('admin.index') }}"><img src="{{ url_for('static', filename='ticket.png') }}" width="40px" height="40px"> Show</a>
+        {% elif user is defined and user.is_user() %}
+        <a class="navbar-brand ms-4 me-4" href="{{ url_for('user.index') }}"><img src="{{ url_for('static', filename='ticket.png') }}" width="40px" height="40px"> Show</a>
+        {% else %}
+        <a class="navbar-brand ms-4 me-4" href="{{ url_for('authn.index') }}"><img src="{{ url_for('static', filename='ticket.png') }}" width="40px" height="40px"> Show</a>
+        {% endif %}
         <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -50,6 +56,12 @@
                 <li class="nav-item">
                   <a class="nav-link" href="/user/venues">Venues</a>
                 </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/user/shows">Shows</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/user/bookings">Bookings</a>
+                </li>
                 {% endif %}
 
                 <li class="nav-item dropdown">
@@ -75,7 +87,7 @@
     <!-- Footer -->
 <footer class="text-center text-lg-start bg-white  text-info-emphasis"> 
     <!-- Copyright -->
-    <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.025);">
+    <div class="text-center p-2" style="background-color: rgba(0, 0, 0, 0.025); width: 100%;">
       © 2023 Copyright:
       <a class="text-reset fw-bold" href="#">Ayan Nandi | BS@IIT Madras</a>
     </div>
