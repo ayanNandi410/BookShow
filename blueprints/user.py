@@ -76,42 +76,40 @@ def bookTimeslot():
     venue = request.args.get('venue')
 
     query = {'show': show, 'venue': venue}
-    timeslotsCall = requests.get(BASE_URL+'/api/getTimeslots',params=query)
+    timeslotsCall = requests.get(BASE_URL+'/api/allocation',params=query)
     timeslots = timeslotsCall.json()
-
+    print(timeslots)
     slots = {}
 
-    for item in timeslots:
-        if item['date'] in slots.keys() :
-            if item['avSeats'] == 0:
-                slots[item['date']].append((item['timeslot'],item['avSeats'],item['price']))
+    if  timeslotsCall.status_code == 404 and timeslots['error_code'] == "AL011":
+        return render_template("bookTimeslot.html",show=show,venue=venue,emptySlotList=True)
+    else:
+        for item in timeslots:
+            if item['date'] in slots.keys() :
+                if item['avSeats'] == 0:
+                    slots[item['date']].append((item['time'],item['avSeats'],item['price']))
+                else:
+                    slots[item['date']].append((item['time'],item['avSeats'],item['price']))
             else:
-                slots[item['date']].append((item['timeslot'],item['avSeats'],item['price']))
-        else:
-            slots[item['date']] = []
-            if item['avSeats'] == 0:
-                slots[item['date']].append((item['timeslot'],item['avSeats'],item['price']))
-            else:
-                slots[item['date']].append((item['timeslot'],item['avSeats'],item['price']))
+                slots[item['date']] = []
+                if item['avSeats'] == 0:
+                    slots[item['date']].append((item['time'],item['avSeats'],item['price']))
+                else:
+                    slots[item['date']].append((item['time'],item['avSeats'],item['price']))
 
-    print(slots)
+        dateList, dayList = [],[]
+        from datetime import date
+        curdate = date.today()
+        for i in range(7): 
+            dateList.append(curdate)
+            dayList.append(curdate.strftime("%A"))
+            curdate += timedelta(days=1)
 
-    dateList, dayList = [],[]
-    from datetime import date
-    curdate = date.today()
-    for i in range(7): 
-        dateList.append(curdate)
-        dayList.append(curdate.strftime("%A"))
-        curdate += timedelta(days=1)
+        for date in dateList:
+            if str(date) not in slots.keys():
+                slots[str(date)] = []
 
-    for date in dateList:
-        if str(date) not in slots.keys():
-            slots[str(date)] = []
-
-    print(slots)
-    print(dayList)
-
-    return render_template("bookTimeslot.html", dayList=dayList,show=show,venue=venue,slotsDict=slots, user=current_user)
+        return render_template("bookTimeslot.html", dayList=dayList,show=show,venue=venue,slotsDict=slots, user=current_user)
 
 
 @user.route('/bookTicket/')
@@ -130,4 +128,7 @@ def bookTicket():
 @user.route('/bookings/')
 @login_required
 def showBookings():
-    return render_template('userBookings.html',user=current_user)
+    bookingsCall = requests.get(BASE_URL+'/api/booking/'+current_user.email)
+    bookings = bookingsCall.json()
+
+    return render_template('userBookings.html',bookings=bookings,user=current_user)

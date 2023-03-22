@@ -24,14 +24,25 @@
 
 {% block content %}
 <div class="body" style="margin-top: 10%; margin-bottom: 10%;">
-    {% if response is defined %}
-        {% if response == 'Success' %}
-            <p class="alert alert-warning" role="alert" style="padding: 10px 20px;">Successfully added</p>
-        {% else %}
-            <p class="alert alert-warning" role="alert" style="padding: 10px 20px;">{{ response['error_code'] }} , 
-                {{ response['error_message'] }}</p>
-        {% endif %}
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+      {% for category, message in messages %}
+        <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="toast-header {{ 'bg-danger' if category == 'error' else 'bg-success'}}">
+            <strong class="me-auto text-white">Add Venue</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+          <div class="toast-body">
+            {{ message }}
+          </div>
+        </div>            
+      {% endfor %}
+    </div>
     {% endif %}
+    {% endwith %}
+
     <div class="container h-custom">
         <h2>Add new Venue</h2><hr/><br/>
       <div class="d-flex justify-content-center align-items-center h-100">
@@ -42,20 +53,20 @@
                 <div class="col-12 col-sm-6">
                     <div class="input-group input-group-lg mb-3">
                         <span class="input-group-text" name="venueName">Venue Name</span>
-                        <input type="text" class="form-control" name="venueName" id="venueName" placeholder="Allen Hall" aria-label="venueName">
+                        <input type="text" class="form-control" name="venueName" id="venueName" placeholder="Allen Hall" value="" aria-label="venueName" required>
                     </div>
                 </div>
                 <div class="col-12 col-sm-6">
                     <div class="input-group input-group-lg mb-3">
                         <span class="input-group-text">Venue Location</span>
-                        <input type="text" class="form-control" name="venueLocation" id="venueLocation" placeholder="Beleghata" aria-label="venueLocation">
+                        <input type="text" class="form-control" name="venueLocation" id="venueLocation" placeholder="Beleghata" value="" aria-label="venueLocation" required>
                     </div>
                 </div>
             </div>
             <div class="col-12 col-sm-6">
                 <div class="input-group input-group-lg mb-3">
                     <span class="input-group-text">Venue City</span>
-                    <input type="text" class="form-control" name="venueCity" id="venueCity" placeholder="Kolkata" aria-label="venueCity">
+                    <input type="text" class="form-control" name="venueCity" id="venueCity" placeholder="Kolkata" value="" aria-label="venueCity" required>
                 </div>
             </div>
             <!--
@@ -70,7 +81,7 @@
                 <div class="col-4">
                     <div class="input-group input-group-lg mb-3">
                         <span class="input-group-text" >Venue Capacity</span>
-                        <input type="number" class="form-control" name="venueCapacity" id="venueCapacity" placeholder="450" aria-label="venueCapacity">
+                        <input type="number" class="form-control" name="venueCapacity" id="venueCapacity" placeholder="450" value="" aria-label="venueCapacity" required>
                     </div>
                 </div>
             </div>
@@ -78,7 +89,7 @@
             <div class="row mb-3">
                 <div class="input-group input-group-lg mb-3">
                     <span class="input-group-text">Venue Description</span>
-                    <textarea class="form-control" name="venueDescription" id="venueDescription" aria-label="With textarea"></textarea>
+                    <textarea class="form-control" name="venueDescription" id="venueDescription" value="" aria-label="With textarea" required></textarea>
                 </div>
             </div>
 

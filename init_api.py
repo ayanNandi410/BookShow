@@ -3,7 +3,8 @@ from flask_restful import Resource, Api
 from api.venueApi import VenueAPI, VenueListByCityApi, VenueListByNameApi
 from api.showApi import ShowAPI, ListShowByNameApi, ListShowByVenueApi
 from api.cityApi import  GetAllCitiesApi
-from api.timeslotApi import TimeSlotAPI
+from api.allocationApi import AllocationAPI
+from api.bookingApi import BookTicketAPI
     
 def getConfiguredApi(app):
     apiV = Api(app)
@@ -18,6 +19,8 @@ def getConfiguredApi(app):
     apiV.add_resource(ListShowByVenueApi,"/api/shows/byVenue/<string:venue>",endpoint="/shows/byVenue/<venue>")
     apiV.add_resource(ListShowByNameApi,"/api/shows/byName/<string:name>",endpoint="/shows/byName/<name>")
     
-    apiV.add_resource(TimeSlotAPI,"/api/getTimeslots",endpoint="/getTimeslots")
+    apiV.add_resource(AllocationAPI,"/api/allocation",endpoint="/allocation")
 
+    apiV.add_resource(BookTicketAPI,"/api/booking/<string:email>",endpoint="/booking")
+    
     return apiV

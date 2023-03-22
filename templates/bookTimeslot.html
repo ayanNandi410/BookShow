@@ -3,6 +3,24 @@
 {% block title %}Ticket Show{% endblock %}
 
 {% block content %}
+<!-- Ticket Price Modal -->
+<div class="modal fade" id="priceModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="priceModalTitle">Slot Details</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="priceModalBody">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <a href="#" id="bookBt" class="btn btn-primary">Book Tickets</a>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="body container" style="margin-top: 6%; padding-bottom: 25%;">
   <div class="row text-center">
     <h4>Choose your timeslot</h4>`<br/>
@@ -15,6 +33,9 @@
         <h5 class="alert alert-success">Venue: {{ venue }}</h5>
       </div>
     </div><hr/>
+    {% if emptySlotList is defined %}
+      <br/><br/><h4 class="alert alert-success text-center">No slots Available in this week.<br/> Will be added soon..</h4>
+    {% else %}
     <div class="card text-center" style="width: fit-content; margin: auto;">
         <div class="card-header" style="background-color: #1f87c8;">
           <p class="card-text text-white">Choose Day from below</p>
@@ -44,9 +65,8 @@
                   <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
                   {{ timeslot[1] | string }}</span></button>&emsp14;
                 {% else %}
-                  <a class="btn btn-success position-relative" 
-                  href="/user/bookTicket?show={{show}}&venue={{venue}}&date={{date}}&time={{timeslot[0][:5]}}&price={{timeslot[2]}}">{{ timeslot[0][:5] | string }}
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">{{ timeslot[1] | string }}</span></a>&emsp14;
+                  <button class="btn btn-success position-relative" onclick=" setModalBody('{{date}}','{{timeslot[0][:5]}}','{{timeslot[2]}}');" data-bs-toggle="modal" data-bs-target="#priceModal">{{ timeslot[0][:5] | string }}
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">{{ timeslot[1] | string }}</span></button>&emsp14;
                 {% endif %}
               {% endfor %}
               {% endif %}
@@ -55,5 +75,17 @@
         </div>
         {% endfor %}
       </div>
+      {% endif %}
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function setModalBody(date, timeslot, price) {
+  const modal = document.getElementById('priceModalBody');
+  modal.innerText = " Date : "+date+"\n Time : "+timeslot+"\nPrice per person : "+price+"\n\nAre you sure you want to book?";
+  const bookBt = document.getElementById('bookBt');
+  bookBt.href = "/user/bookTicket?show={{show}}&venue={{venue}}&date="+date+"&time="+timeslot+"&price="+price;
+  }
+</script>
 {% endblock %}

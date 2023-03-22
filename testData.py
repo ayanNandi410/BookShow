@@ -26,15 +26,15 @@ def generateTestData(app,db):
         malayalam = Language(name='Malayalam')
 
         
-        venue1 = Venue(name='Inox Forum Mall',location='Kasba',city='Kolkata',capacity=340,description='One of the biggest malls in Kolkata',timestamp='2023-02-13 11:30:00')
+        venue1 = Venue(name='Inox Forum Mall',location='Kasba',city='Kolkata',capacity=340,description='One of the biggest malls in Kolkata',timestamp=datetime(2023,3,1,11,21,00))
         db.session.add(venue1)
-        venue2 = Venue(name='Inox Acropolis Mall',location='Rabindra Sadan',city='Kolkata',capacity=210,description='One of the most popular malls in Kolkata',timestamp='2023-01-23 10:30:00')
+        venue2 = Venue(name='Inox Acropolis Mall',location='Rabindra Sadan',city='Kolkata',capacity=210,description='One of the most popular malls in Kolkata',timestamp=datetime(2023,2,18,9,21,00))
         db.session.add(venue2)
-        venue3 = Venue(name='Inox Rangoli Mall',location='Liluah',city='Howrah',capacity=400,description='One of the most unique malls in Kolkata',timestamp='2022-01-23 10:30:00')
+        venue3 = Venue(name='Inox Rangoli Mall',location='Liluah',city='Howrah',capacity=400,description='One of the most unique malls in Kolkata',timestamp=datetime(2023,1,13,18,21,00))
         db.session.add(venue3)
 
         for i in range(8):
-            venueNew = Venue(name='Mall Number '+str(i),location='Loc'+str(i),city='Howrah',capacity=400,description='One of the most unique malls in Kolkata',timestamp='2022-01-23 10:30:00')
+            venueNew = Venue(name='Mall Number '+str(i),location='Loc'+str(i),city='Howrah',capacity=400,description='One of the most unique malls in Kolkata',timestamp=datetime(2022,i+1,i+10,11,i+2,00))
             db.session.add(venueNew)
 
         db.session.add(action)
@@ -81,19 +81,19 @@ def generateTestData(app,db):
             db.session.add(show4)
 
 
-        allocDetails1 = Allocation(venue_id=1,show_id=1,date=date(2023, 12, 25),timeslot=time(11, 00, 00),totSeats=120,avSeats=100,price=234.50)
-        allocDetails2 = Allocation(venue_id=1,show_id=2,date=date(2021, 2, 15),timeslot=time(9, 5, 00),totSeats=150,avSeats=80,price=430.50)
-        allocDetails3 = Allocation(venue_id=2,show_id=3,date=date(2020, 2, 8),timeslot=time(7, 5, 00),totSeats=210,avSeats=20,price=330.50)
-        allocDetails4 = Allocation(venue_id=2,show_id=2,date=date(2020, 2, 8),timeslot=time(8, 5, 00),totSeats=210,avSeats=20,price=330.50)
-        allocDetails5 = Allocation(venue_id=2,show_id=4,date=date(2020, 2, 8),timeslot=time(9, 5, 00),totSeats=210,avSeats=20,price=330.50)
+        allocDetails1 = Allocation(venue_id=1,show_id=1,timeslot=datetime(2023, 12, 25, 11, 00, 00),totSeats=120,avSeats=100,price=234.50)
+        allocDetails2 = Allocation(venue_id=1,show_id=2,timeslot=datetime(2021, 2, 15, 9, 5, 00),totSeats=150,avSeats=80,price=430.50)
+        allocDetails3 = Allocation(venue_id=2,show_id=3,timeslot=datetime(2020, 2, 8, 7, 5, 00),totSeats=210,avSeats=20,price=330.50)
+        allocDetails4 = Allocation(venue_id=2,show_id=2,timeslot=datetime(2020, 2, 8, 8, 5, 00),totSeats=210,avSeats=20,price=330.50)
+        allocDetails5 = Allocation(venue_id=2,show_id=4,timeslot=datetime(2020, 2, 8, 9, 5, 00),totSeats=210,avSeats=20,price=330.50)
         
-        allocDetails6 = Allocation(venue_id=2,show_id=1,date=date(2023, 3, 18),timeslot=time(10, 5, 00),totSeats=210,avSeats=20,price=330.50)
-        allocDetails8 = Allocation(venue_id=2,show_id=1,date=date(2023, 3, 19),timeslot=time(11, 5, 00),totSeats=210,avSeats=20,price=330.50)
-        allocDetails9 = Allocation(venue_id=2,show_id=1,date=date(2023, 3, 20),timeslot=time(12, 5, 00),totSeats=210,avSeats=20,price=330.50)
-        allocDetails10 = Allocation(venue_id=2,show_id=1,date=date(2023, 3, 20),timeslot=time(9, 5, 00),totSeats=210,avSeats=0,price=330.50)
-        allocDetails11 = Allocation(venue_id=2,show_id=1,date=date(2023, 3, 23),timeslot=time(9, 5, 00),totSeats=210,avSeats=20,price=330.50)
+        allocDetails6 = Allocation(venue_id=2,show_id=1,timeslot=datetime(2023, 3, 22, 10, 5, 00),totSeats=210,avSeats=20,price=330.50)
+        allocDetails8 = Allocation(venue_id=2,show_id=1,timeslot=datetime(2023, 3, 23, 11, 5, 00),totSeats=210,avSeats=20,price=330.50)
+        allocDetails9 = Allocation(venue_id=2,show_id=1,timeslot=datetime(2023, 3, 25, 12, 5, 00),totSeats=210,avSeats=20,price=330.50)
+        allocDetails10 = Allocation(venue_id=2,show_id=1,timeslot=datetime(2023, 3, 27, 9, 5, 00),totSeats=210,avSeats=0,price=330.50)
+        allocDetails11 = Allocation(venue_id=2,show_id=1,timeslot=datetime(2023, 3, 26, 9, 5, 00),totSeats=210,avSeats=20,price=330.50)
         
-        allocDetails7 = Allocation(venue_id=2,show_id=6,date=date(2020, 2, 8),timeslot=time(11, 5, 00),totSeats=210,avSeats=20,price=330.50)
+        allocDetails7 = Allocation(venue_id=2,show_id=6, timeslot=datetime(2020, 2, 8, 11, 5, 00),totSeats=210,avSeats=20,price=330.50)
         db.session.add(allocDetails1)
         db.session.add(allocDetails2)
         db.session.add(allocDetails3)

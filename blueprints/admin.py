@@ -62,7 +62,14 @@ def showVenuesByCity(city):
 def deleteVenue(name):
     delVenueCall = requests.delete(BASE_URL+'/api/venue/'+name)
     response = delVenueCall.json()
-    print(response)
+
+    if delVenueCall.status_code != 200:
+        if 'error_message' in response.keys():
+            flash(response['error_message'],'Delete Venue')
+        else:
+             flash('Some error occured. Try Aagain...','Delete Venue')
+    else:
+        flash('Succesfully Deleted','Delete Venue')
     return redirect(url_for('admin.showVenues'))
 
 # -------------------- Shows ---------------------
@@ -78,17 +85,26 @@ def showShows():
 @admin_login_required
 def addVenue():
     if request.method == 'POST':
-        name = request.form.get('venueName')
-        location = request.form.get('venueLocation')
-        city = request.form.get('venueCity')
-        description = request.form.get('venueDescription')
-        capacity = request.form.get('venueCapacity')
+        name = request.form.get('venueName','')
+        location = request.form.get('venueLocation','')
+        city = request.form.get('venueCity','')
+        description = request.form.get('venueDescription','')
+        capacity = request.form.get('venueCapacity','')
         venue = { 'name' : name, 'location' : location, 'city' : city, 'description' : description, 
         'capacity' : capacity }
 
         resV = requests.post(BASE_URL+'/api/venue', json=venue)
-        
-        return render_template('addVenue.html',response=resV.json(), user=current_user)
+        response = resV.json()
+
+        if resV.status_code != 201:
+            if 'error_message' in response.keys():
+                flash(response['error_message'],'error')
+            else:
+                flash('Some error occured. Try Again...','error')
+        else:
+            flash('Succesfully Added','success') 
+
+        return render_template('addVenue.html', user=current_user)
     else:
         return render_template('addVenue.html', user=current_user)
     
