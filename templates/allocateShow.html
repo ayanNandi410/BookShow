@@ -36,7 +36,16 @@
         <h2>Add new Show</h2><hr/><br/>
       <div class="d-flex justify-content-center align-items-center h-100">
 
-          <form class="mt-4" action="/admin/show/add" method="post" enctype=multipart/form-data>  
+          <form class="mt-4" action="/admin/showFor/{{ venue_name }}/add" method="post" enctype=multipart/form-data>  
+            <!-- Name input -->
+            <div class="row mb-3">
+                <div class="col-12 col-sm-6">
+                    <div class="input-group input-group-md mb-3">
+                        <span class="input-group-text" name="venueName">For Venue</span>
+                        <input type="text" class="form-control" name="venueName" 
+                        id="venueName" value="{{ venue_name }}" aria-label="venueName" disabled>
+                    </div>
+                </div>
             <div class="row mb-3">
                 <div class="col-12 col-sm-6">
                     <div class="input-group input-group-md mb-3">
@@ -53,6 +62,14 @@
                     </div>
                 </div>
             </div>
+            <!--
+            <div class="row mb-3">
+                <div class="input-group input-group-lg">
+                    <input type="file" class="form-control" id="venueImage" name="venueImage">
+                    <label class="input-group-text" for="venueImage">Upload Image</label>
+                  </div>
+            </div>
+            -->
 
             <div class="row mb-3">
                 <div class="col-12">
@@ -73,26 +90,6 @@
                                 <input type="checkbox" class="form-check-input" 
                                 id="TagComedy" name="tags" value="Comedy">
                                 <label for="Comedy" class="form-check-label"> Comedy</label>    
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input type="checkbox" class="form-check-input" 
-                                id="TagHorror" name="tags" value="Horror">
-                                <label class="form-check-label" for="Horror"> Horror</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input type="checkbox" class="form-check-input" 
-                                id="TagMystery" name="tags" value="Mystery">
-                                <label for="Mystery" class="form-check-label"> Mystery</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input type="checkbox" class="form-check-input" 
-                                id="TagFantasy" name="tags" value="Fantasy">
-                                <label for="Fantasy" class="form-check-label"> Fantasy</label>    
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input type="checkbox" class="form-check-input" 
-                                id="TagDrama" name="tags" value="Drama">
-                                <label for="Drama" class="form-check-label"> Drama</label>    
                             </div>
                         </div>
                     </div>
@@ -119,22 +116,27 @@
                                 id="LangBengali" name="languages" value="Bengali">
                                 <label for="Bengali" class="form-check-label"> Bengali</label>    
                             </div>
-                            <div class="form-check form-check-inline">
-                                <input type="checkbox" class="form-check-input" 
-                                id="LangTamil" name="languages" value="Tamil">
-                                <label class="form-check-label" for="Tamil"> Tamil</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input type="checkbox" class="form-check-input" 
-                                id="LangTelegu" name="languages" value="Telegu">
-                                <label for="Telegu" class="form-check-label"> Telegu</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input type="checkbox" class="form-check-input" 
-                                id="LangMalayalam" name="languages" value="Malayalam">
-                                <label for="Malayalam" class="form-check-label"> Malayalam</label>    
-                            </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-6">
+                    <div class="input-group input-group-md mb-3">
+                        <span class="input-group-text" >Release Date</span>
+                        <input type="date" class="form-control" name="showReleaseDate" 
+                        id="showReleaseDate" aria-label="Show Release Date">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-6">
+                    <div class="input-group input-group-md mb-3">
+                        <span class="input-group-text" >Release Time</span>
+                        <input type="time" class="form-control" name="showReleaseTime" 
+                        id="showReleaseTime" min="06:00" max="23:00" required>
                     </div>
                 </div>
             </div>
@@ -145,6 +147,16 @@
                         <span class="input-group-text" >Duration</span>
                         <input type="text" class="form-control" name="showDuration" 
                         id="showDuration" placeholder="2 hrs 3 min" aria-label="Show Duration">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-5">
+                    <div class="input-group input-group-md mb-3">
+                        <span class="input-group-text" >Ticket Price</span>
+                        <input type="number" step=".01" class="form-control" name="showTicketPrice" 
+                        id="showTicketPrice" placeholder="450.00" aria-label="Show Ticket Price">
                     </div>
                 </div>
             </div>

@@ -15,7 +15,7 @@ def generateTestData(app,db):
         fantasy = Tag(name='Fantasy')
         horror = Tag(name='Horror')
         mystery = Tag(name='Mystery')
-
+        comedy = Tag(name='Comedy')
 
 
         hindi = Language(name='Hindi')
@@ -43,6 +43,7 @@ def generateTestData(app,db):
         db.session.add(mystery)
         db.session.add(fantasy)
         db.session.add(drama)
+        db.session.add(comedy)
 
         db.session.add(hindi)
         db.session.add(english)

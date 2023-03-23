@@ -72,15 +72,6 @@ def deleteVenue(name):
         flash('Succesfully Deleted','Delete Venue')
     return redirect(url_for('admin.showVenues'))
 
-# -------------------- Shows ---------------------
-
-@admin.route('/showShows')
-@admin_login_required
-def showShows():
-    page = request.args.get('page', 1, type=int)
-    paginationShow = Show.query.order_by(Show.timestamp).paginate(page=page, per_page=20)
-    return render_template('showsHome.html',pagination=paginationShow, user=current_user)
-
 @admin.route('/venue/add',methods=['GET','POST'])
 @admin_login_required
 def addVenue():
@@ -107,10 +98,41 @@ def addVenue():
         return render_template('addVenue.html', user=current_user)
     else:
         return render_template('addVenue.html', user=current_user)
+
+# -------------------- Shows ---------------------
+
+@admin.route('/showShows')
+@admin_login_required
+def showShows():
+    page = request.args.get('page', 1, type=int)
+    paginationShow = Show.query.order_by(Show.timestamp).paginate(page=page, per_page=20)
+    return render_template('showsHome.html',pagination=paginationShow, user=current_user)
+
+@admin.route('/show/add',methods=['GET','POST'])
+@admin_login_required
+def addShow():
+    if request.method == 'POST':
+        name = request.form.get('showName')
+        tags = request.form.getlist('tags')
+        languages = request.form.getlist('languages')
+        rating = request.form.get('showRating')
+        duration = request.form.get('showDuration')
+
+        showWithAllocation = { 'name' : name, 'tags' : list(tags), 'languages' : list(languages),
+                 'rating' : int(rating), 'duration' : duration }
+        print(showWithAllocation)
+
+        resS = requests.post(BASE_URL+'/api/show', json=showWithAllocation)
+        
+        return render_template('addShow.html',response=resS.json(),user=current_user), 201
+    else:
+
+        return render_template('addShow.html',user=current_user)
+
     
 @admin.route('/showFor/<vname>/add',methods=['GET','POST'])
 @admin_login_required
-def addShow(vname):
+def addShowForVenue(vname):
     if request.method == 'POST':
         name = request.form.get('showName')
         venue = request.form.get('venueName')

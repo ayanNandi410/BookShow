@@ -7,14 +7,16 @@ from models.users import User
 from init_api import getConfiguredApi
 from testData import generateTestData
 from db import db
+import os, tempfile
 
 def create_app():
     app = Flask(__name__)
 
     UPLOAD_FOLDER = '/uploads/'
+    basedir = os.path.abspath(os.path.dirname(__file__))
 
     app.config['SECRET_KEY'] = 'ABCD12345'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ticketdb.sqlite'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'ticketdb.sqlite')
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
     # blueprint for authentication routes

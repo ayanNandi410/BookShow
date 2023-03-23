@@ -114,13 +114,13 @@
             <div class="card-body">
               <h5 class="card-title">{{ venue['name'] }}</h5>
               <p class="card-text">
-                <span class="badge rounded-pill bg-secondary" style="padding: 8px 10px;">{{ venue['location'] }}</span>
+                <span class="badge rounded-pill bg-secondary" style="padding: 8px 10px;">{{ venue['location'] }}, {{ venue['city'] }}</span>&emsp13;
               </p>   
               <a href="#" class="btn btn-primary">Shows</a>
               <a href="/admin/showFor/{{ venue['name'] }}/add" class="btn btn-primary btn-success">+ Add Show</a>
             </div>
             <div class="card-footer text-muted">
-              <a href="#" class="card-link" onclick="setVenueName('{{ venue['name'] }}','{{ venue['location'] }}' );" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</a>
+              <a href="#" class="card-link" data-columns="2" data-vName="{{ venue['name'] }}" data-vLoc="{{ venue['location'] }}" onclick="setVenueName();" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</a>
               <a href="#" class="card-link">Update</a>
             </div>
           </div>
@@ -132,9 +132,12 @@
 
 {% block scripts %}
 <script>
-  function setVenueName(name, loc) {
+  function setVenueName() {
+    venue = event.target;
+    venueName = venue.dataset.vname;
+    venueLoc = venue.dataset.vloc;
   const modal = document.getElementById('deleteModalBody');
-  modal.innerText = " Name : "+name+"\nLocation : "+loc+"\n\nAre you sure you want to delete?";
+  modal.innerText = " Name : "+venueName+"\nLocation : "+venueLoc+"\n\nAre you sure you want to delete?";
   const delBt = document.getElementById('venueDeleteBt');
   delBt.href = "/admin/deleteVenue/"+name;
   }
