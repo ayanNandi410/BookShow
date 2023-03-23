@@ -1,6 +1,6 @@
 {% extends "baseTemplate.html" %}
 
-{% block title %}Add Show{% endblock %}
+{% block title %}Allocate Show{% endblock %}
 
 {% block head %}
 <style>
@@ -19,10 +19,61 @@
             height: 100%;
         }
     }
+    .offcanvas{
+        min-height: 90%;
+    }
 </style>
 {% endblock %}
 
-{% block content %}
+{% block content %} 
+
+<div class="offcanvas offcanvas-bottom" tabindex="-1" id="chShowCanvas" aria-labelledby="offcanvasBottomLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="offcanvasBottomLabel">Choose show</h5>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        {% if showListEmpty is defined %}
+            <br/><br/><br/>
+            <div class="col-6 offset-md-4 justify-content-center">
+              <h3 class="alert alert-primary mb-4">No Shows Available</h3>
+            </div>
+        {% else %}
+          <div class="row row-cols-1 row-cols-sm-4 g-4">
+            {% for show in shows %}
+            <div class="col">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">{{ show['name'] }}</h5>
+                  <p class="card-text">
+                    <!-- <br/>Ticket Price : &nbsp;&#8377;{{ show['ticketPrice'] }}<br/>  -->
+                    <div class="card-text ratings">
+                      {% for i in range(1,6) %}
+                        {% if(i <= (show['rating']/2)) %}
+                          <i class="fa fa-star rating-color"></i>
+                        {% else %}
+                          <i class="fa fa-star"></i>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                    {% for tagItem in show['tags'] %}
+                    <span class="badge bg-secondary">{{ tagItem['name'] }}</span>&nbsp;
+                    {% endfor %}<br/>
+                    {% for tagItem in show['languages'] %}
+                    <span class="badge bg-success">{{ tagItem['name'] }}</span>&nbsp;
+                    {% endfor %}
+                    </p>
+                  <a href="#" class="btn btn-primary" data-columns="1" data-sname="{{ show['name'] }}" 
+                  onclick="chooseShow();" data-bs-toggle="offcanvas" data-bs-target="#chShowCanvas">Choose Show</a>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+      </div>
+</div>
+
 <div class="body" style="margin-top: 10%; margin-bottom: 10%;">
     {% if response is defined %}
         {% if response == 'Success' %}
@@ -33,32 +84,32 @@
         {% endif %}
     {% endif %}
     <div class="container h-custom">
-        <h2>Add new Show</h2><hr/><br/>
+        <h2>Allocate Show</h2><hr/><br/>
       <div class="d-flex justify-content-center align-items-center h-100">
 
-          <form class="mt-4" action="/admin/showFor/{{ venue_name }}/add" method="post" enctype=multipart/form-data>  
+          <form class="mt-4" action="/admin/allocation/add" method="post" enctype=multipart/form-data>  
             <!-- Name input -->
             <div class="row mb-3">
                 <div class="col-12 col-sm-6">
                     <div class="input-group input-group-md mb-3">
                         <span class="input-group-text" name="venueName">For Venue</span>
                         <input type="text" class="form-control" name="venueName" 
-                        id="venueName" value="{{ venue_name }}" aria-label="venueName" disabled>
+                        id="venueName" value="{{ vname }}" aria-label="venueName" disabled>
                     </div>
                 </div>
             <div class="row mb-3">
                 <div class="col-12 col-sm-6">
                     <div class="input-group input-group-md mb-3">
-                        <span class="input-group-text" name="showName">Name</span>
+                        <span class="input-group-text" name="showName">For Show</span>
                         <input type="text" class="form-control" name="showName" id="showName" 
-                        placeholder="Show Name" aria-label="Show Name">
+                        placeholder="Not choosen" aria-label="Show Name" value="" disabled>
                     </div>
                 </div>
                 <div class="col-12 col-sm-6">
-                    <div class="input-group input-group-md mb-3">
-                        <span class="input-group-text">Initial Rating</span>
-                        <input type="text" class="form-control" name="showRating" id="showRating" 
-                        placeholder="Out of 10" aria-label="Show Rating">
+                    <div class="col-4">
+                        <button type="button" class="btn btn-success btn-md"
+                        style="padding-left: 2.5rem; padding-right: 2.5rem;" 
+                        data-bs-toggle="offcanvas" data-bs-target="#chShowCanvas" aria-controls="chShowCanvas">Choose Show</button>
                     </div>
                 </div>
             </div>
@@ -71,56 +122,7 @@
             </div>
             -->
 
-            <div class="row mb-3">
-                <div class="col-12">
-                    <div class="input-group input-group-md mb-3">
-                        <span class="input-group-text">Tags</span>
-                        <div class="form-control">
-                            <div class="form-check form-check-inline">
-                                <input type="checkbox" class="form-check-input" 
-                                id="TagAction" name="tags" value="Action">
-                                <label class="form-check-label" for="Action"> Action</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input type="checkbox" class="form-check-input" 
-                                id="TagThriller" name="tags" value="Thriller">
-                                <label for="Thriller" class="form-check-label"> Thriller</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input type="checkbox" class="form-check-input" 
-                                id="TagComedy" name="tags" value="Comedy">
-                                <label for="Comedy" class="form-check-label"> Comedy</label>    
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col-12">
-                    <div class="input-group input-group-md mb-3">
-                        <span class="input-group-text">Languages</span>
-                        <div class="form-control">
-                            <div class="form-check form-check-inline">
-                                <input type="checkbox" class="form-check-input" 
-                                id="LangEnglish" name="languages" value="English">
-                                <label class="form-check-label" for="English"> English</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input type="checkbox" class="form-check-input" 
-                                id="LangHindi" name="languages" value="Hindi">
-                                <label for="Hindi" class="form-check-label"> Hindi</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input type="checkbox" class="form-check-input" 
-                                id="LangBengali" name="languages" value="Bengali">
-                                <label for="Bengali" class="form-check-label"> Bengali</label>    
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+            
             <div class="row mb-3">
                 <div class="col-6">
                     <div class="input-group input-group-md mb-3">
@@ -142,16 +144,6 @@
             </div>
 
             <div class="row mb-3">
-                <div class="col-4">
-                    <div class="input-group input-group-md mb-3">
-                        <span class="input-group-text" >Duration</span>
-                        <input type="text" class="form-control" name="showDuration" 
-                        id="showDuration" placeholder="2 hrs 3 min" aria-label="Show Duration">
-                    </div>
-                </div>
-            </div>
-
-            <div class="row mb-3">
                 <div class="col-5">
                     <div class="input-group input-group-md mb-3">
                         <span class="input-group-text" >Ticket Price</span>
@@ -164,7 +156,7 @@
             <div class="row mb-3">
                 <div class="col-4 offset-5">
                     <button type="submit" class="btn btn-primary btn-md"
-                    style="padding-left: 2.5rem; padding-right: 2.5rem;">Register Show</button>
+                    style="padding-left: 2.5rem; padding-right: 2.5rem;">Allocate Show Timings</button>
                 </div>
             </div>
   
@@ -172,4 +164,17 @@
       </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function chooseShow(){
+        const showName = document.getElementById("showName");
+        show = event.target;
+        sName = show.dataset.sname;
+        showName.value = sName;
+
+
+    }
+</script>
 {% endblock %}

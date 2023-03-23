@@ -43,16 +43,19 @@
             {% for day in dayList %}
             <li class="nav-item">
               {% if loop.index == 1 %}
-              <a class=" nav-link text-white" data-bs-toggle="collapse" href="#{{ day | string }}" role="button" aria-expanded="false" aria-controls="{{ day | string }}">{{day}}(Today)</a>
+              <a class="nav-link text-white" data-bs-toggle="collapse" href="#{{ day | string }}" 
+              role="button" aria-expanded="false" aria-controls="{{ day | string }}">{{day}}(Today)</a>
               {% else %}
-              <a class=" nav-link text-white" data-bs-toggle="collapse" href="#{{ day | string }}" role="button" aria-expanded="false" aria-controls="{{ day | string }}">{{day}}</a>
+              <a class="nav-link text-white" data-bs-toggle="collapse" href="#{{ day | string }}" 
+              role="button" aria-expanded="false" aria-controls="{{ day | string }}">{{day}}</a>
               {% endif %}
             </li>
             {% endfor %}
           </ul>
         </div>
+        <div id="timeslots">
         {% for date, slots in slotsDict|dictsort %}
-        <div class="collapse" id="{{ dayList[loop.index-1] | string }}">
+        <div class="collapse" data-bs-parent="#timeslots" id="{{ dayList[loop.index-1] | string }}">
           <div class="card card-body">
             <h5 class="card-title" style="margin-bottom: 10px;">{{ date }} ({{ dayList[loop.index-1] | string }})</h5>
             <div class="card-text">
@@ -74,6 +77,7 @@
           </div>
         </div>
         {% endfor %}
+        </div>
       </div>
       {% endif %}
 </div>

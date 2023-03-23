@@ -117,7 +117,7 @@
                 <span class="badge rounded-pill bg-secondary" style="padding: 8px 10px;">{{ venue['location'] }}, {{ venue['city'] }}</span>&emsp13;
               </p>   
               <a href="#" class="btn btn-primary">Shows</a>
-              <a href="/admin/showFor/{{ venue['name'] }}/add" class="btn btn-primary btn-success">+ Add Show</a>
+              <a href="/admin/allocation/add?venue={{ venue['name'] }}" class="btn btn-primary btn-success">+ Add Show</a>
             </div>
             <div class="card-footer text-muted">
               <a href="#" class="card-link" data-columns="2" data-vName="{{ venue['name'] }}" data-vLoc="{{ venue['location'] }}" onclick="setVenueName();" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</a>

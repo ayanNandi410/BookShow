@@ -77,12 +77,12 @@
                     <div class="input-group input-group-lg mb-3">
                         <span class="input-group-text">Number of Seats</span>
                         <input type="number" class="form-control" name="allocSeats" 
-                        id="allocSeats" aria-label="allocSeats">
+                        id="allocSeats" aria-label="allocSeats" onclick="disableSubmit();" required>
                     </div>
                 </div>
                 <div class="col-12 col-sm-6">
                         <div class="input-group input-group-lg mb-3">
-                            <span class="input-group-text" >Total Price</span>
+                            <span class="input-group-text" >Total Price (&#x20B9;)</span>
                             <input type="number" class="form-control" name="totPrice" 
                             id="totPrice" aria-label="totPrice" disabled> (excluding GST)
                         </div>
@@ -90,7 +90,7 @@
             </div>
             <div class="row mb-3">
                 <div class="text-center">
-                    <button type="button" class="btn btn-sm btn-primary btn-lg" onclick="setPrice({{ details.price }});"
+                    <button type="button" data-columns="1" data-price="{{ details.price }}" class="btn btn-sm btn-primary btn-lg" onclick="setPrice();"
                     style="padding-left: 2.5rem; padding-right: 2.5rem;">Get Total Cost</button>
                 </div>
             </div>
@@ -98,7 +98,8 @@
             <div class="row mb-3">
                 <div class="text-center">
                     <button type="submit" class="btn btn-md btn-success btn-lg" id="submitBtn"
-                    style="padding-left: 2.5rem; padding-right: 2.5rem;" disabled>Book Tickets and Pay</button>
+                    style="padding-left: 2.5rem; padding-right: 2.5rem;" onselect="alertCost();"
+                    disabled>Book Tickets and Pay</button>
                 </div>
             </div>
   
@@ -110,12 +111,27 @@
 
 {% block scripts %}
 <script>
-  function setPrice(totPrice) {
+  function setPrice() {
   const numSeats = document.getElementById('allocSeats');
-  const price = document.getElementById('totPrice');
+  if(numSeats.value == ""){
+    alert("Enter some value...");
+  } 
+  else{
+    priceInput = event.target;
+    totPrice = priceInput.dataset.price;
   document.getElementById('submitBtn').disabled = false;
   let num = parseInt(numSeats.value);
-  price.value = (parseInt(totPrice) * num).toString();
+  priceElm = document.getElementById('totPrice')
+  priceElm.value = (parseFloat(totPrice) * num).toFixed(2).toString();
+  }
+  }
+
+  function disableSubmit(){
+    document.getElementById('submitBtn').disabled = true;
+  }
+
+  function alertCost(){
+    alert("Get Total Cost first!!!");
   }
 </script>
 {% endblock %}

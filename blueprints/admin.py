@@ -108,6 +108,16 @@ def showShows():
     paginationShow = Show.query.order_by(Show.timestamp).paginate(page=page, per_page=20)
     return render_template('showsHome.html',pagination=paginationShow, user=current_user)
 
+@admin.route('/allocation/add', methods=['GET','POST'])
+@admin_login_required
+def allocateShow():
+    if request.method == "GET":
+        vname = request.args.get('venue')
+        shows = Show.query.all()
+        return render_template('allocateShow.html',vname=vname,shows=shows, user=current_user)
+    else:
+        pass
+
 @admin.route('/show/add',methods=['GET','POST'])
 @admin_login_required
 def addShow():
