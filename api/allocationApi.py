@@ -68,12 +68,12 @@ class AllocationAPI(Resource):
             raise BusinessValidationError(status_code=400,error_code="AL003",error_message="Invalid value for Ticket Price")
 
         try:
-            rDate = dt.strptime(rlDate, "%d-%m-%Y").date()
+            rDate = dt.strptime(rlDate, "%Y-%m-%d").date()
         except(ValueError):
             raise BusinessValidationError(status_code=400,error_code="AL004",error_message="Invalid Date or date format")
 
         try:
-            rTime = dt.strptime(rlTime, "%H:%M:%S").time()
+            rTime = dt.strptime(rlTime, "%H:%M").time()
         except(ValueError):
             raise BusinessValidationError(status_code=400,error_code="AL005",error_message="Invalid Time or time format")
 
@@ -83,7 +83,7 @@ class AllocationAPI(Resource):
         if int(allcSeats) <= 0:
             raise BusinessValidationError(status_code=400,error_code="AL007",error_message="Invalid seat count")
 
-
+        
         show = db.session.query(Show).filter(Show.name == showName).first()
 
         if not show:
@@ -94,10 +94,20 @@ class AllocationAPI(Resource):
         if not venue:
             raise BusinessValidationError(status_code=400,error_code="AL009",error_message="Venue does not exist")
 
+        if int(allcSeats) > int(venue.capacity):
+            raise BusinessValidationError(status_code=400,error_code="AL0016",error_message="Seats exceeds capacity of Venue")
+
+
         from datetime import datetime
         timestamp = datetime.now()
 
         timeslot = datetime.combine(rDate,rTime)
+
+        prevAlloc = db.session.query(Allocation).filter(Allocation.venue == venue, Allocation.show == show, Allocation.timeslot == timeslot).first()
+
+        if prevAlloc:
+            raise BusinessValidationError(status_code=400,error_code="AL0015",error_message="Timeslot already allocated")
+
 
         show_id = db.session.query(Show.id).filter(Show.name == showName).first()
         venue_id = db.session.query(Venue.id).filter(Venue.name == venueName).first()

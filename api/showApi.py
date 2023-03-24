@@ -1,4 +1,5 @@
 from flask_restful import Resource, fields, marshal_with, reqparse, inputs
+from flask import request
 import json
 from models.admin import Show, Venue, Tag, Language
 from sqlalchemy import select,join
@@ -24,6 +25,12 @@ userShow_output_fields = {
     "tags" : fields.List(fields.Nested(tag_output_fields)),
     "languages" : fields.List(fields.Nested(language_output_fields)),
     "timestamp" : fields.DateTime(dt_format='rfc822')
+}
+
+chooseShow_output_fields = {
+    "id" : fields.Integer,
+    "name" : fields.String,
+    "duration" : fields.String
 }
 
 create_show_parser = reqparse.RequestParser()
@@ -130,6 +137,23 @@ class ListShowByNameApi(Resource):
             return shows
         else:
             raise NotFoundError(error_message='No Venues found for this name',status_code=404,error_code="SW014")
+        
+    def post(self):
+        pass
+
+class ChooseShowApi(Resource):
+
+    @marshal_with(chooseShow_output_fields)
+    def get(self):
+        print(request.args)
+        query = request.args.get('name')
+
+        shows = db.session.query(Show).filter(Show.name.ilike(f'%{query}%')).all()
+
+        if shows:
+            return shows
+        else:
+            raise NotFoundError(error_message='No Shows found for this name',status_code=404,error_code="SW017")
         
     def post(self):
         pass

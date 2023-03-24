@@ -2,6 +2,14 @@
 
 {% block title %}Venues Dashboard{% endblock %}
 
+{% block head %}
+<style>
+    .offcanvas{
+        min-height: 90%;
+    }
+</style>
+{% endblock %}
+
 {% block searchBar %}
 <form class="d-md-flex" role="search">
   <input class="form-control form-control-sm me-2 mt-2 mb-2" type="search" placeholder="Search for venues" aria-label="Search">
@@ -24,6 +32,19 @@
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         <a href="#" id="venueDeleteBt" class="btn btn-primary">Delete Venue</a>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Offcanvas for Shows -->
+<div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasShows" aria-labelledby="offcanvasBottomLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasShowsTitle" ></h5>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div class="row row-cols-2 row-cols-sm-5 g-4" id="cardListShows">
+
     </div>
   </div>
 </div>
@@ -116,8 +137,10 @@
               <p class="card-text">
                 <span class="badge rounded-pill bg-secondary" style="padding: 8px 10px;">{{ venue['location'] }}, {{ venue['city'] }}</span>&emsp13;
               </p>   
-              <a href="#" class="btn btn-primary">Shows</a>
-              <a href="/admin/allocation/add?venue={{ venue['name'] }}" class="btn btn-primary btn-success">+ Add Show</a>
+              <a href="#" data-columns="1" data-vname="{{ venue['name'] }}" class="btn btn-primary" onclick="getShows();"
+              data-bs-toggle="offcanvas" data-bs-target="#offcanvasShows" aria-controls="offcanvasShows">Shows</a>
+              
+              <a href="/admin/allocation/add?venue={{ venue['name'] }}" class="btn btn-primary btn-success">+ Allocate Show</a>
             </div>
             <div class="card-footer text-muted">
               <a href="#" class="card-link" data-columns="2" data-vName="{{ venue['name'] }}" data-vLoc="{{ venue['location'] }}" onclick="setVenueName();" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</a>
@@ -141,5 +164,51 @@
   const delBt = document.getElementById('venueDeleteBt');
   delBt.href = "/admin/deleteVenue/"+name;
   }
+
+  function getCardLayout(vName, sName, sDuration, sRating){
+        
+        return `<div class="col">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">${ sName }</h5>
+              <p class="card-text">
+                Duration : ${ sDuration }
+                </p>
+              <p class="card-text">
+                Rating : ${ sRating } out of 10
+                </p>
+              <a href="/admin/getAllocations?show=${ sName }&venue=${ vName }" class="btn btn-primary">View Timings</a>
+            </div>
+          </div>
+        </div>`
+
+    }
+
+  function getShows(){
+    query = event.target;
+    vName = query.dataset.vname; 
+
+    document.getElementById('offcanvasShowsTitle').innerHTML = 'Shows allocated for '+vName;
+    document.getElementById('cardListShows').innerHTML = `<div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span></div>`;
+
+        fetch('http://127.0.0.1:5000/api/shows/byVenue/'+vName)
+    .then(async (response) => {
+
+        const data = await response.json();
+
+        let allCards = "";
+        for(const e of data){
+            allCards += getCardLayout(vName, e.name, e.duration, e.rating);
+          }
+        document.getElementById('cardListShows').innerHTML = allCards;
+        
+    })
+    .catch(error => {
+        document.getElementById('cardListShows').innerHTML = "<h3>No shows alocated</h3>";
+        console.log(error)
+    });
+    }
+
 </script>
 {% endblock %}

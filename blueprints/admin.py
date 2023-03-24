@@ -108,16 +108,6 @@ def showShows():
     paginationShow = Show.query.order_by(Show.timestamp).paginate(page=page, per_page=20)
     return render_template('showsHome.html',pagination=paginationShow, user=current_user)
 
-@admin.route('/allocation/add', methods=['GET','POST'])
-@admin_login_required
-def allocateShow():
-    if request.method == "GET":
-        vname = request.args.get('venue')
-        shows = Show.query.all()
-        return render_template('allocateShow.html',vname=vname,shows=shows, user=current_user)
-    else:
-        pass
-
 @admin.route('/show/add',methods=['GET','POST'])
 @admin_login_required
 def addShow():
@@ -165,3 +155,39 @@ def addShowForVenue(vname):
     else:
 
         return render_template('addShow.html',venue_name=vname,user=current_user)
+    
+
+#  ------------------- Allocation -------------------
+
+@admin.route('/allocation/add', methods=['GET','POST'])
+@admin_login_required
+def allocateShow():
+    vname = request.args.get('venue')
+    if request.method == "GET":
+        return render_template('allocateShow.html',vname=vname, user=current_user)
+    else:
+        sname = request.form.get('showName')
+        venue = request.form.get('venueName')
+        rlDate = request.form.get('showReleaseDate')
+        rlTime = request.form.get('showReleaseTime')
+        allcSeats = request.form.get('allocSeats')
+        ticketPrice = request.form.get('showTicketPrice',type=float)
+
+        showWithAllocation = { 'show_name' : sname, 'venue_name' : venue, 'releaseDate' : rlDate, 
+                              'releaseTime' : rlTime, 'allocSeats' : int(allcSeats), 'price' : float(ticketPrice) }
+        print(showWithAllocation)
+
+        resA = requests.post(BASE_URL+'/api/allocation', json=showWithAllocation)
+        response=resA.json()
+
+        if resA.status_code != 201:
+            if 'error_message' in response.keys():
+                flash(response['error_message'],'error')
+            else:
+                flash('Some error occured. Try Again...','error')
+        else:
+            flash('Succesfully Added','success') 
+        
+        return render_template('allocateShow.html',vname=vname,response=response,user=current_user), 201
+
+    

@@ -105,6 +105,9 @@
               <div class="card-text">
                 {% for tag in show['tags'] %}
                 <span class="badge bg-success">{{ tag['name'] }}</span>&nbsp;
+                {% endfor %}<br/>
+                {% for lng in show['languages'] %}
+                <span class="badge bg-dark text-white">{{ lng['name'] }}</span>&nbsp;
                 {% endfor %}
               </div><br/>
             </div>
