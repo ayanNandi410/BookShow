@@ -1,6 +1,7 @@
 from db import db
 from sqlalchemy.sql import func
 from datetime import datetime
+from models.users import User
 
 tags = db.Table('tags',
     db.Column('tag_id', db.Integer, db.ForeignKey('Tag.id'), primary_key=True),
@@ -93,11 +94,13 @@ class BookTicket(db.Model):
 class MovieReview(db.Model):
     __tablename__ = 'MovieReview'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_email = db.Column(db.String(40),nullable=False)
+    user_email = db.Column(db.String(40),db.ForeignKey('Users.email'),nullable=False)
     show_id = db.Column(db.Integer,db.ForeignKey('Show.id'),nullable=False)
     comment = db.Column(db.String(220),nullable=False)
     gRating = db.Column(db.Integer,nullable=False)
     timestamp = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
 
+    user =  db.relationship('User',lazy='subquery', viewonly=True)
+
     def __repr__(self):
-        return "< Review : "+str(self.show_id)+","+str(self.gRating)+","+self.user_email+">"
+        return "< Review : "+str(self.comment)+","+str(self.gRating)+","+self.user_email+">"

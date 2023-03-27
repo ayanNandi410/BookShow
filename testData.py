@@ -138,7 +138,17 @@ def addData(db):
         bookT1.allocShow = allocDetails9
         db.session.add(bookT1)
 
-        review1 = MovieReview(show_id=1,user_email="test@gmail.com",gRating=8,comment="Very good Movie. Loved it!",timestamp=datetime.now())
+        review1 = MovieReview(show_id=1,user_email="test@gmail.com",gRating=1,comment="Very good Movie. Loved it!",timestamp=datetime.now())
+        db.session.add(review1)
+        review1 = MovieReview(show_id=1,user_email="test2@gmail.com",gRating=6,comment="Needs Improvement",timestamp=datetime.now())
+        db.session.add(review1)
+        review1 = MovieReview(show_id=1,user_email="test3@gmail.com",gRating=3,comment="Could have been better",timestamp=datetime.now())
+        db.session.add(review1)
+        review1 = MovieReview(show_id=1,user_email="test4@gmail.com",gRating=10,comment="Very good Movie. Loved it!",timestamp=datetime.now())
+        db.session.add(review1)
+        review1 = MovieReview(show_id=1,user_email="test5@gmail.com",gRating=7,comment="Needs Improvement",timestamp=datetime.now())
+        db.session.add(review1)
+        review1 = MovieReview(show_id=1,user_email="test6@gmail.com",gRating=4,comment="Could have been better",timestamp=datetime.now())
         db.session.add(review1)
         db.session.commit()
 

@@ -7,13 +7,13 @@ from db import db
 from validation import NotFoundError, BusinessValidationError
 from sqlalchemy import desc, exc
 
-show_output_fields = {
+user_field = {
     "name" : fields.String
 }
 
 review_output_fields = {
-    "show" : fields.Nested(show_output_fields),
-    "user_email": fields.String,
+    "user": fields.Nested(user_field),
+    "user_email" : fields.String,
     "comment" : fields.String,
     "gRating" : fields.Integer,
     "timestamp" : fields.DateTime(dt_format='rfc822')
@@ -35,7 +35,7 @@ class MovieReviewAPI(Resource):
         if not show:
            raise NotFoundError(error_message='Show name not found',status_code=404,error_code="RW001") 
 
-        reviews = db.session.query(MovieReview).filter(MovieReview.show_id == show.id).order_by(MovieReview.timestamp).all()
+        reviews = db.session.query(MovieReview).filter(MovieReview.show_id == show.id).order_by(desc(MovieReview.timestamp)).limit(30).all()
         print(reviews)
         if not reviews:
             raise NotFoundError(error_message='No Review found',status_code=404,error_code="RW002")

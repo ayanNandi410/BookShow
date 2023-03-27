@@ -80,9 +80,13 @@ def popShows():
     if request.method == 'GET':
         pshowsCall = requests.get(BASE_URL+'/api/popShows/'+current_user.email)
         pshows= pshowsCall.json()
-        print(pshows)
-        return render_template('userShows.html',shows=pshows,heading="Popular Shows", user=current_user)
-    
+
+        if pshowsCall.status_code == 404:
+            return render_template('userShows.html',shows=pshows,heading="Latest Added Shows",showListEmpty=True, user=current_user)
+        else:
+            return render_template('userShows.html',shows=pshows,heading="Latest Added Shows", user=current_user)
+  
+
 @user.route('/showsByName/', methods=['GET','POST'])
 @login_required
 def showsByName():

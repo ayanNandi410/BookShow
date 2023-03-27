@@ -2,7 +2,7 @@ from flask_restful import Resource, fields, marshal_with, reqparse, inputs
 from flask import request
 import json
 from models.admin import Show, Venue, Tag, Language, Allocation, BookTicket
-from sqlalchemy import select, join, func, exc
+from sqlalchemy import select, join, func, exc, desc
 from db import db
 from validation import NotFoundError, BusinessValidationError
 from datetime import datetime as dt
@@ -249,12 +249,13 @@ class PopularShowsApi(Resource):
     @marshal_with(userShow_output_fields)
     def get(self, email):
 
-        popshows = db.session.query(BookTicket.show, func.sum(BookTicket.id).label('bookings')).filter(BookTicket.user_email == email).order_by(func.sum(BookTicket.id)).all()
-        print(popshows)
-        showids = []
-        for row in popshows:
-            showids.append(row.id)
-        shows = db.session.query(Show).filter(Show.id._in(showids)).limit(10).all()
+        #popshows = db.session.query(BookTicket.show, func.sum(BookTicket.id).label('bookings')).filter(BookTicket.user_email == email).order_by(func.sum(BookTicket.id)).all()
+        shows = db.session.query(Show).order_by(desc(Show.timestamp)).limit(10).all()
+
+        #showids = []
+        #for row in popshows:
+        #    showids.append(row.id)
+        #shows = db.session.query(Show).filter(Show.id._in(showids)).limit(10).all()
 
         if shows:
             return shows

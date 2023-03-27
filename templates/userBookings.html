@@ -79,7 +79,7 @@
                 </div>
                 <div class="d-flex w-100 justify-content-between">
                     <p class="mb-1">Venue : {{ booking['venue'][0]['name'] }}</p>
-                    <small class="text-muted">Total Price : <b>{{ booking['totPrice'] }}</b></small>
+                    <small>Total Price : <b>{{ booking['totPrice'] }}</b></small>
                 </div>
                 <div class="d-flex w-100 justify-content-between">
                     <p class="mb-1">Show Timing : {{ booking['allocation']['timeslot'][:16] | string }}</p>

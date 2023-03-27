@@ -26,6 +26,26 @@
 {% endblock %}
 
 {% block content %}
+<!-- Reviews Modal -->
+<div class="modal fade" id="reviewsModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="reviewsModalLabel">Reviews</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="reviewsModalBody">
+        <ul class="list-group" id="reviews">
+
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Filter Modal -->
 <div class="modal fade" id="filterModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -86,6 +106,9 @@
               </div><br/>
             </div>
             <div class="card-footer text-muted">
+              <button type="button" data-columns="1" data-sname="{{ show['name'] }}" onclick="getReviews();"
+              class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#reviewsModal">Reviews</button>&emsp13;
+              <button type="button" class="btn btn-sm btn-success">Venues</button>
             </div>
           </div>
         </div>
@@ -96,5 +119,62 @@
 {% endblock %}
 
 {% block scripts %}
+<script>
+      function getCardLayout(name,rating,comment,tmp,color){
+        
+        return `<li class="list-group-item d-flex justify-content-between align-items-start">
+          <div class="ms-2 me-auto">
+          <div class="fw-bold">${name}</div>
+          ${comment}<br/><br/>
+          <p class="text-muted">${tmp.substring(0,16)}</p>
+          </div>
+          <span class="badge ${color} rounded-pill">${rating}</span>
+          </li>`
 
+    }
+
+    function getReviews(){
+        
+    document.getElementById('reviews').innerHTML = `<div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span></div>`;
+
+    sNameEv = event.target;
+    sname = sNameEv.dataset.sname 
+        fetch('http://127.0.0.1:5000/api/review/'+sname)
+    .then(async (response) => {
+
+        const data = await response.json();
+        let allCards = "";
+        for(const e of data){
+            if(e.user.name == null) 
+            {
+              name = "User";
+            }
+            else{
+              name = e.user.name;
+            }
+            if(parseInt(e.gRating) > 7)
+            {
+                color = 'bg-success'
+            }
+            else if(parseInt(e.gRating) < 4)
+            {
+              color = 'bg-danger'
+            }
+            else
+            {
+              color = 'bg-warning'
+            }
+
+            allCards += getCardLayout(name,e.gRating,e.comment,e.timestamp,color);
+        }
+        document.getElementById('reviews').innerHTML = allCards;
+        
+    })
+    .catch(error => {
+        document.getElementById('reviewsModalBody').innerHTML = "<h3>No Reviews available</h3>";
+        console.log(error)
+    });
+    }
+</script>
 {% endblock %}
