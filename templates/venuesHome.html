@@ -62,8 +62,8 @@
     <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 11">
       {% for category, message in messages %}
         <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
-          <div class="toast-header bg-danger">
-            <strong class="me-auto text-white">{{ category }}</strong>
+          <div class="toast-header {{ 'bg-danger' if category == 'error' else 'bg-success'}}">
+            <strong class="me-auto text-white">Delete Venue</strong>
             <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
           </div>
           <div class="toast-body">
@@ -162,7 +162,7 @@
   const modal = document.getElementById('deleteModalBody');
   modal.innerText = " Name : "+venueName+"\nLocation : "+venueLoc+"\n\nAre you sure you want to delete?";
   const delBt = document.getElementById('venueDeleteBt');
-  delBt.href = "/admin/deleteVenue/"+name;
+  delBt.href = "/admin/deleteVenue/"+venueName;
   }
 
   function getCardLayout(vName, sName, sDuration, sRating){

@@ -12,7 +12,8 @@
 
 {% block content %}
 
-<div class="container py-5 col-8" id="body">
+<div class="body">
+<div class="container py-5 col-8">
     <h1 class="display-5 fw-bold">{{ venue['name'] }}</h1>
     <p class="col-md-8 fs-4">{{ venue['description'] }}</p>
     <button class="btn btn-primary btn-md" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">View all shows</button>
@@ -66,5 +67,6 @@
       </div>
       {% endif %}
   </div>
+</div>
 </div>
 {% endblock %}

@@ -63,7 +63,7 @@ def showVenuesByCity(city):
     venues = requests.get(BASE_URL+'/api/venues/'+city)
     return render_template('venuesHome.html',venues = venues,city=city, user=current_user)
 
-@admin.route('/deleteVenue/<name>')
+@admin.route('/deleteVenue/<name>', methods=['GET'])
 @admin_login_required
 def deleteVenue(name):
     delVenueCall = requests.delete(BASE_URL+'/api/venue/'+name)
@@ -71,11 +71,11 @@ def deleteVenue(name):
 
     if delVenueCall.status_code != 200:
         if 'error_message' in response.keys():
-            flash(response['error_message'],'Delete Venue')
+            flash(response['error_message'],'error')
         else:
-             flash('Some error occured. Try Aagain...','Delete Venue')
+             flash('Some error occured. Try Aagain...','error')
     else:
-        flash('Succesfully Deleted','Delete Venue')
+        flash('Succesfully Deleted','success')
     return redirect(url_for('admin.showVenues'))
 
 @admin.route('/venue/add',methods=['GET','POST'])
@@ -128,7 +128,7 @@ def updateVenue():
         else:
             flash('Succesfully Updated','success') 
 
-        return render_template('updateVenue.html', user=current_user)
+        return render_template('updateVenue.html',vname=name, user=current_user)
     else:
         name = request.args.get('name')
         return render_template('updateVenue.html',vname=name, user=current_user)
@@ -152,18 +152,64 @@ def addShow():
         rating = request.form.get('showRating')
         duration = request.form.get('showDuration')
 
-        showWithAllocation = { 'name' : name, 'tags' : list(tags), 'languages' : list(languages),
+        show = { 'name' : name, 'tags' : list(tags), 'languages' : list(languages),
                  'rating' : int(rating), 'duration' : duration }
-        print(showWithAllocation)
+        print(show)
 
-        resS = requests.post(BASE_URL+'/api/show', json=showWithAllocation)
+        resS = requests.post(BASE_URL+'/api/show', json=show)
         
         return render_template('addShow.html',response=resS.json(),user=current_user), 201
     else:
 
         return render_template('addShow.html',user=current_user)
-
     
+@admin.route('/deleteShow/<name>',methods=['GET'])
+@admin_login_required
+def deleteShow(name):
+    delShowCall = requests.delete(BASE_URL+'/api/show/'+name)
+    response = delShowCall.json()
+
+    if delShowCall.status_code != 200:
+        if 'error_message' in response.keys():
+            flash(response['error_message'],'error')
+        else:
+             flash('Some error occured. Try Aagain...','error')
+    else:
+        flash('Succesfully Deleted','success')
+    return redirect(url_for('admin.showShows'))
+
+@admin.route('/show/update',methods=['GET','POST'])
+@admin_login_required
+def updateShow():
+    if request.method == 'POST':
+        name = request.form.get('showName')
+        tags = request.form.getlist('tags')
+        languages = request.form.getlist('languages')
+        rating = request.form.get('showRating')
+        duration = request.form.get('showDuration')
+
+        show = { 'name' : name, 'tags' : list(tags), 'languages' : list(languages),
+                 'rating' : int(rating), 'duration' : duration }
+        print(show)
+
+        resS = requests.put(BASE_URL+'/api/show', json=show)
+        response = resS.json()
+        
+        if resS.status_code != 201:
+            if 'error_message' in response.keys():
+                flash(response['error_message'],'error')
+            else:
+                flash('Some error occured. Try Again...','error')
+        else:
+            flash('Succesfully Updated','success') 
+        
+        return render_template('updateShow.html',sname=name,response=resS.json(),user=current_user), 201
+    else:
+        name = request.args.get('name')
+        return render_template('updateShow.html',sname=name, user=current_user)
+
+
+# not used
 @admin.route('/showFor/<vname>/add',methods=['GET','POST'])
 @admin_login_required
 def addShowForVenue(vname):

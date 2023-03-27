@@ -26,13 +26,44 @@
 {% endblock %}
 
 {% block content %}
-<div class="container body">
-    {% if firstPage is defined %}
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-      <strong>Hello {{ user.name }}</strong> ,here are all the shows for all venues...
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Show Details</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="deleteModalBody">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <a href="#" id="showDeleteBt" class="btn btn-primary">Delete Show</a>
+      </div>
     </div>
-    {% endif %}
+  </div>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+  {% for category, message in messages %}
+    <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-header {{ 'bg-danger' if category == 'error' else 'bg-success'}}">
+        <strong class="me-auto text-white">Delete Show</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body">
+        {{ message }}
+      </div>
+    </div>            
+  {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+
+<div class="container body">
     
     <div class="row">
       <div class="col-12 col-sm-4"><h2>&emsp;Shows</h2></div>
@@ -114,8 +145,10 @@
               </div><br/>
             </div>
             <div class="card-footer text-muted">
-              <a href="#" class="card-link">Delete</a>
-              <a href="#" class="card-link">Update</a>
+              <a href="#" class="card-link" data-columns="2" data-sname="{{ show['name'] }}" 
+              data-vdur="{{ show['duration'] }}" onclick="setShowName();" data-bs-toggle="modal" 
+              data-bs-target="#deleteModal">Delete</a>
+              <a href="/admin/show/update?name={{ show['name'] }}" class="card-link">Update</a>
             </div>
           </div>
         </div>
@@ -125,5 +158,15 @@
 {% endblock %}
 
 {% block scripts %}
-
+<script>
+    function setShowName() {
+    show = event.target;
+    showName = show.dataset.sname;
+    showDur = show.dataset.vdur;
+  const modal = document.getElementById('deleteModalBody');
+  modal.innerText = " Name : "+showName+"\nDuration : "+showDur+"\n\nAre you sure you want to delete?";
+  const delBt = document.getElementById('showDeleteBt');
+  delBt.href = "/admin/deleteShow/"+showName;
+  }
+</script>
 {% endblock %}

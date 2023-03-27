@@ -67,7 +67,10 @@
                 <button class="btn btn-danger position-relative" disabled>{{ timeslot[0][:5] | string }}
                   <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
                   {{ timeslot[1] | string }}</span></button>&emsp14;
-                {% else %}
+                  {% elif (timeslot[1] | int) < 15 %}
+                  <button class="btn btn-warning position-relative" onclick=" setModalBody('{{date}}','{{timeslot[0][:5]}}','{{timeslot[2]}}');" data-bs-toggle="modal" data-bs-target="#priceModal">{{ timeslot[0][:5] | string }}
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">{{ timeslot[1] | string }}</span></button>&emsp14;
+                  {% else %}
                   <button class="btn btn-success position-relative" onclick=" setModalBody('{{date}}','{{timeslot[0][:5]}}','{{timeslot[2]}}');" data-bs-toggle="modal" data-bs-target="#priceModal">{{ timeslot[0][:5] | string }}
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">{{ timeslot[1] | string }}</span></button>&emsp14;
                 {% endif %}

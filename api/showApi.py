@@ -85,17 +85,27 @@ class ShowAPI(Resource):
         if show:
             raise BusinessValidationError(status_code=400,error_code="SW008",error_message="Show already exists")
 
+        tagList = []
+        langList = []
+        for tagName in tags:
+            tag = db.session.query(Tag).filter(Tag.name == tagName).first()
+            if not tag:
+                raise BusinessValidationError(status_code=400,error_code="SW0021",error_message="Tag "+tagName+" not found")
+            tagList.append(tag)
+
+        for langName in languages:
+            lng = db.session.query(Language).filter(Language.name == langName).first()
+            if not lng:
+                raise BusinessValidationError(status_code=400,error_code="SW0022",error_message="Language "+langName+" not found")
+            langList.append(lng)
+
         from datetime import datetime
         timestamp = datetime.now()
 
         try:
             new_show = Show(name=name,rating=rating,duration=duration,timestamp=timestamp)
-            for tagName in tags:
-                tag = db.session.query(Tag).filter(Tag.name == tagName).first()
-                new_show.tags.append(tag)
-            for langName in languages:
-                lng = db.session.query(Language).filter(Language.name == langName).first()
-                new_show.languages.append(lng)
+            new_show.tags = tagList
+            new_show.languages = langList
 
             db.session.add(new_show)
             db.session.commit()
@@ -103,14 +113,95 @@ class ShowAPI(Resource):
             return "Success", 201
         except exc.SQLAlchemyError as e:    # Some Database Error occured
             db.session.rollback()
-            raise BusinessValidationError(status_code=500,error_code="VN017",error_message="Delete Transaction failed. Try again")
+            raise BusinessValidationError(status_code=500,error_code="SW017",error_message="Add Transaction failed. Try again")
 
 
-    def put(self,name):
-        pass
+    def put(self):
+        vn_args = create_show_parser.parse_args()
+        name = vn_args.get('name',None)
+        tags = vn_args.get('tags',[])
+        languages = vn_args.get('languages',[])
+        rating = vn_args.get('rating',None)
+        duration = vn_args.get('duration',None)
+
+        if name is None or name == '':
+            raise BusinessValidationError(status_code=400,error_code="SW002",error_message="Name is required")
+    
+        if tags is []:
+            raise BusinessValidationError(status_code=400,error_code="SW003",error_message="A Single Tag is required")
+
+        if languages is []:
+            raise BusinessValidationError(status_code=400,error_code="SW004",error_message="Some Language is required")
+
+        if rating is None:
+            raise BusinessValidationError(status_code=400,error_code="SW005",error_message="Initial rating is required")
+
+        if int(rating) < 0 or int(rating) > 10:
+            raise BusinessValidationError(status_code=400,error_code="SW006",error_message="Invalid value for rating")
+
+        if duration is None:
+            raise BusinessValidationError(status_code=400,error_code="SW007",error_message="Duration is required")
+
+
+        show = db.session.query(Show).filter(Show.name == name).first()
+
+        if not show:
+            raise BusinessValidationError(status_code=400,error_code="SW0015",error_message="Show does not exist")
+
+        tagList = []
+        langList = []
+        for tagName in tags:
+            tag = db.session.query(Tag).filter(Tag.name == tagName).first()
+            if not tag:
+                raise BusinessValidationError(status_code=400,error_code="SW0021",error_message="Tag "+tagName+" not found")
+            tagList.append(tag)
+
+        for langName in languages:
+            lng = db.session.query(Language).filter(Language.name == langName).first()
+            if not lng:
+                raise BusinessValidationError(status_code=400,error_code="SW0022",error_message="Language "+langName+" not found")
+            langList.append(lng)
+
+        from datetime import datetime
+        timestamp = datetime.now()
+
+        try:
+            
+            show.name = name
+            show.rating = int(rating)
+            show.duration = duration
+            show.tags = tagList
+            show.languages = langList
+        
+            db.session.add(show)
+            db.session.commit()
+
+            return "Success", 201
+        except exc.SQLAlchemyError as e:    # Some Database Error occured
+            db.session.rollback()
+            raise BusinessValidationError(status_code=500,error_code="SW018",error_message="Update Transaction failed. Try again")
+
     
     def delete(self,name):
-        pass
+        show = db.session.query(Show).filter(Show.name == name).first()
+
+        if not show:
+            raise BusinessValidationError(status_code=400,error_code="SW001",error_message="Show not found with such name")
+        
+        # check for dependency
+        venueForShow = db.session.query(Allocation).filter(Allocation.show == show).first()
+
+        if venueForShow:
+            raise BusinessValidationError(status_code=400,error_code="SW008",error_message="Show has been allocated to venues")
+
+        try:
+            db.session.delete(show)
+            db.session.commit()
+            return "Success", 200
+        except exc.SQLAlchemyError as e:    # Some Database Error occured
+            db.session.rollback()
+            raise BusinessValidationError(status_code=500,error_code="VN013",error_message="Delete Transaction failed. Try again")
+
     
 class ListShowByVenueApi(Resource):
 

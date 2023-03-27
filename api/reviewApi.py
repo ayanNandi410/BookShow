@@ -32,10 +32,13 @@ class MovieReviewAPI(Resource):
         print(sname)
         show = db.session.query(Show).filter(Show.name == sname).first()
 
+        if not show:
+           raise NotFoundError(error_message='Show name not found',status_code=404,error_code="RW001") 
+
         reviews = db.session.query(MovieReview).filter(MovieReview.show_id == show.id).order_by(MovieReview.timestamp).all()
         print(reviews)
         if not reviews:
-            raise NotFoundError(error_message='No Review found',status_code=404,error_code="RW001")
+            raise NotFoundError(error_message='No Review found',status_code=404,error_code="RW002")
         else:
             return reviews, 200
 
@@ -48,30 +51,30 @@ class MovieReviewAPI(Resource):
         comment = bk_args.get('comment',None)
     
         if showName is None or showName == '':
-            raise BusinessValidationError(status_code=400,error_code="AL002",error_message="Show Name is required")
+            raise BusinessValidationError(status_code=400,error_code="RW003",error_message="Show Name is required")
 
         if email is None or email == '':
-            raise BusinessValidationError(status_code=400,error_code="AL0017",error_message="Email is required")
+            raise BusinessValidationError(status_code=400,error_code="RW004",error_message="Email is required")
 
         if rating is None:
-            raise BusinessValidationError(status_code=400,error_code="AL006",error_message="Rating is required")
+            raise BusinessValidationError(status_code=400,error_code="RW005",error_message="Rating is required")
 
         if int(rating)<0 or int(rating)>10:
-            raise BusinessValidationError(status_code=400,error_code="AL006",error_message="Invalid value for rating")
+            raise BusinessValidationError(status_code=400,error_code="RW006",error_message="Invalid value for rating")
 
         if comment is None or comment == '':
-            raise BusinessValidationError(status_code=400,error_code="AL007",error_message="Comment is required")
+            raise BusinessValidationError(status_code=400,error_code="RW007",error_message="Comment is required")
 
         
         show = db.session.query(Show).filter(Show.name == showName).first()
 
         if not show:
-            raise BusinessValidationError(status_code=400,error_code="AL008",error_message="Show does not exist")
+            raise BusinessValidationError(status_code=400,error_code="RW008",error_message="Show does not exist")
 
         review = db.session.query(MovieReview).filter(MovieReview.show_id == show.id,MovieReview.user_email == email).first()
 
         if review:
-            raise BusinessValidationError(status_code=400,error_code="AL008",error_message="Already reviewed")
+            raise BusinessValidationError(status_code=400,error_code="RW009",error_message="Already reviewed")
 
         timestamp = dt.now()
 
@@ -82,11 +85,11 @@ class MovieReviewAPI(Resource):
             return "Success", 200
         except exc.SQLAlchemyError as e:    # Some Database Error occured
             db.session.rollback()
-            raise BusinessValidationError(status_code=500,error_code="VN013",error_message="Add Transaction failed. Try again")
+            raise BusinessValidationError(status_code=500,error_code="RW020",error_message="Add Transaction failed. Try again")
 
 
     def put(self,name):
-        raise BusinessValidationError(status_code=405,error_code="AL008",error_message="Method not allowed")
+        raise BusinessValidationError(status_code=405,error_code="RW010",error_message="Method not allowed")
     
     def delete(self,name):
-        raise BusinessValidationError(status_code=405,error_code="AL008",error_message="Method not allowed")
+        raise BusinessValidationError(status_code=405,error_code="RW011",error_message="Method not allowed")

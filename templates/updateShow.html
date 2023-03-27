@@ -1,6 +1,6 @@
 {% extends "baseTemplate.html" %}
 
-{% block title %}Add Show{% endblock %}
+{% block title %}Update Show{% endblock %}
 
 {% block head %}
 <style>
@@ -24,13 +24,14 @@
 
 {% block content %}
 
+
 {% with messages = get_flashed_messages(with_categories=true) %}
 {% if messages %}
 <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 11">
   {% for category, message in messages %}
     <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
       <div class="toast-header {{ 'bg-danger' if category == 'error' else 'bg-success'}}">
-        <strong class="me-auto text-white">Add Show</strong>
+        <strong class="me-auto text-white">Update Show</strong>
         <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
       </div>
       <div class="toast-body">
@@ -42,18 +43,19 @@
 {% endif %}
 {% endwith %}
 
-<div class="body" style="margin-top: 10%; margin-bottom: 10%;">
+<div class="body">
+
     <div class="container h-custom">
-        <h2>Add new Show</h2><hr/><br/>
+        <h2>Update existing Show</h2><hr/><br/>
       <div class="d-flex justify-content-center align-items-center h-100">
 
-          <form class="mt-4" action="/admin/show/add" method="post" enctype=multipart/form-data>  
+          <form class="mt-4" action="/admin/show/update" method="post" enctype=multipart/form-data>  
             <div class="row mb-3">
                 <div class="col-12 col-sm-6">
                     <div class="input-group input-group-md mb-3">
                         <span class="input-group-text" name="showName">Name</span>
                         <input type="text" class="form-control" name="showName" id="showName" 
-                        placeholder="Show Name" aria-label="Show Name">
+                        placeholder="Show Name" value="{{ sname }}" aria-label="Show Name" readonly>
                     </div>
                 </div>
                 <div class="col-12 col-sm-6">
@@ -163,7 +165,7 @@
             <div class="row mb-3">
                 <div class="col-4 offset-5">
                     <button type="submit" class="btn btn-primary btn-md"
-                    style="padding-left: 2.5rem; padding-right: 2.5rem;">Register Show</button>
+                    style="padding-left: 2.5rem; padding-right: 2.5rem;">Update Show</button>
                 </div>
             </div>
   
