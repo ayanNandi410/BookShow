@@ -50,8 +50,10 @@ class Show(db.Model):
         backref=db.backref('show', lazy=True))
     tags = db.relationship('Tag', secondary=tags, lazy='subquery',
         backref=db.backref('show', lazy=True))
-    venues = db.relationship('Venue',secondary='Allocation',lazy='subquery', viewonly=True)
     timestamp = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
+
+    venues = db.relationship('Venue',secondary='Allocation',lazy='subquery', viewonly=True)
+    reviews = db.relationship('MovieReview', backref='show', lazy=True, viewonly=True)
 
     def __repr__(self):
         return "< Show : "+self.name+">"
@@ -87,3 +89,15 @@ class BookTicket(db.Model):
     allocation =  db.relationship('Allocation',lazy='subquery', viewonly=True)
     venue = db.relationship('Venue',secondary='Allocation',lazy='subquery', viewonly=True)
     show = db.relationship('Show',secondary='Allocation',lazy='subquery', viewonly=True)
+
+class MovieReview(db.Model):
+    __tablename__ = 'MovieReview'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_email = db.Column(db.String(40),nullable=False)
+    show_id = db.Column(db.Integer,db.ForeignKey('Show.id'),nullable=False)
+    comment = db.Column(db.String(220),nullable=False)
+    gRating = db.Column(db.Integer,nullable=False)
+    timestamp = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
+
+    def __repr__(self):
+        return "< Review : "+str(self.show_id)+","+str(self.gRating)+","+self.user_email+">"

@@ -23,6 +23,25 @@
 {% endblock %}
 
 {% block content %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+      {% for category, message in messages %}
+        <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="toast-header {{ 'bg-danger' if category == 'error' else 'bg-success'}}">
+            <strong class="me-auto text-white">Book Ticket</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+          <div class="toast-body">
+            {{ message }}
+          </div>
+        </div>            
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
 <div class="body" style="margin-top: 10%; margin-bottom: 10%;">
     {% if response is defined %}
         {% if response == 'Success' %}
@@ -36,21 +55,21 @@
         <h2>Choose Seats and Book Tickets</h2><hr/><br/>
       <div class="d-flex justify-content-center align-items-center h-100">
 
-          <form class="mt-4" action="{{ url_for('admin.addVenue')}}" method="post" enctype=multipart/form-data>  
+          <form class="mt-4" action="/user/bookTicket/" method="post" enctype=multipart/form-data>  
             <!-- Name input -->
             <div class="row mb-3">
                 <div class="col-12 col-sm-6">
                     <div class="input-group input-group-lg mb-3">
                         <span class="input-group-text" name="venueName">Venue</span>
-                        <input type="text" class="form-control" name="venueName" 
-                        id="venueName" aria-label="venue" value="{{ details.venue }}" disabled>
+                        <input type="text" class="form-control disable" name="venueName" 
+                        id="venueName" aria-label="venue" value="{{ details.venue }}">
                     </div>
                 </div>
                 <div class="col-12 col-sm-6">
                     <div class="input-group input-group-lg mb-3">
                         <span class="input-group-text">Show </span>
-                        <input type="text" class="form-control" name="showName" 
-                        id="showName" value="{{ details.show }}" aria-label="showName" disabled>
+                        <input type="text" class="form-control disable" name="showName" 
+                        id="showName" value="{{ details.show }}" aria-label="showName">
                     </div>
                 </div>
             </div>
@@ -59,15 +78,15 @@
                 <div class="col-12 col-sm-6">
                     <div class="input-group input-group-lg mb-3">
                         <span class="input-group-text">Date</span>
-                        <input type="date" class="form-control" name="date" 
-                        id="date" aria-label="date" value="{{ details.date }}" disabled>
+                        <input type="date" class="form-control disable" name="date" 
+                        id="date" aria-label="date" value="{{ details.date }}">
                     </div>
                 </div>
                 <div class="col-12 col-sm-6">
                         <div class="input-group input-group-lg mb-3">
-                            <span class="input-group-text" >Timeslot</span>
-                            <input type="time" class="form-control" name="timeslot" 
-                            id="timeslot" aria-label="timeslot" value="{{ details.time }}" disabled> 
+                            <span class="input-group-text" >Time</span>
+                            <input type="time" class="form-control disable" name="time" 
+                            id="timeslot" aria-label="timeslot" value="{{ details.time }}"> 
                         </div>
                 </div>
             </div>
@@ -84,8 +103,8 @@
                 <div class="col-12 col-sm-6">
                         <div class="input-group input-group-lg mb-3">
                             <span class="input-group-text" >Total Price (&#x20B9;)</span>
-                            <input type="number" class="form-control" name="totPrice" 
-                            id="totPrice" aria-label="totPrice" disabled> (excluding GST)
+                            <input type="text" class="form-control disable" name="totPrice" 
+                            id="totPrice" aria-label="totPrice"> (excluding GST)
                         </div>
                 </div>
             </div>

@@ -23,57 +23,72 @@
 {% endblock %}
 
 {% block content %}
-<div class="body" style="margin-top: 10%; margin-bottom: 10%;">
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+      {% for category, message in messages %}
+        <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="toast-header bg-danger">
+            <strong class="me-auto text-white">User Sign Up</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+          <div class="toast-body">
+            {{ message }}
+          </div>
+        </div>            
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
 
+<div class="body">
     <div class="container-fluid h-custom">
-      <div class="row d-flex justify-content-center align-items-center h-100">
-        <div class="col-md-9 col-lg-6 col-xl-5">
-          <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
-            class="img-fluid" alt="Sample image">
+      <div class="row d-flex justify-content-center h-100">
+        <div class="col-12 col-sm-4">
+          <div class="justify-content-center">
+            <h3 class="alert alert-warning mb-4">Sign Up to book shows!</h3><br/>
+            <img src="{{ url_for('static', filename="signup.png") }}" class="align-items-center" width="300px" height="300px">   
+          </div>
         </div>
-        <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
-
-          {% with messages = get_flashed_messages() %}
-          {% if messages %}
-            {% for message in messages %}
-            <p class="alert alert-warning" role="alert" style="padding: 10px 20px;">{{ message }}</p>
-            {% endfor %}
-          {% endif %}
-          {% endwith %}
-
+        <div class="col-12 col-sm-5 offset-1">
           <form class="mt-4" action="/userSignup" method="post">  
             <!-- Name input -->
-              <div class="form-outline mb-4 col-lg-6 col-md-12">
-                <input type="text" id="signup_firstname" name="signup_firstname" class="form-control form-control-lg"
-                  placeholder="First Name" />
-                <label class="form-label" for="form3Example3">First Name</label>
+            <div class="row mb-4">
+              <div class="col-12 col-sm-6">
+                <div class="form-floating">
+                  <input type="text" id="signup_firstname" name="signup_firstname" class="form-control form-control-lg"
+                  placeholder="First Name" required/>
+                <label for="signup_firstname"> First Name</label>
+                </div>
               </div>
   
-              <div class="form-outline mb-4 col-lg-6 col-md-12">
-                <input type="text" id="signup_lastname" name="signup_lastname" class="form-control form-control-lg"
-                  placeholder="Last Name" />
-                <label class="form-label" for="form3Example3">Last Name</label>
+              <div class="col-12 col-sm-6">
+                <div class="form-floating">
+                  <input type="text" id="signup_lastname" name="signup_lastname" class="form-control form-control-lg"
+                  placeholder="Last Name" required/>
+                <label for="signup_lastname"> Last Name</label>
+                </div>
               </div>
+            </div>
 
-
-            <div class="form-outline mb-4 col-12">
+            <div class="form-floating mb-4 col-12">
               <input type="email" id="signup_email" name="signup_email" class="form-control form-control-lg"
-                placeholder="Enter a valid email address" />
-              <label class="form-label" for="form3Example3">Email address</label>
+                placeholder="Enter a valid email address" required/>
+              <label class="form-label" for="signup_email">Email address</label>
             </div>
   
             <!-- Password input -->
-            <div class="form-outline mb-3 col-12">
+            <div class="form-floating mb-3 col-12">
               <input type="password" id="signup_passwd" name="signup_passwd" class="form-control form-control-lg"
-                placeholder="Enter password" />
-              <label class="form-label" for="form3Example4">Password</label>
+                placeholder="Enter password" required/>
+              <label class="form-label" for="signup_passwd">Password</label>
             </div>
             
             <!-- Reenter Password input -->
-            <div class="form-outline mb-3 col-12">
+            <div class="form-floating mb-3 col-12">
               <input type="password" id="signup_check_passwd" name="signup_check_passwd" class="form-control form-control-lg"
-                placeholder="Same password" />
-              <label class="form-label" for="form3Example4">Retype Password</label>
+                placeholder="Same password" required/>
+              <label class="form-label" for="signup_check_passwd">Retype Password</label>
             </div>
   
             <div class="d-flex justify-content-between align-items-center">

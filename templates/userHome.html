@@ -12,6 +12,24 @@
 
 {% block content %}
 
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+      {% for category, message in messages %}
+        <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="toast-header {{ 'bg-danger' if category == 'error' else 'bg-success'}}">
+            <strong class="me-auto text-white">Result</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+          <div class="toast-body">
+            {{ message }}
+          </div>
+        </div>            
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
 <!--Choose City Modal -->
 <div class="modal fade in" tabindex="-1" id="cityModal" data-bs-backdrop="static">
     <div class="modal-dialog">
@@ -28,7 +46,7 @@
     </div>
 </div>
 
-<div class="container py-5 col-8" id="body">
+<div class="body container py-5 col-8">
     <h1 class="display-5 fw-bold">Welcome {{ user['name'] }}</h1>
     <button class="btn btn-primary btn-md" type="button" data-bs-toggle="modal" data-bs-target="#cityModal">View venues by City</button>
 </div>

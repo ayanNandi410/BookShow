@@ -1,8 +1,8 @@
 from flask_restful import Resource, fields, marshal_with, reqparse, inputs
 from flask import request
 import json
-from models.admin import Show, Venue, Tag, Language
-from sqlalchemy import select,join
+from models.admin import Show, Venue, Tag, Language, Allocation, BookTicket
+from sqlalchemy import select, join, func, exc
 from db import db
 from validation import NotFoundError, BusinessValidationError
 from datetime import datetime as dt
@@ -74,37 +74,37 @@ class ShowAPI(Resource):
             raise BusinessValidationError(status_code=400,error_code="SW005",error_message="Initial rating is required")
 
         if int(rating) < 0 or int(rating) > 10:
-            raise BusinessValidationError(status_code=400,error_code="SW005",error_message="Invalid value for rating")
+            raise BusinessValidationError(status_code=400,error_code="SW006",error_message="Invalid value for rating")
 
         if duration is None:
-            raise BusinessValidationError(status_code=400,error_code="SW006",error_message="Duration is required")
+            raise BusinessValidationError(status_code=400,error_code="SW007",error_message="Duration is required")
 
 
         show = db.session.query(Show).filter(Show.name == name).first()
 
         if show:
-            raise BusinessValidationError(status_code=400,error_code="SW011",error_message="Show already exists")
+            raise BusinessValidationError(status_code=400,error_code="SW008",error_message="Show already exists")
 
         from datetime import datetime
         timestamp = datetime.now()
 
-        new_show = Show(name=name,rating=rating,duration=duration,timestamp=timestamp)
-        for tagName in tags:
-            tag = db.session.query(Tag).filter(Tag.name == tagName).first()
-            new_show.tags.append(tag)
-        for langName in languages:
-            lng = db.session.query(Language).filter(Language.name == langName).first()
-            new_show.languages.append(lng)
-        #new_show.tags.append()
+        try:
+            new_show = Show(name=name,rating=rating,duration=duration,timestamp=timestamp)
+            for tagName in tags:
+                tag = db.session.query(Tag).filter(Tag.name == tagName).first()
+                new_show.tags.append(tag)
+            for langName in languages:
+                lng = db.session.query(Language).filter(Language.name == langName).first()
+                new_show.languages.append(lng)
 
-        #vid = db.session.query(Venue.id).filter(Venue.name == venue).first()
-        #allocation = DayAllocation(venue_id=vid,show_id=new_show.id,date=rlDate,timeslot=rlTime,price=ticketPrice)
-        db.session.add(new_show)
-        print("Show added :",new_show.tags,new_show.languages)
-        #db.session.add(allocation)
+            db.session.add(new_show)
+            db.session.commit()
 
-        db.session.commit()
-        return "Success", 201
+            return "Success", 201
+        except exc.SQLAlchemyError as e:    # Some Database Error occured
+            db.session.rollback()
+            raise BusinessValidationError(status_code=500,error_code="VN017",error_message="Delete Transaction failed. Try again")
+
 
     def put(self,name):
         pass
@@ -120,7 +120,7 @@ class ListShowByVenueApi(Resource):
         shows = venue.shows
         
         if len(shows) == 0:
-            raise NotFoundError(error_message='No Shows found for this venue',status_code=404,error_code="SW0013")
+            raise NotFoundError(error_message='No Shows found for this venue',status_code=404,error_code="SW009")
         else:
             return shows
         
@@ -136,16 +136,13 @@ class ListShowByNameApi(Resource):
         if shows:
             return shows
         else:
-            raise NotFoundError(error_message='No Venues found for this name',status_code=404,error_code="SW014")
+            raise NotFoundError(error_message='No Venues found for this name',status_code=404,error_code="SW010")
         
-    def post(self):
-        pass
 
 class ChooseShowApi(Resource):
 
     @marshal_with(chooseShow_output_fields)
     def get(self):
-        print(request.args)
         query = request.args.get('name')
 
         shows = db.session.query(Show).filter(Show.name.ilike(f'%{query}%')).all()
@@ -153,7 +150,23 @@ class ChooseShowApi(Resource):
         if shows:
             return shows
         else:
-            raise NotFoundError(error_message='No Shows found for this name',status_code=404,error_code="SW017")
+            raise NotFoundError(error_message='No Shows found for this name',status_code=404,error_code="SW011")
         
-    def post(self):
-        pass
+
+class PopularShowsApi(Resource):
+
+    @marshal_with(userShow_output_fields)
+    def get(self, email):
+
+        popshows = db.session.query(BookTicket.show, func.sum(BookTicket.id).label('bookings')).filter(BookTicket.user_email == email).order_by(func.sum(BookTicket.id)).all()
+        print(popshows)
+        showids = []
+        for row in popshows:
+            showids.append(row.id)
+        shows = db.session.query(Show).filter(Show.id._in(showids)).limit(10).all()
+
+        if shows:
+            return shows
+        else:
+            raise NotFoundError(error_message='No Shows found',status_code=404,error_code="SW013")
+        

@@ -113,8 +113,7 @@
 
     <div class="container h-custom">
         <h2>Allocate Show</h2><hr/><br/>
-      <div class="d-flex justify-content-center align-items-center h-100">
-
+        <div class="d-flex justify-content-center h-100">
           <form class="mt-4" action="/admin/allocation/add?venue={{ vname }}" method="post" enctype=multipart/form-data>  
             <!-- Name input -->
             <div class="row mb-3">
@@ -122,7 +121,7 @@
                     <div class="input-group input-group-md mb-3">
                         <span class="input-group-text" name="venueName">For Venue</span>
                         <input type="text" class="form-control" name="venueName" 
-                        id="venueName" value="{{ vname }}" aria-label="venueName" required>
+                        id="venueName" value="{{ vname }}" aria-label="venueName" readonly>
                     </div>
                 </div>
             <div class="row mb-3">
@@ -130,7 +129,7 @@
                     <div class="input-group input-group-md mb-3">
                         <span class="input-group-text" name="showName">For Show</span>
                         <input type="text" class="form-control" name="showName" id="showName" 
-                        placeholder="Not choosen" aria-label="Show Name" value="" required>
+                        placeholder="Not choosen" aria-label="Show Name" value="" readonly>
                     </div>
                 </div>
                 <div class="col-12 col-sm-6">
@@ -196,9 +195,8 @@
                     style="padding-left: 2.5rem; padding-right: 2.5rem;">Allocate Show Timings</button>
                 </div>
             </div>
-  
           </form>
-      </div>
+        </div>
     </div>
 </div>
 {% endblock %}

@@ -1,9 +1,11 @@
 from flask_restful import Resource, fields, marshal_with, reqparse
+from flask import request
 from models.admin import Venue, Allocation
 from db import db
 from validation import NotFoundError, BusinessValidationError
-from sqlalchemy import desc
+from sqlalchemy import desc, exc
 
+# Output JSON format
 venue_output_fields = {
     "id" : fields.Integer,
     "name" : fields.String,
@@ -15,6 +17,7 @@ venue_output_fields = {
 
 }
 
+# for POST and PUT request
 create_venue_parser = reqparse.RequestParser()
 create_venue_parser.add_argument('name')
 create_venue_parser.add_argument('location')
@@ -24,6 +27,7 @@ create_venue_parser.add_argument('description')
 
 class VenueAPI(Resource):
 
+    # get Venue by Name
     @marshal_with(venue_output_fields)
     def get(self,name):
         venues = db.session.query(Venue).filter(Venue.name == name).first()
@@ -33,7 +37,7 @@ class VenueAPI(Resource):
         else:
             raise NotFoundError(error_message='Venue not found',status_code=404,error_code="VN001")
 
-
+    # Create new Venue
     def post(self):
         vn_args = create_venue_parser.parse_args()
         name = vn_args.get('name',None)
@@ -41,7 +45,6 @@ class VenueAPI(Resource):
         city = vn_args.get('city',None)
         capacity = vn_args.get('capacity',None)
         desc = vn_args.get('description',None)
-         
 
         if name is None or name == '':
             raise BusinessValidationError(status_code=400,error_code="VN002",error_message="Name is required")
@@ -70,31 +73,89 @@ class VenueAPI(Resource):
         from datetime import datetime
         timestamp = datetime.now()
 
-        new_venue = Venue(name=name,location=location,city=city,capacity=int(capacity),description=desc,timestamp=timestamp)
-        db.session.add(new_venue)
-        db.session.commit()
-        return "Success", 201
+        
+        try:
+            new_venue = Venue(name=name,location=location,city=city,capacity=int(capacity),description=desc,timestamp=timestamp)
+            db.session.add(new_venue)
+            db.session.commit()
+            return "Success", 201
+        except exc.SQLAlchemyError as e:    # Some Database Error occured
+            db.session.rollback()
+            raise BusinessValidationError(status_code=500,error_code="VN011",error_message=" Add Transaction failed. Try again")
 
-    def put(self,name):
-        pass
+
+    # Update existing venue
+    def put(self):
+        vn_args = create_venue_parser.parse_args()
+        name = vn_args.get('name',None)
+        location = vn_args.get('location',None)
+        city = vn_args.get('city',None)
+        capacity = vn_args.get('capacity',None)
+        desc = vn_args.get('description',None)
+         
+        
+        if name is None or name == '':
+            raise BusinessValidationError(status_code=400,error_code="VN002",error_message="Name is required")
     
+        if location is None or location == '':
+            raise BusinessValidationError(status_code=400,error_code="VN003",error_message="Location is required")
+
+        if city is None or city == '':
+            raise BusinessValidationError(status_code=400,error_code="VN004",error_message="City is required")
+
+        if capacity == None or type(capacity) is not int:
+            raise BusinessValidationError(status_code=400,error_code="VN005",error_message="Invalid capacity of venue")
+        
+        if int(capacity) < 40:
+            raise BusinessValidationError(status_code=400,error_code="VN006",error_message="Capacity must be atleast 40")
+        
+        if desc is None or desc == '':
+            raise BusinessValidationError(status_code=400,error_code="VN007",error_message="Description is required")
+
+        venue = db.session.query(Venue).filter(Venue.name == name).first()
+
+        from datetime import datetime
+        timestamp = datetime.now()
+
+        try:
+            venue.name = name
+            venue.location = location
+            venue.city = city
+            venue.capacity = capacity
+            venue.description = desc
+            venue.timestamp = timestamp
+            
+            db.session.add(venue)
+            db.session.commit()
+            return "Success", 201
+        except exc.SQLAlchemyError as e:    # Some Database Error occured
+            db.session.rollback()
+            raise BusinessValidationError(status_code=500,error_code="VN012",error_message="Update Transaction failed. Try again")
+
+    
+    # Delete existing venue
     def delete(self,name):
         venue = db.session.query(Venue).filter(Venue.name == name).first()
 
         if not venue:
-            raise BusinessValidationError(status_code=400,error_code="VN011",error_message="Venue not found with such name")
+            raise BusinessValidationError(status_code=400,error_code="VN001",error_message="Venue not found with such name")
         
         # check for dependency
         showForVenue = db.session.query(Allocation).filter(Allocation.venue_id == venue.id).first()
 
         if showForVenue:
-            raise BusinessValidationError(status_code=400,error_code="VN012",error_message="Venue has shows allocated to it")
+            raise BusinessValidationError(status_code=400,error_code="VN008",error_message="Venue has shows allocated to it")
 
-        db.session.delete(venue)
-        db.session.commit()
-        return "Success", 200
+        try:
+            db.session.delete(venue)
+            db.session.commit()
+            return "Success", 200
+        except exc.SQLAlchemyError as e:    # Some Database Error occured
+            db.session.rollback()
+            raise BusinessValidationError(status_code=500,error_code="VN013",error_message="Delete Transaction failed. Try again")
 
-    
+
+# Get Venue List for a city
 class VenueListByCityApi(Resource):
 
     @marshal_with(venue_output_fields)
@@ -107,8 +168,9 @@ class VenueListByCityApi(Resource):
             raise NotFoundError(error_message='No Venues found for this city',status_code=404,error_code="VN009")
         
     def post(self):
-        pass
+        raise BusinessValidationError(status_code=405,error_code="VN050",error_message="Method not allowed")
 
+# Get Venue List by Venue Name
 class VenueListByNameApi(Resource):
 
     @marshal_with(venue_output_fields)
@@ -119,8 +181,3 @@ class VenueListByNameApi(Resource):
             return venues
         else:
             raise NotFoundError(error_message='No Venues found for this name',status_code=404,error_code="VN010")
-        
-    def post(self):
-        pass
-
-# entities = MyEntity.query.order_by(desc(MyEntity.time)).limit(3).all()

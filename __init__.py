@@ -1,5 +1,6 @@
 from flask import Flask, render_template
 from flask_login import LoginManager
+from config import LocalDevConfig
 from blueprints.authentication import authn as userAuth
 from blueprints.admin import admin as adminProfile
 from blueprints.user import user as userProfile
@@ -7,17 +8,13 @@ from models.users import User
 from init_api import getConfiguredApi
 from testData import generateTestData
 from db import db
-import os, tempfile
+import os
 
 def create_app():
     app = Flask(__name__)
 
-    UPLOAD_FOLDER = '/uploads/'
-    basedir = os.path.abspath(os.path.dirname(__file__))
-
-    app.config['SECRET_KEY'] = 'ABCD12345'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'ticketdb.sqlite')
-    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+    # Local Development Configuration
+    app.config.from_object(LocalDevConfig)
 
     # blueprint for authentication routes
     app.register_blueprint(userAuth)

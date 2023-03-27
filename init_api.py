@@ -1,10 +1,11 @@
 # Api initialization
 from flask_restful import Resource, Api
 from api.venueApi import VenueAPI, VenueListByCityApi, VenueListByNameApi
-from api.showApi import ShowAPI, ListShowByNameApi, ListShowByVenueApi, ChooseShowApi
+from api.showApi import ShowAPI, ListShowByNameApi, ListShowByVenueApi, ChooseShowApi, PopularShowsApi
 from api.cityApi import  GetAllCitiesApi
 from api.allocationApi import AllocationAPI
 from api.bookingApi import BookTicketAPI
+from api.reviewApi import MovieReviewAPI
     
 def getConfiguredApi(app):
     apiV = Api(app)
@@ -19,9 +20,12 @@ def getConfiguredApi(app):
     apiV.add_resource(ListShowByVenueApi,"/api/shows/byVenue/<string:venue>",endpoint="/shows/byVenue/<venue>")
     apiV.add_resource(ListShowByNameApi,"/api/shows/byName/<string:name>",endpoint="/shows/byName/<name>")
     apiV.add_resource(ChooseShowApi,"/api/choose/allShows",endpoint="/allShows")
+    apiV.add_resource(PopularShowsApi,"/api/popShows/<string:email>",endpoint="/popShows")
 
     apiV.add_resource(AllocationAPI,"/api/allocation",endpoint="/allocation")
 
-    apiV.add_resource(BookTicketAPI,"/api/booking/<string:email>",endpoint="/booking")
+    apiV.add_resource(BookTicketAPI,"/api/booking","/api/booking/<string:email>",endpoint="/booking")
     
+    apiV.add_resource(MovieReviewAPI,"/api/review","/api/review/<string:sname>",endpoint="/review")
+
     return apiV

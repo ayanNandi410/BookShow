@@ -53,16 +53,19 @@ def userLogin():
     user = User.query.filter_by(email=email).first()
 
     if not user:
-        flash('Register first!','Login')
+        flash('Register first!','error')
         return redirect(url_for('authn.userSignup'))
     elif user and user.is_admin():
-        flash('You should login as Admin User','Login')
+        flash('You should login as Admin User','error')
         return redirect(url_for('authn.adminLogin'))
 
     # check if the user actually exists
     # take the user-supplied password, hash it, and compare it to the hashed password in the database
-    if not user or not check_password_hash(user.password, password):
-        flash('Please check your login details and try again.','Login')
+    if not user:
+        flash('Please check your login details and try again.','error')
+        return redirect(url_for('authn.userLogin'))
+    elif not check_password_hash(user.password, password):
+        flash('Invalid password','error')
         return redirect(url_for('authn.userLogin')) # if the user doesn't exist or password is wrong, reload the page
 
     # if the above check passes, then we know the user has the right credentials
@@ -87,10 +90,10 @@ def adminLogin():
     # check if the user actually exists
     # take the user-supplied password, hash it, and compare it to the hashed password in the database
     if not user:
-        flash('Please check your login details and try again.','Login')
+        flash('Please check your login details and try again.','error')
         return redirect(url_for('authn.adminLogin'))
     elif not check_password_hash(user.password, password):
-        flash('Invalid password','Login')
+        flash('Invalid password','error')
         return redirect(url_for('authn.adminLogin')) # if the user doesn't exist or password is wrong, reload the page
 
     # if the above check passes, then we know the user has the right credentials

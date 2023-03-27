@@ -1,0 +1,100 @@
+{% extends "baseTemplate.html" %}
+
+{% block title %}Popular Shows{% endblock %}
+
+{% block head %}
+<style>
+
+.ratings{
+    margin-left:10px;
+    color:#cecece;
+    font-size:16px;
+}
+
+.rating-color{
+    color:#fbc634;
+}
+
+</style>
+{% endblock %}
+
+{% block searchBar %}
+<form class="d-md-flex" role="search" method="post" action="/user/showsByName">
+  <input class="form-control form-control-sm me-2 mt-2 mb-2" name="sname" type="search" placeholder="Search for shows" aria-label="Search">
+  <button class="btn btn-sm btn-outline-success mt-2 mb-2" type="submit">Search</button>
+</form>
+{% endblock %}
+
+{% block content %}
+<!-- Filter Modal -->
+<div class="modal fade" id="filterModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="filterModalLabel">Filter Shows</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="filterModalBody">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <a href="#" id="venueDeleteBt" class="btn btn-primary">Filter</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="container body">
+    <div class="row">
+      <div class="col-12 col-sm-4"><h2>{{ heading }}</h2></div>
+    </div>
+    
+    <hr/><br/>
+  
+    <br/><br/>
+    {% if showListEmpty is defined %}
+    <br/><h2 class="alert alert-primary text-center">No Show available</h2>
+    {% else %}
+    <div class="row row-cols-md-3 row-cols-sm-2 row-cols-xs-1 row-cols-1 g-3">    
+    {% for show in shows %}
+        <div class="col">
+          <div class="card p-3" style="width: 18rem; margin-right: 20px;">
+            <div class="card-img-caption d-flex flex-row-reverse">
+              <span class="card-text badge rounded-pill badge-custom">
+                <div class="ratings">
+                  {% for i in range(1,6) %}
+                    {% if(i <= (show['rating']|int)/2) %}
+                      <i class="fa fa-star rating-color"></i>
+                    {% else %}
+                      <i class="fa fa-star-o"></i>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              </span>
+              <img src="{{ url_for('static',filename='show.png')}}" class="card-img-top blurImage" height="200px" width="30px" alt="...">
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">{{ show['name'] }}</h5>
+              <div class="card-text">
+                {% for tag in show['tags'] %}
+                <span class="badge bg-success">{{ tag['name'] }}</span>&nbsp;
+                {% endfor %}<br/>
+                {% for lng in show['languages'] %}
+                <span class="badge bg-dark text-white">{{ lng['name'] }}</span>&nbsp;
+                {% endfor %}
+                <span class="badge bg-info text-white">{{ show['duration'] }}</span>&nbsp;
+              </div><br/>
+            </div>
+            <div class="card-footer text-muted">
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}

@@ -144,7 +144,7 @@
             </div>
             <div class="card-footer text-muted">
               <a href="#" class="card-link" data-columns="2" data-vName="{{ venue['name'] }}" data-vLoc="{{ venue['location'] }}" onclick="setVenueName();" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</a>
-              <a href="#" class="card-link">Update</a>
+              <a href="/admin/venue/update?name={{ venue['name'] }}" class="card-link">Update</a>
             </div>
           </div>
         </div>

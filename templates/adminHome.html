@@ -23,8 +23,9 @@
     </div>
 </div>
 
-<div class="container py-5 col-8" id="body">
-    <h1 class="display-5 fw-bold">Welcome {{ user['name'] }}</h1>
-    <button class="btn btn-primary btn-md" type="button" data-bs-toggle="modal" data-bs-target="#cityModal">View venues by City</button>
+<div class="body container py-5 col-8">
+    <h1 class="display-5 fw-bold">Welcome {{ user['name'] }}!</h1>
+    <h4>You can explore using the navbar links. </h4><br/>
+    <button class="btn btn-primary btn-md" type="button" data-bs-toggle="modal" data-bs-target="#cityModal">Filter Venues by City</button>
 </div>
 {% endblock %}

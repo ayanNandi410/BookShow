@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, flash, redirect, url_for
 import requests
 from datetime import datetime,timedelta
 from flask import render_template
@@ -30,9 +30,13 @@ def userProfile():
 @user.route('/venues')
 @login_required
 def userVenues():
-    venues = Venue.query.all()
+    page = request.args.get('page', 1, type=int)
+    pagedVenues = Venue.query.order_by(Venue.name).paginate(page=page, per_page=20)
 
-    return render_template('userVenues.html',venues=venues, user=current_user)
+    if pagedVenues.pages == 0:
+        return render_template('userVenues.html',venuesPage=pagedVenues,noVenue=True, user=current_user)
+    else:
+        return render_template('userVenues.html',venuesPage=pagedVenues, user=current_user)
 
 @user.route('/venuesByCity/<city>')
 @login_required
@@ -68,6 +72,32 @@ def userVenueHome(name):
     else:
         return render_template('userVenueHome.html',venue=cur_venue,shows=shows, user=current_user)
     
+# --------------------- Shows -----------------------------
+
+@user.route('/popularShows/', methods=['GET','POST'])
+@login_required
+def popShows():
+    if request.method == 'GET':
+        pshowsCall = requests.get(BASE_URL+'/api/popShows/'+current_user.email)
+        pshows= pshowsCall.json()
+        print(pshows)
+        return render_template('userShows.html',shows=pshows,heading="Popular Shows", user=current_user)
+    
+@user.route('/showsByName/', methods=['GET','POST'])
+@login_required
+def showsByName():
+    if request.method == 'POST':
+        name = request.form.get('sname')
+
+        showsByNameCall = requests.get(BASE_URL+'/api/shows/byName/'+name)
+        shows = showsByNameCall.json()
+
+        if showsByNameCall.status_code == 404:
+            return render_template('userShows.html',heading="Shows with name : "+name,showListEmpty=True, user=current_user)
+        else:
+            return render_template('userShows.html',shows=shows,heading="Shows with name : "+name, user=current_user)
+
+# ------------------- Timeslot ---------------------------
 
 @user.route('/bookTimeslot/')
 @login_required
@@ -111,8 +141,9 @@ def bookTimeslot():
 
         return render_template("bookTimeslot.html", dayList=dayList,show=show,venue=venue,slotsDict=slots, user=current_user)
 
+# ---------------- Ticket Booking ----------------------
 
-@user.route('/bookTicket/')
+@user.route('/bookTicket/', methods=['GET','POST'])
 @login_required
 def bookTicket():
     show = request.args.get('show')
@@ -121,9 +152,33 @@ def bookTicket():
     time = request.args.get('time')
     price = request.args.get('price')
 
-    details = { "show": show, "venue": venue, "date": date, "time": time,"price": float(price), "email": current_user.email}
+    details = { "show": show, "venue": venue, "date": date, "time": time,"price": price, "email": current_user.email}
 
-    return render_template('bookTicket.html',details=details,user=current_user)
+    if request.method == 'GET':
+        
+        return render_template('bookTicket.html',details=details,user=current_user)
+    else:
+        show = request.form.get('showName')
+        venue = request.form.get('venueName') 
+        date = request.form.get('date')
+        time = request.form.get('time') 
+        seats = request.form.get('allocSeats')
+        price = request.form.get('totPrice')
+
+        ticketDetails = { "user_email" : current_user.email,"show_name" : show, "venue_name" : venue, "date" : date, "time" : time, "allocSeats" : int(seats), "totPrice" : price  }
+
+        bookingCall = requests.post(BASE_URL+'/api/booking',json=ticketDetails)
+        response = bookingCall.json()
+
+        if bookingCall.status_code != 201:
+            if 'error_message' in response.keys():
+                flash(response['error_message'],'error')
+            else:
+                flash('Some error occured. Try Again...','error')
+        else:
+            flash('Succesfully booked tickets','success') 
+
+        return redirect( url_for('user.userHome') )
 
 @user.route('/bookings/')
 @login_required
@@ -132,3 +187,35 @@ def showBookings():
     bookings = bookingsCall.json()
 
     return render_template('userBookings.html',bookings=bookings,user=current_user)
+
+# --------------- Movie Review ---------------------------
+
+@user.route('/review/add', methods=["POST"])
+@login_required
+def addReview():
+    show = request.form.get('showName')
+    email = current_user.email
+    gRating = request.form.get('userRating')
+    comment = request.form.get('userComment')
+
+    reviewJson = { 'show_name' : show, 'user_email' : email, 'rating' : gRating, 'comment' : comment}
+
+    reviewsPostCall = requests.post(BASE_URL+'/api/review',json=reviewJson)
+    response = reviewsPostCall.json()
+
+    if reviewsPostCall.status_code != 200:
+        if 'error_message' in response.keys():
+            flash(response['error_message'],'error')
+        else:
+            flash('Some error occured. Try Again...','error')
+    else:
+        flash('Succesfully added your review','success') 
+
+    return redirect(url_for('user.showBookings'))
+
+@user.route('/reviews/<sname>')
+@login_required
+def getReviews(sname):
+
+    reviewsCall = requests.get(BASE_URL+'/api/review/'+sname)
+    reviews = reviewsCall.json()

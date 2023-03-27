@@ -20,6 +20,7 @@ admin = Blueprint('admin', __name__,url_prefix='/admin')
 
 
 def admin_login_required(view):
+    @login_required
     @wraps(view)
     def wrap(*args, **kwargs):
         if current_user is not None:
@@ -33,22 +34,27 @@ def admin_login_required(view):
             return redirect(url_for('authn.adminLogin'))
     return wrap
 
+# Admin Home
 @admin.route('/')
 @admin_login_required
 def index():
     return render_template('adminHome.html',user=current_user)
 
 
+# Admin Profile
 @admin.route('/profile')
 @admin_login_required
 def profile():
     return render_template('profile.html',name=current_user.name)
 
+
+# List All Venues
 @admin.route('/showVenues')
 @admin_login_required
 def showVenues():
     page = request.args.get('page', 1, type=int)
-    paginationVenue = Venue.query.order_by(Venue.name).paginate(page=page, per_page=20)
+    paginationVenue = db.session.query(Venue).order_by(Venue.timestamp,Venue.name).paginate(page=page, per_page=20)
+
     return render_template('venuesHome.html',pagination=paginationVenue, user=current_user)
 
 @admin.route('/showVenues/<city>')
@@ -98,6 +104,34 @@ def addVenue():
         return render_template('addVenue.html', user=current_user)
     else:
         return render_template('addVenue.html', user=current_user)
+    
+@admin.route('/venue/update',methods=['GET','POST'])
+@admin_login_required
+def updateVenue():
+    if request.method == 'POST':
+        name = request.form.get('venueName','')
+        location = request.form.get('venueLocation','')
+        city = request.form.get('venueCity','')
+        description = request.form.get('venueDescription','')
+        capacity = request.form.get('venueCapacity','')
+        venue = { 'name' : name, 'location' : location, 'city' : city, 'description' : description, 
+        'capacity' : capacity }
+
+        resV = requests.put(BASE_URL+'/api/venue', json=venue)
+        response = resV.json()
+
+        if resV.status_code != 201:
+            if 'error_message' in response.keys():
+                flash(response['error_message'],'error')
+            else:
+                flash('Some error occured. Try Again...','error')
+        else:
+            flash('Succesfully Updated','success') 
+
+        return render_template('updateVenue.html', user=current_user)
+    else:
+        name = request.args.get('name')
+        return render_template('updateVenue.html',vname=name, user=current_user)
 
 # -------------------- Shows ---------------------
 
@@ -190,4 +224,4 @@ def allocateShow():
         
         return render_template('allocateShow.html',vname=vname,response=response,user=current_user), 201
 
-    
+     

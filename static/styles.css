@@ -1,10 +1,10 @@
-.ratings{
-    margin : 4px 4px;
-    padding: 5px 7px;
+nav{
+    min-height: fit-content;
 }
 
 .ratings{
-    
+    margin : 4px 4px;
+    padding: 5px 7px;
     color:#ffffff;
     font-size:8px;
     background-color: #1687d8;
@@ -16,7 +16,7 @@
     color:#fbc52f;
 }
 
-#body{
+.body{
     margin-top: 8%;
     margin-bottom: 20%;
     height: 100%;
@@ -56,3 +56,8 @@ footer{
     text-decoration: solid;
     padding: 5px 10px;
   }
+
+  .disable{
+    pointer-events:none;
+    background:rgba(194, 193, 193, 0.911);
+    }

@@ -1,14 +1,10 @@
-from models.admin import Show,Tag,Venue,tags,Language,Allocation, BookTicket
+from models.admin import Show,Tag,Venue,tags,Language,Allocation, BookTicket, MovieReview
 from models.users import User
 from werkzeug.security import generate_password_hash
 from datetime import date, time, datetime
 from flask_login import current_user
 
-def generateTestData(app,db):
-    with app.app_context():
-        db.drop_all()
-        db.create_all()
-
+def addData(db):
         action = Tag(name='Action')
         thriller = Tag(name='Thriller')
         drama = Tag(name='Drama')
@@ -33,8 +29,8 @@ def generateTestData(app,db):
         venue3 = Venue(name='Inox Rangoli Mall',location='Liluah',city='Howrah',capacity=400,description='One of the most unique malls in Kolkata',timestamp=datetime(2023,1,13,18,21,00))
         db.session.add(venue3)
 
-        for i in range(8):
-            venueNew = Venue(name='Mall Number '+str(i),location='Loc'+str(i),city='Howrah',capacity=400,description='One of the most unique malls in Kolkata',timestamp=datetime(2022,i+1,i+10,11,i+2,00))
+        for i in range(50):
+            venueNew = Venue(name='Mall Number '+str(i),location='Loc'+str(i),city='Howrah',capacity=400,description='One of the most unique malls in Kolkata',timestamp=datetime(2022,1,10,11,2,00))
             db.session.add(venueNew)
 
         db.session.add(action)
@@ -110,10 +106,24 @@ def generateTestData(app,db):
         bookT1 = BookTicket(user_email='test@gmail.com',allocSeats=3,totPrice=345.50,timestamp=datetime.now())
         bookT1.allocShow = allocDetails1
         db.session.add(bookT1)
-        bookT1 = BookTicket(user_email='test@gmail.com',allocSeats=7,totPrice=1200.50,timestamp=datetime.now())
-        bookT1.allocShow = allocDetails1
+        bookT1 = BookTicket(user_email='test@gmail.com',allocSeats=2,totPrice=1200.50,timestamp=datetime.now())
+        bookT1.allocShow = allocDetails10
+        db.session.add(bookT1)
+        bookT1 = BookTicket(user_email='test@gmail.com',allocSeats=7,totPrice=800.50,timestamp=datetime.now())
+        bookT1.allocShow = allocDetails9
         db.session.add(bookT1)
 
+        review1 = MovieReview(show_id=1,user_email="test@gmail.com",gRating=8,comment="Very good Movie. Loved it!",timestamp=datetime.now())
+        db.session.add(review1)
+        db.session.commit()
+
+
+def generateTestData(app,db):
+    with app.app_context():
+        db.drop_all()
+        db.create_all()
+
+        addData(db)
 
         db.session.add(User(name='Admin User',email='admin@gmail.com',password=generate_password_hash('admin123', method='sha256'),access=1))
         db.session.add(User(name='Test User',email='test@gmail.com',password=generate_password_hash('1234', method='sha256'),access=0))
