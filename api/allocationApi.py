@@ -3,12 +3,13 @@ import json
 from models.admin import Show, Venue, Allocation
 from datetime import date, timedelta
 from flask import request
-from sqlalchemy import desc
+from sqlalchemy import desc, exc
 from db import db
 from validation import NotFoundError, BusinessValidationError
 from datetime import datetime as dt
 
 allocation_output_fields = {
+    "id" : fields.Integer,
     "date" : fields.String,
     "time" : fields.String,
     "avSeats" : fields.Integer,
@@ -29,25 +30,16 @@ create_allocation_parser.add_argument('price', type=float, help="Not a valid num
 class AllocationAPI(Resource):
 
     @marshal_with(allocation_output_fields)
-    def get(self):
-        showName = request.args.get('show')
-        venueName = request.args.get('venue')
+    def get(self,aid):
 
-        show = db.session.query(Show).filter(Show.name == showName).first()
-        venue =db.session.query(Venue).filter(Venue.name == venueName).first()
+        timeslot = db.session.query(Allocation).filter(Allocation.id == aid).first()
 
-        timeslotList = db.session.query(Allocation.timeslot,Allocation.avSeats,Allocation.totSeats,Allocation.price).filter(Allocation.venue == venue,Allocation.show == show,Allocation.timeslot > date.today(),Allocation.timeslot < (date.today()+timedelta(days=7))).order_by(Allocation.timeslot).all()
-
-        if not timeslotList:
-            raise NotFoundError(error_message='No timeslots found',status_code=404,error_code="AL011")
+        if not timeslot:
+            raise NotFoundError(error_message='No timeslot found',status_code=404,error_code="AL011")
         else:
-            slotlist = []
-            for row in timeslotList:
-                slotDict = { "date" : row.timeslot.strftime("%Y-%m-%d"), "time" : row.timeslot.strftime("%H:%M:%S"), 
-                            "avSeats" : row.avSeats, "totSeats" : row.totSeats, "price" : row.price }
-                slotlist.append(slotDict)
-            print(slotDict)
-            return slotlist, 200
+            slot = { "id":timeslot.id, "date" : timeslot.timeslot.strftime("%Y-%m-%d"), "time" : timeslot.timeslot.strftime("%H:%M:%S"), 
+                            "avSeats" : timeslot.avSeats, "totSeats" : timeslot.totSeats, "price" : timeslot.price }
+            return slot, 200
 
     def post(self):
         vn_args = create_allocation_parser.parse_args()
@@ -122,5 +114,42 @@ class AllocationAPI(Resource):
     def put(self,name):
         pass
     
-    def delete(self,name):
-        pass
+    def delete(self,aid):
+
+        try:
+            delAlloc = db.session.query(Allocation).filter(Allocation.id == aid).first()
+            db.session.delete(delAlloc)
+            db.session.commit()
+
+            return 'Success', 200
+        except exc.SQLAlchemyError as e:    # Some Database Error occured
+            db.session.rollback()
+            raise BusinessValidationError(status_code=500,error_code="AL017",error_message="Delete Transaction failed. Try again")
+
+
+
+class AllocationBetweenDatesAPI(Resource):
+
+    @marshal_with(allocation_output_fields)
+    def get(self):
+        sDate = request.args.get('startDate')
+        eDate = request.args.get('endDate')
+
+        showName = request.args.get('show')
+        venueName = request.args.get('venue')
+
+        show = db.session.query(Show).filter(Show.name == showName).first()
+        venue =db.session.query(Venue).filter(Venue.name == venueName).first()
+
+        timeslotList = db.session.query(Allocation.id,Allocation.timeslot,Allocation.avSeats,Allocation.totSeats,Allocation.price).filter(Allocation.venue == venue,Allocation.show == show,Allocation.timeslot.between(sDate,eDate)).order_by(Allocation.timeslot).limit(50).all()
+
+        if not timeslotList:
+            raise NotFoundError(error_message='No timeslots found',status_code=404,error_code="AL011")
+        else:
+            slotlist = []
+            for row in timeslotList:
+                slotDict = { "id": row.id, "date" : row.timeslot.strftime("%Y-%m-%d"), "time" : row.timeslot.strftime("%H:%M:%S"), 
+                            "avSeats" : row.avSeats, "totSeats" : row.totSeats, "price" : row.price }
+                slotlist.append(slotDict)
+            print(slotDict)
+            return slotlist, 200

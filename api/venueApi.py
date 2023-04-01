@@ -1,6 +1,6 @@
 from flask_restful import Resource, fields, marshal_with, reqparse
 from flask import request
-from models.admin import Venue, Allocation
+from models.admin import Venue, Allocation, Show
 from db import db
 from validation import NotFoundError, BusinessValidationError
 from sqlalchemy import desc, exc
@@ -29,11 +29,11 @@ class VenueAPI(Resource):
 
     # get Venue by Name
     @marshal_with(venue_output_fields)
-    def get(self,name):
-        venues = db.session.query(Venue).filter(Venue.name == name).first()
+    def get(self,id):
+        venue = db.session.query(Venue).filter(Venue.id == id).first()
 
-        if venues:
-            return venues
+        if venue:
+            return venue
         else:
             raise NotFoundError(error_message='Venue not found',status_code=404,error_code="VN001")
 
@@ -65,10 +65,10 @@ class VenueAPI(Resource):
             raise BusinessValidationError(status_code=400,error_code="VN007",error_message="Description is required")
 
 
-        venue = db.session.query(Venue).filter(Venue.name == name).first()
+        venue = db.session.query(Venue).filter(Venue.name == name, Venue.location == location,Venue.city == city).first()
 
         if venue:
-            raise BusinessValidationError(status_code=400,error_code="VN008",error_message="Venue already exists")
+            raise BusinessValidationError(status_code=400,error_code="VN008",error_message="Venue already exists in the same city")
 
         from datetime import datetime
         timestamp = datetime.now()
@@ -87,13 +87,14 @@ class VenueAPI(Resource):
     # Update existing venue
     def put(self):
         vn_args = create_venue_parser.parse_args()
+        id = vn_args.get('id',None)
         name = vn_args.get('name',None)
         location = vn_args.get('location',None)
         city = vn_args.get('city',None)
         capacity = vn_args.get('capacity',None)
         desc = vn_args.get('description',None)
          
-        
+
         if name is None or name == '':
             raise BusinessValidationError(status_code=400,error_code="VN002",error_message="Name is required")
     
@@ -112,7 +113,7 @@ class VenueAPI(Resource):
         if desc is None or desc == '':
             raise BusinessValidationError(status_code=400,error_code="VN007",error_message="Description is required")
 
-        venue = db.session.query(Venue).filter(Venue.name == name).first()
+        venue = db.session.query(Venue).filter(Venue.id == int(id)).first()
 
         from datetime import datetime
         timestamp = datetime.now()
@@ -134,8 +135,8 @@ class VenueAPI(Resource):
 
     
     # Delete existing venue
-    def delete(self,name):
-        venue = db.session.query(Venue).filter(Venue.name == name).first()
+    def delete(self,id):
+        venue = db.session.query(Venue).filter(Venue.id == id).first()
 
         if not venue:
             raise BusinessValidationError(status_code=400,error_code="VN001",error_message="Venue not found with such name")
@@ -181,3 +182,30 @@ class VenueListByNameApi(Resource):
             return venues
         else:
             raise NotFoundError(error_message='No Venues found for this name',status_code=404,error_code="VN010")
+        
+
+# Get Venue List by Show Name
+class VenueListByShowApi(Resource):
+
+    @marshal_with(venue_output_fields)
+    def get(self,sname):
+        city = request.args.get('city',None)
+           
+        show = db.session.query(Show).filter(Show.name == sname).first()
+        venues = show.venues
+
+
+        if city is not None: 
+            venueList = []
+            for venue in venues:
+                if venue.city == city:
+                    venueList.append(venue)
+            if venueList != []:
+                return venueList
+            else:
+                raise NotFoundError(error_message='No Venues found for show with city name',status_code=404,error_code="VN012")
+        
+        if venues:
+            return venues
+        else:
+            raise NotFoundError(error_message='No Venues found for show',status_code=404,error_code="VN011")

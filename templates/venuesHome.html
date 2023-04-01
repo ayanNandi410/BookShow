@@ -143,8 +143,8 @@
               <a href="/admin/allocation/add?venue={{ venue['name'] }}" class="btn btn-primary btn-success">+ Allocate Show</a>
             </div>
             <div class="card-footer text-muted">
-              <a href="#" class="card-link" data-columns="2" data-vName="{{ venue['name'] }}" data-vLoc="{{ venue['location'] }}" onclick="setVenueName();" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</a>
-              <a href="/admin/venue/update?name={{ venue['name'] }}" class="card-link">Update</a>
+              <a href="#" class="card-link" data-columns="2" data-vName="{{ venue['name'] }}" data-vLoc="{{ venue['location'] }}" data-vid="{{ venue['id'] }}" onclick="setVenueName();" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</a>
+              <a href="/admin/venue/update?id={{ venue['id'] }}" class="card-link">Update</a>
             </div>
           </div>
         </div>
@@ -159,10 +159,12 @@
     venue = event.target;
     venueName = venue.dataset.vname;
     venueLoc = venue.dataset.vloc;
+    venueId = venue.dataset.vid;
+
   const modal = document.getElementById('deleteModalBody');
   modal.innerText = " Name : "+venueName+"\nLocation : "+venueLoc+"\n\nAre you sure you want to delete?";
   const delBt = document.getElementById('venueDeleteBt');
-  delBt.href = "/admin/deleteVenue/"+venueName;
+  delBt.href = "/admin/deleteVenue/"+venueId;
   }
 
   function getCardLayout(vName, sName, sDuration, sRating){

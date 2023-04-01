@@ -47,27 +47,30 @@
         <h2>Update Existing Venue</h2><hr/><br/>
       <div class="d-flex justify-content-center align-items-center h-100">
 
-          <form class="mt-4" action="{{ url_for('admin.updateVenue')}}" method="post" enctype=multipart/form-data>  
+          <form class="mt-4" action="{{ url_for('admin.updateVenue')}}" method="post" onchange="enableSubmit();">  
+            
+            <input type="number" value="{{ venue['id'] }}" name="venueId" id="venueId" style="display: none;">
+            
             <!-- Name input -->
             <div class="row mb-3">
                 <div class="col-12 col-sm-6">
                     <div class="input-group input-group-lg mb-3">
                         <span class="input-group-text" name="venueName">Venue Name</span>
                         <input type="text" class="form-control" name="venueName" id="venueName" 
-                        placeholder="Allen Hall" value="{{ vname }}" aria-label="venueName" readonly>
+                        placeholder="Allen Hall" value="{{ venue['name'] }}" aria-label="venueName" readonly>
                     </div>
                 </div>
                 <div class="col-12 col-sm-6">
                     <div class="input-group input-group-lg mb-3">
                         <span class="input-group-text">Venue Location</span>
-                        <input type="text" class="form-control" name="venueLocation" id="venueLocation" placeholder="Beleghata" value="" aria-label="venueLocation" required>
+                        <input type="text" class="form-control" name="venueLocation" value="{{ venue['location'] }}" id="venueLocation" placeholder="Beleghata" value="" aria-label="venueLocation" required>
                     </div>
                 </div>
             </div>
             <div class="col-12 col-sm-6">
                 <div class="input-group input-group-lg mb-3">
                     <span class="input-group-text">Venue City</span>
-                    <input type="text" class="form-control" name="venueCity" id="venueCity" placeholder="Kolkata" value="" aria-label="venueCity" required>
+                    <input type="text" class="form-control" name="venueCity" id="venueCity" value="{{ venue['city'] }}" placeholder="Kolkata" value="" aria-label="venueCity" required>
                 </div>
             </div>
 
@@ -75,7 +78,8 @@
                 <div class="col-4">
                     <div class="input-group input-group-lg mb-3">
                         <span class="input-group-text" >Venue Capacity</span>
-                        <input type="number" class="form-control" name="venueCapacity" id="venueCapacity" placeholder="450" value="" aria-label="venueCapacity" required>
+                        <input type="number" class="form-control" name="venueCapacity" id="venueCapacity" value="{{ venue['capacity'] }}"
+                         placeholder="450" value="" aria-label="venueCapacity" required>
                     </div>
                 </div>
             </div>
@@ -83,14 +87,14 @@
             <div class="row mb-3">
                 <div class="input-group input-group-lg mb-3">
                     <span class="input-group-text">Venue Description</span>
-                    <textarea class="form-control" name="venueDescription" id="venueDescription" value="" aria-label="With textarea" required></textarea>
+                    <textarea class="form-control" name="venueDescription" id="venueDescription" value="{{ venue['description'] }}" aria-label="With textarea" required></textarea>
                 </div>
             </div>
 
             <div class="row mb-3">
                 <div class="col-4 offset-5">
-                    <button type="submit" class="btn btn-primary btn-lg" onclick="validateForm();"
-                    style="padding-left: 2.5rem; padding-right: 2.5rem;">Update Venue</button>
+                    <button type="submit" id="submitVenue" class="btn btn-primary btn-lg"
+                    style="padding-left: 2.5rem; padding-right: 2.5rem;" disabled>Update Venue</button>
                 </div>
             </div>
   
@@ -98,4 +102,12 @@
       </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function enableSubmit(){
+        document.getElementById('submitVenue').disabled = false;
+    }
+</script>
 {% endblock %}

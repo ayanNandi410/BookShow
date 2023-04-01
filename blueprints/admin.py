@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template,request, redirect, url_for, flash, session
 from flask_login import login_required, current_user
+from sqlalchemy import desc
 from datetime import datetime
 from models.admin import Venue, Show
 from models.users import User
@@ -8,7 +9,8 @@ from functools import wraps
 from werkzeug.utils import secure_filename
 from db import db
 import requests
-from constants import BASE_URL
+from constants import BASE_URL, PER_PAGE_SIZE
+
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
@@ -53,8 +55,8 @@ def profile():
 @admin_login_required
 def showVenues():
     page = request.args.get('page', 1, type=int)
-    paginationVenue = db.session.query(Venue).order_by(Venue.timestamp,Venue.name).paginate(page=page, per_page=20)
-
+    paginationVenue = db.session.query(Venue).order_by(desc(Venue.timestamp),Venue.name).paginate(page=page, per_page=PER_PAGE_SIZE)
+    
     return render_template('venuesHome.html',pagination=paginationVenue, user=current_user)
 
 @admin.route('/showVenues/<city>')
@@ -63,10 +65,10 @@ def showVenuesByCity(city):
     venues = requests.get(BASE_URL+'/api/venues/'+city)
     return render_template('venuesHome.html',venues = venues,city=city, user=current_user)
 
-@admin.route('/deleteVenue/<name>', methods=['GET'])
+@admin.route('/deleteVenue/<id>', methods=['GET'])
 @admin_login_required
-def deleteVenue(name):
-    delVenueCall = requests.delete(BASE_URL+'/api/venue/'+name)
+def deleteVenue(id):
+    delVenueCall = requests.delete(BASE_URL+'/api/venue/'+id)
     response = delVenueCall.json()
 
     if delVenueCall.status_code != 200:
@@ -109,12 +111,13 @@ def addVenue():
 @admin_login_required
 def updateVenue():
     if request.method == 'POST':
+        id = request.form.get('venueId','')
         name = request.form.get('venueName','')
         location = request.form.get('venueLocation','')
         city = request.form.get('venueCity','')
         description = request.form.get('venueDescription','')
         capacity = request.form.get('venueCapacity','')
-        venue = { 'name' : name, 'location' : location, 'city' : city, 'description' : description, 
+        venue = { 'id' : id,'name' : name, 'location' : location, 'city' : city, 'description' : description, 
         'capacity' : capacity }
 
         resV = requests.put(BASE_URL+'/api/venue', json=venue)
@@ -130,8 +133,12 @@ def updateVenue():
 
         return render_template('updateVenue.html',vname=name, user=current_user)
     else:
-        name = request.args.get('name')
-        return render_template('updateVenue.html',vname=name, user=current_user)
+        id = request.args.get('id')
+
+        resV = requests.get(BASE_URL+'/api/venue/'+id)
+        response = resV.json()
+
+        return render_template('updateVenue.html',venue=response, user=current_user)
 
 # -------------------- Shows ---------------------
 
@@ -139,7 +146,7 @@ def updateVenue():
 @admin_login_required
 def showShows():
     page = request.args.get('page', 1, type=int)
-    paginationShow = Show.query.order_by(Show.timestamp).paginate(page=page, per_page=20)
+    paginationShow = db.session.query(Show).order_by(desc(Show.timestamp)).paginate(page=page, per_page=PER_PAGE_SIZE)
     return render_template('showsHome.html',pagination=paginationShow, user=current_user)
 
 @admin.route('/show/add',methods=['GET','POST'])
@@ -154,11 +161,19 @@ def addShow():
 
         show = { 'name' : name, 'tags' : list(tags), 'languages' : list(languages),
                  'rating' : int(rating), 'duration' : duration }
-        print(show)
 
         resS = requests.post(BASE_URL+'/api/show', json=show)
-        
-        return render_template('addShow.html',response=resS.json(),user=current_user), 201
+        response=resS.json()
+
+        if resS.status_code != 201:
+            if 'error_message' in response.keys():
+                flash(response['error_message'],'error')
+            else:
+                flash('Some error occured. Try Again...','error')
+        else:
+            flash('Succesfully added','success') 
+
+        return render_template('addShow.html',response=response,user=current_user), 201
     else:
 
         return render_template('addShow.html',user=current_user)
@@ -270,4 +285,64 @@ def allocateShow():
         
         return render_template('allocateShow.html',vname=vname,response=response,user=current_user), 201
 
-     
+
+@admin.route('/getAllocations', methods=['GET','POST'])
+@admin_login_required
+def getAllocations():
+    show = request.args.get('show')
+    venue = request.args.get('venue')
+    if request.method == 'GET':
+        return render_template('adminTimings.html',show=show,venue=venue,emptyAlloc=True,user=current_user), 200
+    else:
+        sDate = request.form.get('startDate')
+        eDate = request.form.get('endDate')
+        resA = requests.get(BASE_URL+'/api/allocations/dateRange?show='+show+'&venue='+venue+'&startDate='+sDate+'&endDate='+eDate)
+        response=resA.json()
+
+    if resA.status_code != 200:
+        return render_template('adminTimings.html',show=show,venue=venue,emptyAlloc=True,user=current_user), 200
+    else:
+        return render_template('adminTimings.html',show=show,venue=venue,sDate=sDate,eDate=eDate,allocations=response,user=current_user), 200
+
+
+@admin.route('/allocation/delete', methods=['GET'])
+@admin_login_required
+def deleteAllocation():
+    
+    id = request.args.get('aid')
+    
+    resA = requests.delete(BASE_URL+'/api/allocation/'+str(id))
+    response=resA.json()
+
+    if resA.status_code != 200:
+        if 'error_message' in response.keys():
+            flash(response['error_message'],'error')
+        else:
+             flash('Some error occured. Try Aagain...','error')
+    else:
+        flash('Succesfully Deleted','success')
+
+    show = request.args.get('show')
+    venue = request.args.get('venue')
+    sDate = request.args.get('sDate')
+    eDate = request.args.get('eDate')
+
+    return render_template('adminTimings.html',show=show,venue=venue,sDate=sDate,eDate=eDate,emptyAlloc=True,user=current_user), 200
+
+
+@admin.route('/allocation/update', methods=['GET'])
+@admin_login_required
+def updateAllocation():
+
+    id = request.args.get('aid')
+    
+    resA = requests.update(BASE_URL+'/api/allocation/'+str(id))
+    response=resA.json()
+
+    if resA.status_code != 200:
+        if 'error_message' in response.keys():
+            flash(response['error_message'],'error')
+        else:
+             flash('Some error occured. Try Aagain...','error')
+    else:
+        flash('Succesfully Deleted','success')

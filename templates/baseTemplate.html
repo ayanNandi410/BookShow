@@ -11,20 +11,20 @@
     {% block head %}{% endblock %}
 </head>
   <body>
-    <nav class="navbar navbar-default navbar-expand-lg fixed-top" id="appNavbar" style="background-color: #9acbee; max-height: 9%;">
+    <nav class="navbar navbar-default navbar-expand-lg fixed-top" id="appNavbar" style="background-color: #9acbee; max-height: 10%;">
         {% if user is defined and user.is_admin() %}
-        <a class="navbar-brand ms-4 me-4" href="{{ url_for('admin.index') }}"><img src="{{ url_for('static', filename='ticket.png') }}" width="40px" height="40px"> Show</a>
+        <a class="navbar-brand ms-4 me-4" href="{{ url_for('admin.index') }}"><img src="{{ url_for('static', filename='ticket.png') }}" width="40px" height="40px"> BookShow</a>
         {% elif user is defined and user.is_user() %}
-        <a class="navbar-brand ms-4 me-4" href="{{ url_for('user.userHome') }}"><img src="{{ url_for('static', filename='ticket.png') }}" width="40px" height="40px"> Show</a>
+        <a class="navbar-brand ms-4 me-4" href="{{ url_for('user.userHome') }}"><img src="{{ url_for('static', filename='ticket.png') }}" width="40px" height="40px"> BookShow</a>
         {% else %}
-        <a class="navbar-brand ms-4 me-4" href="{{ url_for('authn.index') }}"><img src="{{ url_for('static', filename='ticket.png') }}" width="40px" height="40px"> Show</a>
+        <a class="navbar-brand ms-4 me-4" href="{{ url_for('authn.index') }}"><img src="{{ url_for('static', filename='ticket.png') }}" width="40px" height="40px"> BookShow</a>
         {% endif %}
         <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
             <div class="offcanvas-header">
-              <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Ticket Show</h5>
+              <h5 class="offcanvas-title" id="offcanvasNavbarLabel">BookShow</h5>
               <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
             <div class="offcanvas-body">
@@ -40,7 +40,7 @@
                 {% endif %}
                 {% if user is defined and user.is_admin() %}
                 <li class="nav-item">
-                  <a class="nav-link active" aria-current="page" href="/admin">Home</a>
+                  <a class="nav-link" aria-current="page" href="/admin">Home</a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link" href="/admin/showVenues">Venues</a>
@@ -52,11 +52,13 @@
 
                 {% if user is defined and user.is_user() %}
                 <li class="nav-item">
-                  <a class="nav-link active" aria-current="page" href="/user/userHome">Home</a>
+                  <a class="nav-link" aria-current="page" href="/user/userHome">Home</a>
                 </li>
+                <!--
                 <li class="nav-item">
                   <a class="nav-link" href="/user/venues">Venues</a>
                 </li>
+                -->
                 <li class="nav-item">
                   <a class="nav-link" href="/user/popularShows">Shows</a>
                 </li>

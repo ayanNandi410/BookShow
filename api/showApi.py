@@ -222,7 +222,7 @@ class ListShowByNameApi(Resource):
 
     @marshal_with(userShow_output_fields)
     def get(self,name):
-        shows = db.session.query(Show).filter(Show.name.ilike(f'%{name}%')).all()
+        shows = db.session.query(Show).filter(Show.name.ilike(f'%{name}%')).order_by(desc(Show.timestamp)).all()
 
         if shows:
             return shows
@@ -236,7 +236,7 @@ class ChooseShowApi(Resource):
     def get(self):
         query = request.args.get('name')
 
-        shows = db.session.query(Show).filter(Show.name.ilike(f'%{query}%')).all()
+        shows = db.session.query(Show).filter(Show.name.ilike(f'%{query}%')).order_by(desc(Show.timestamp)).all()
 
         if shows:
             return shows

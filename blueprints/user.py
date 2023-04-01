@@ -27,6 +27,7 @@ def userHome():
 def userProfile():
     return render_template("userProfile.html", user=current_user)
 
+# ignore
 @user.route('/venues')
 @login_required
 def userVenues():
@@ -36,14 +37,18 @@ def userVenues():
     if pagedVenues.pages == 0:
         return render_template('userVenues.html',venuesPage=pagedVenues,noVenue=True, user=current_user)
     else:
-        return render_template('userVenues.html',venuesPage=pagedVenues, user=current_user)
+        return render_template('userVenues.html',venues=pagedVenues, user=current_user)
 
 @user.route('/venuesByCity/<city>')
 @login_required
 def userVenuesByCity(city):
     venueCall = requests.get(BASE_URL+'/api/venues/byCity/'+city)
     venues = venueCall.json()
-    return render_template('userVenues.html',venues=venues,city=city, user=current_user)
+
+    if venueCall.status_code != 200:
+        return render_template('userVenues.html',venues=venues,city=city,noVenue=True, user=current_user)
+    else:
+        return render_template('userVenues.html',venues=venues,city=city, user=current_user)
 
 @user.route('/searchVenueByName',methods=['POST'])
 @login_required
@@ -81,25 +86,34 @@ def popShows():
         pshowsCall = requests.get(BASE_URL+'/api/popShows/'+current_user.email)
         pshows= pshowsCall.json()
 
+        cityCall = requests.get(BASE_URL+'/api/city/all')
+        cities = cityCall.json()
+
         if pshowsCall.status_code == 404:
             return render_template('userShows.html',shows=pshows,heading="Latest Added Shows",showListEmpty=True, user=current_user)
         else:
-            return render_template('userShows.html',shows=pshows,heading="Latest Added Shows", user=current_user)
+            return render_template('userShows.html',shows=pshows,heading="Latest Added Shows", cities=cities, user=current_user)
   
 
-@user.route('/showsByName/', methods=['GET','POST'])
+@user.route('/showsByName', methods=['GET','POST'])
 @login_required
 def showsByName():
     if request.method == 'POST':
         name = request.form.get('sname')
 
+        if name == '':
+            return redirect(url_for('user.popShows'))
+
         showsByNameCall = requests.get(BASE_URL+'/api/shows/byName/'+name)
         shows = showsByNameCall.json()
+
+        cityCall = requests.get(BASE_URL+'/api/city/all')
+        cities = cityCall.json()
 
         if showsByNameCall.status_code == 404:
             return render_template('userShows.html',heading="Shows with name : "+name,showListEmpty=True, user=current_user)
         else:
-            return render_template('userShows.html',shows=shows,heading="Shows with name : "+name, user=current_user)
+            return render_template('userShows.html',shows=shows,heading="Shows with name : "+name, cities=cities, user=current_user)
 
 # ------------------- Timeslot ---------------------------
 

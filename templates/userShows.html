@@ -4,17 +4,9 @@
 
 {% block head %}
 <style>
-
-.ratings{
-    margin-left:10px;
-    color:#cecece;
-    font-size:16px;
+.offcanvas{
+        min-height: 90%;
 }
-
-.rating-color{
-    color:#fbc634;
-}
-
 </style>
 {% endblock %}
 
@@ -36,7 +28,6 @@
       </div>
       <div class="modal-body" id="reviewsModalBody">
         <ul class="list-group" id="reviews">
-
         </ul>
       </div>
       <div class="modal-footer">
@@ -55,6 +46,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body" id="filterModalBody">
+
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -64,14 +56,44 @@
     </div>
   </div>
 
+  <div class="offcanvas offcanvas-bottom" tabindex="-1" id="chVenueCanvas" aria-labelledby="offcanvasBottomLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="venuesShowTitle">Venues for : <small id="shwName"></small></h5>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div id="searchBar">
+          <div class="row">
+              <div class="col-4">
+                <div class="dropdown">
+                  <button class="btn btn-secondary dropdown-toggle" type="button" id="cityName" data-bs-toggle="dropdown" aria-expanded="false">
+                    Choose city
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    {% for city in cities %}
+                    <li><a  class="dropdown-item" href="#" data-columns="1" data-city="{{ city['city'] }}" onclick="getVenues();">{{ city['city'] }}</a></li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>       
+          </div>
+          <br/><br/>
+        </div>
+        <div class="row row-cols-2 row-cols-sm-5 row-md-4 g-4" id="chooseVenueCards">
+
+        </div>
+    </div>
+</div>
+
 <div class="container body">
     <div class="row">
-      <div class="col-12 col-sm-4"><h2>{{ heading }}</h2></div>
+      <div class="col-12 col-sm-8"><h2>{{ heading }}</h2></div>
+      <div class="col-12 col-sm-4 d-flex flex-row-reverse">
+        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" 
+        data-bs-target="#filterModal" style="padding: 1px 15px; background-color:rgb(32, 121, 118)">Filter</button>
+      </div>
     </div>
-    
-    <hr/><br/>
-  
-    <br/><br/>
+    <hr/><br/><br/>
     {% if showListEmpty is defined %}
     <br/><h2 class="alert alert-primary text-center">No Show available</h2>
     {% else %}
@@ -103,15 +125,19 @@
                 <span class="badge bg-dark text-white">{{ lng['name'] }}</span>&nbsp;
                 {% endfor %}
                 <span class="badge bg-info text-white">{{ show['duration'] }}</span>&nbsp;
-              </div><br/>
+              </div>
             </div>
             <div class="card-footer text-muted">
               <button type="button" data-columns="1" data-sname="{{ show['name'] }}" onclick="getReviews();"
               class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#reviewsModal">Reviews</button>&emsp13;
-              <button type="button" class="btn btn-sm btn-success">Venues</button>
+              
+              <button type="button" class="btn btn-sm btn-success" data-bs-toggle="offcanvas" onclick="setShow();"
+              data-bs-target="#chVenueCanvas" aria-controls="chVenueCanvas" data-columns="1" data-sname="{{ show['name'] }}">Venues</button>
             </div>
           </div>
         </div>
+
+
       {% endfor %}
     </div>
     {% endif %}
@@ -120,6 +146,8 @@
 
 {% block scripts %}
 <script>
+    cty = '';
+
       function getCardLayout(name,rating,comment,tmp,color){
         
         return `<li class="list-group-item d-flex justify-content-between align-items-start">
@@ -172,9 +200,62 @@
         
     })
     .catch(error => {
-        document.getElementById('reviewsModalBody').innerHTML = "<h3>No Reviews available</h3>";
+        document.getElementById('reviewsModalBody').innerHTML = "<h3>No Reviews yet</h3>";
         console.log(error)
     });
     }
+
+  function getVnCardLayout(sName,vName, vLoc, vCity){
+        
+        return `<div class="col">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">${ vName }</h5>
+                  <p class="card-text">
+                    <br/>Location : &nbsp;${ vLoc }, ${ vCity } 
+                    </p>
+                  <a href="/user/bookTimeslot/?show=${sName}&venue=${vName}" class="btn btn-primary">Choose Venue</a>
+                </div>
+              </div>
+            </div>`
+
+  }
+
+  function getVenues(){
+        
+    document.getElementById('chooseVenueCards').innerHTML = `<div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span></div>`;
+
+    vnEvent = event.target;
+    city = vnEvent.dataset.city;
+
+    sname = document.getElementById('shwName').innerHTML  
+    console.log(city,sname)
+    fetchUrl = 'http://127.0.0.1:5000/api/venues/byShow/'+sname+"?city="+city
+        
+      fetch(fetchUrl)
+    .then(async (response) => {
+
+        const data = await response.json();
+        let allCards = "";
+        for(const e of data){
+            allCards += getVnCardLayout(sname,e.name, e.location, e.city);
+        }
+        document.getElementById('chooseVenueCards').innerHTML = allCards;
+        
+    })
+    .catch(error => {
+        document.getElementById('chooseVenueCards').innerHTML = "<h3>Coming to this city soon...</h3>";
+        console.log(error)
+    });
+  }
+
+  function setShow(){
+        const showName = document.getElementById("shwName");
+        showEv = event.target;
+        show = showEv.dataset.sname;
+        showName.innerHTML = show;   
+  }
+
 </script>
 {% endblock %}

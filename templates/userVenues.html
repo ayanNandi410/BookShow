@@ -12,70 +12,21 @@
 {% block content %}
 
 <div class="body container">
-
-    {% if firstPage is defined %}
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-      <strong>Hello {{ user.name }}</strong> ,here are all the venues...
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    {% endif %}
-
     <div class="row">
       <div class="col-12 col-sm-4">
-      {% if name is not defined %}
-      <h2>Venues {% if city is defined %}<span class="badge bg-secondary bg-success">in {{ city }}</span>{% endif %}</h2><br/>
-      {% else %}
-      <h2>Search Results for {{ name }}:</h2>
-      {% endif %}
-      </div>
-      <div class="col-12 col-sm-8 d-flex flex-row-reverse">
-        <nav aria-label="Page navigation example">
-          <ul class="pagination">
-  
-              {% if venuesPage.has_prev %}
-              <li class="page-item">
-                  <a class='page-link' href="{{ url_for('user.userVenues', page=venuesPage.prev_num) }}">
-                  Previous</a>
-              </li>
-              {% endif %}
-  
-              {% for number in venuesPage.iter_pages() %}
-              {% if number %}
-              {% if venuesPage.page != number %}
-              <li class="page-item">
-                  <a  class='page-link'
-                      href="{{ url_for('user.userVenues', page=number) }}">
-                      {{ number }}
-                  </a>
-              </li>
-              {% else %}
-                  <li class="page-item"><a href="#" class='page-link active' aria-disabled="true">{{ number }}</a></li>
-              {% endif %}
-              {% else %}
-              <li class="page-item"><a href="#" class='page-link' aria-disabled="true">...</a></li>
-              {% endif %}
-              {% endfor %}
-  
-              {% if venuesPage.has_next %}
-              <li class="page-item">
-                  <a  class='page-link'
-                      href="{{ url_for('user.userVenues', page=venuesPage.next_num) }}">
-                      Next
-                  </a>
-              </li>
-          {% endif %}
-          </ul>
-          </nav>
-      </div>
-      <hr/>
+        {% if name is not defined %}
+          <h2>Venues {% if city is defined %}<span class="badge bg-secondary bg-success">in {{ city }}</span>{% endif %}</h2><br/>
+        {% else %}
+          <h2>Search Results for {{ name }}:</h2>
+        {% endif %}
+      </div>  
     </div>
     <br/><br/>
-
     {% if noVenue is defined %}
       <br/><h2 class="alert alert-primary text-center">No venue available</h2>
     {% else%}
-    <div class="row row-cols-md-3 row-cols-sm-6 row-cols-1 g-3">    
-    {% for venue in venuesPage %}
+    <div class="row row-cols-md-3 row-cols-sm-1 g-3">    
+    {% for venue in venues %}
     <div class="col">
       <div class="card p-3" style="width: 18rem; margin-right: 20px;">
         <div class="card-img-caption d-flex flex-row-reverse">

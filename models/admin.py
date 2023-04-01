@@ -76,7 +76,7 @@ class Allocation(db.Model):
     #show = db.relationship('Show', backref= db.backref('DayAllocation', cascade='all, delete-orphan' ))
 
     def __repr__(self):
-        return "< Allocation : "+self.venue.name+","+self.show.name+","+str(self.timeslot)+","+str(self.date)+">"
+        return "< Allocation : "+self.venue.name+","+self.show.name+","+str(self.timeslot)+","+str(self.timeslot)+">"
 
 class BookTicket(db.Model):
     __tablename__ = 'BookTicket'
