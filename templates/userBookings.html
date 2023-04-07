@@ -66,11 +66,14 @@
     </div>
   </div>
 
-<div class="container" style="margin-top: 8%;">
+<div class="container body">
     <h2>Bookings</h2><hr/>
     <br/>
 
-    <div class="container-fluid">    
+    <div class="vh-100">  
+      {% if bookingsEmpty is defined %}  
+      <h2 class="text-center alert alert-primary">No booking done yet</h2>
+      {% else %}
         <div class="list-group">
             {% for booking in bookings %}
             <div href="#" class="list-group-item list-group-item-action">
@@ -88,12 +91,15 @@
                 </div>
                 <div class="text-center">
                     <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#reviewModal"
-                    onclick="setShowName();" data-colums="1" data-sname="{{ booking['show'][0]['name'] }}" data-sid="{{ booking['show'][0]['id'] }}">Add Review</button>
+                    onclick="setShowName();" data-colums="1" data-sname="{{ booking['show'][0]['name'] }}" 
+                    data-sid="{{ booking['show'][0]['id'] }}">Add Review</button>
                 </div>
             </div>
             {% endfor %}
           </div>
+        {% endif %}
     </div>
+  </div>
 {% endblock %}
 
 {% block scripts %}

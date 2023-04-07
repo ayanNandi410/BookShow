@@ -36,6 +36,7 @@ def userSignup():
     db.session.add(new_user)
     db.session.commit()
 
+    flash('Successfully signed up','success')
     return redirect(url_for('authn.userLogin'))
 
 
@@ -104,4 +105,5 @@ def adminLogin():
 @login_required
 def logout():
     logout_user()
+    flash('Successfully logged out')
     return redirect(url_for('authn.userLogin'))

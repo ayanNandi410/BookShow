@@ -90,7 +90,7 @@
 <script>
   function setModalBody(date, timeslot, price) {
   const modal = document.getElementById('priceModalBody');
-  modal.innerText = " Date : "+date+"\n Time : "+timeslot+"\nPrice per person : "+price+"\n\nAre you sure you want to book?";
+  modal.innerHTML = " Date : "+date+"<br/> Time : "+timeslot+"<br/> Price per person :&nbsp;<span>&#x20B9;</span> "+price+"<br/><br/> Are you sure you want to book?";
   const bookBt = document.getElementById('bookBt');
   bookBt.href = "/user/bookTicket?show={{show}}&venue={{venue}}&date="+date+"&time="+timeslot+"&price="+price;
   }

@@ -212,7 +212,10 @@ def showBookings():
     bookingsCall = requests.get(BASE_URL+'/api/booking/'+current_user.email)
     bookings = bookingsCall.json()
 
-    return render_template('userBookings.html',bookings=bookings,user=current_user)
+    if bookingsCall.status_code != 200:
+        return render_template('userBookings.html',bookingsEmpty=True,user=current_user)
+    else:
+        return render_template('userBookings.html',bookings=bookings,user=current_user)
 
 # --------------- Movie Review ---------------------------
 
