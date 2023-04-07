@@ -16,10 +16,20 @@ nav{
     color:#fbc52f;
 }
 
+@media only screen and (max-width: 550px) {
+    .body{
+        margin-top: 20%;
+        margin-bottom: 15%;
+    }
+}
+
+@media only screen and (min-width: 560px) {
 .body{
-    margin-top: 8%;
-    margin-bottom: 20%;
+    margin-top: 7%;
+    padding-top: 20px;
+    margin-bottom: 7%;
     height: 100%;
+}
 }
 
 footer{

@@ -45,13 +45,118 @@
           <h1 class="modal-title fs-5" id="filterModalLabel">Filter Shows</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body" id="filterModalBody">
+        <form method="post" action="/user/filterShows">
 
+        <div class="modal-body" id="filterModalBody">
+          <div class="container">
+
+            <div class="row mb-3">
+              <div class="col-12">
+                  <div class="input-group input-group-md">
+                      <span class="input-group-text">Tags</span>
+                      <div class="form-control">
+                          <div class="form-check form-check-inline">
+                              <input type="checkbox" class="form-check-input" 
+                              id="TagAction" name="tags" value="Action">
+                              <label class="form-check-label" for="Action"> Action</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                              <input type="checkbox" class="form-check-input" 
+                              id="TagThriller" name="tags" value="Thriller">
+                              <label for="Thriller" class="form-check-label"> Thriller</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                              <input type="checkbox" class="form-check-input" 
+                              id="TagComedy" name="tags" value="Comedy">
+                              <label for="Comedy" class="form-check-label"> Comedy</label>    
+                          </div>
+                          <div class="form-check form-check-inline">
+                              <input type="checkbox" class="form-check-input" 
+                              id="TagHorror" name="tags" value="Horror">
+                              <label class="form-check-label" for="Horror"> Horror</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                              <input type="checkbox" class="form-check-input" 
+                              id="TagMystery" name="tags" value="Mystery">
+                              <label for="Mystery" class="form-check-label"> Mystery</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                              <input type="checkbox" class="form-check-input" 
+                              id="TagFantasy" name="tags" value="Fantasy">
+                              <label for="Fantasy" class="form-check-label"> Fantasy</label>    
+                          </div>
+                          <div class="form-check form-check-inline">
+                              <input type="checkbox" class="form-check-input" 
+                              id="TagDrama" name="tags" value="Drama">
+                              <label for="Drama" class="form-check-label"> Drama</label>    
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              <div id="tagCheck" class="invalid-feedback">&emsp;One tag must be selected</div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-12">
+                  <div class="input-group input-group-md">
+                      <span class="input-group-text">Languages</span>
+                      <div class="form-control">
+                          <div class="form-check form-check-inline">
+                              <input type="checkbox" class="form-check-input" 
+                              id="LangEnglish" name="languages" value="English">
+                              <label class="form-check-label" for="English"> English</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                              <input type="checkbox" class="form-check-input" 
+                              id="LangHindi" name="languages" value="Hindi">
+                              <label for="Hindi" class="form-check-label"> Hindi</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                              <input type="checkbox" class="form-check-input" 
+                              id="LangBengali" name="languages" value="Bengali">
+                              <label for="Bengali" class="form-check-label"> Bengali</label>    
+                          </div>
+                          <div class="form-check form-check-inline">
+                              <input type="checkbox" class="form-check-input" 
+                              id="LangTamil" name="languages" value="Tamil">
+                              <label class="form-check-label" for="Tamil"> Tamil</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                              <input type="checkbox" class="form-check-input" 
+                              id="LangTelegu" name="languages" value="Telegu">
+                              <label for="Telegu" class="form-check-label"> Telegu</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                              <input type="checkbox" class="form-check-input" 
+                              id="LangMalayalam" name="languages" value="Malayalam">
+                              <label for="Malayalam" class="form-check-label"> Malayalam</label>    
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              <div id="langCheck" class="invalid-feedback">&emsp;One Language must be selected</div>
+          </div>
+
+          <div class="col-12 col-sm-8 mb-3">
+            <label for="userRating" class="form-label">Rating (greater than) <span id="ratingValue" class="badge bg-primary text-white" on="changeColour();">5</span></label>
+            <input type="range" class="form-range" min="0" max="10" value="5" step="1" 
+            name="userRating" id="userRating" onchange="updateRating(this.value);" required>
+          </div>
+          
+          <div class="col-12 mb-3">
+            <label for="runningShows" class="form-radio-label">Display only running shows? </label>
+            <input type="radio" class="form-radio-input" name="runShows" value="yes" checked> Yes
+            &emsp14;<input type="radio" class="form-radio-input" name="runShows" value="no"> No
+          </div>
+          <br/>
+
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <a href="#" id="venueDeleteBt" class="btn btn-primary">Filter</a>
+          <button type="submit" id="filterBt" class="btn btn-primary">Filter</a>
         </div>
+        </form>
       </div>
     </div>
   </div>
@@ -90,12 +195,14 @@
       <div class="col-12 col-sm-8"><h2>{{ heading }}</h2></div>
       <div class="col-12 col-sm-4 d-flex flex-row-reverse">
         <button type="button" class="btn btn-secondary" data-bs-toggle="modal" 
-        data-bs-target="#filterModal" style="padding: 1px 15px; background-color:rgb(32, 121, 118)">Filter</button>
+        data-bs-target="#filterModal" style="padding: 1px 15px; background-color:rgb(32, 121, 118)">Filter Shows</button>
       </div>
     </div>
     <hr/><br/><br/>
     {% if showListEmpty is defined %}
-    <br/><h2 class="alert alert-primary text-center">No Show available</h2>
+    <div class="vh-100">
+      <br/><h2 class="alert alert-primary text-center" style="width: 50%; margin: auto;">No Show available</h2>
+    </div>
     {% else %}
     <div class="row row-cols-md-3 row-cols-sm-2 row-cols-xs-1 row-cols-1 g-3">    
     {% for show in shows %}
@@ -205,7 +312,7 @@
     });
     }
 
-  function getVnCardLayout(sName,vName, vLoc, vCity){
+  function getVnCardLayout(sName,vId,vName, vLoc, vCity){
         
         return `<div class="col">
               <div class="card">
@@ -214,7 +321,7 @@
                   <p class="card-text">
                     <br/>Location : &nbsp;${ vLoc }, ${ vCity } 
                     </p>
-                  <a href="/user/bookTimeslot/?show=${sName}&venue=${vName}" class="btn btn-primary">Choose Venue</a>
+                  <a href="/user/bookTimeslot/?show=${sName}&vid=${ vId }" class="btn btn-primary">Choose Venue</a>
                 </div>
               </div>
             </div>`
@@ -231,15 +338,15 @@
 
     sname = document.getElementById('shwName').innerHTML  
     console.log(city,sname)
-    fetchUrl = 'http://127.0.0.1:5000/api/venues/byShow/'+sname+"?city="+city
+    fetchUrl = 'http://127.0.0.1:5000/api/venues/byShow/'+sname+"?city="+city;
         
-      fetch(fetchUrl)
+    fetch(fetchUrl)
     .then(async (response) => {
 
         const data = await response.json();
         let allCards = "";
         for(const e of data){
-            allCards += getVnCardLayout(sname,e.name, e.location, e.city);
+            allCards += getVnCardLayout(sname,e.id, e.name, e.location, e.city);
         }
         document.getElementById('chooseVenueCards').innerHTML = allCards;
         
@@ -255,6 +362,27 @@
         showEv = event.target;
         show = showEv.dataset.sname;
         showName.innerHTML = show;   
+  }
+
+  function updateRating(val) 
+  {
+          document.getElementById('ratingValue').innerHTML=val; 
+          let value = parseInt(val);
+          console.log(value);
+        if(value < 4)
+        {
+            document.getElementById('ratingValue').classList.remove("bg-primary","bg-success","bg-warning","bg-danger");
+            document.getElementById('ratingValue').classList.add("bg-danger");
+        }        
+        else if(value > 7)
+        {
+            document.getElementById('ratingValue').classList.remove("bg-primary","bg-success","bg-warning","bg-danger");
+            document.getElementById('ratingValue').classList.add("bg-success");
+        }
+        else{
+            document.getElementById('ratingValue').classList.remove("bg-primary","bg-success","bg-warning","bg-danger");
+            document.getElementById('ratingValue').classList.add("bg-warning");
+        }
   }
 
 </script>

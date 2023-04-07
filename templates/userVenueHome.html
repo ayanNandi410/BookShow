@@ -34,16 +34,11 @@
         {% for show in shows %}
         <div class="col">
           <div class="card">
-            <img src="{{ url_for('static',filename='show.png')}}" class="card-img-top" id="BlurImage" alt="{{ show['name'] }}">
-            <!--
-            <div class="card-img-overlay text-white">
-            </div>
-          -->
             <div class="card-body">
-              <h5 class="card-title">{{ show['name'] }}</h5>
-              <p class="card-text">
+              <h5 class="card-title">{{ show['name'] }}</h5><br/>
+              <div class="card-text">
                 <!-- <br/>Ticket Price : &nbsp;&#8377;{{ show['ticketPrice'] }}<br/>  -->
-                <div class="card-text ratings">
+                <div class="ratings" style="padding: 3px 5px;">
                   {% for i in range(1,6) %}
                     {% if(i <= (show['rating']/2)) %}
                       <i class="fa fa-star rating-color"></i>
@@ -58,8 +53,8 @@
                 {% for tagItem in show['languages'] %}
                 <span class="badge bg-success">{{ tagItem['name'] }}</span>&nbsp;
                 {% endfor %}
-                </p>
-              <a href="/user/bookTimeslot/?show={{ show['name'] }}&venue={{ venue['name'] }}" class="btn btn-primary">Buy Tickets</a>
+              </div><br/>
+              <a href="/user/bookTimeslot/?show={{ show['name'] }}&vid={{ venue['id'] }}" class="btn btn-primary">Buy Tickets</a>
             </div>
           </div>
         </div>

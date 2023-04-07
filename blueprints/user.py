@@ -1,6 +1,6 @@
 from flask import Blueprint, request, flash, redirect, url_for
 import requests
-from datetime import datetime,timedelta
+from datetime import datetime, timedelta, date
 from flask import render_template
 from flask_login import login_required, current_user
 from models.admin import Venue, Show
@@ -61,21 +61,21 @@ def userVenuesByName():
     else:
         return render_template('NotFound.html', user=current_user)
 
-@user.route('/venueHome/<name>')
+@user.route('/venueHome', methods=['GET','POST'])
 @login_required
-def userVenueHome(name):
-    venueCall = requests.get(BASE_URL+'/api/venue/'+name)
-    venue = venueCall.json()
-    venue_id = venue['id']
-    cur_venue = Venue.query.filter(Venue.id == venue_id).first()
+def userVenueHome():
 
-    showsByVenueCall = requests.get(BASE_URL+'/api/shows/byVenue/'+name)
+    venue_id = request.form.get('vid')
+    venueCall = requests.get(BASE_URL+'/api/venue/'+str(venue_id))
+    venue = venueCall.json()
+
+    showsByVenueCall = requests.get(BASE_URL+'/api/shows/byVenue/'+str(venue_id))
     shows = showsByVenueCall.json()
 
-    if showsByVenueCall.status_code == 404 and shows['error_code'] == "SW008":
-        return render_template('userVenueHome.html',venue=cur_venue,showListEmpty=True, user=current_user)
+    if showsByVenueCall.status_code == 404:
+        return render_template('userVenueHome.html',venue=venue,showListEmpty=True, user=current_user)
     else:
-        return render_template('userVenueHome.html',venue=cur_venue,shows=shows, user=current_user)
+        return render_template('userVenueHome.html',venue=venue,shows=shows, user=current_user)
     
 # --------------------- Shows -----------------------------
 
@@ -121,13 +121,21 @@ def showsByName():
 @login_required
 def bookTimeslot():
     show = request.args.get('show')
-    venue = request.args.get('venue')
+    venueId = request.args.get('vid')
 
-    query = {'show': show, 'venue': venue}
-    timeslotsCall = requests.get(BASE_URL+'/api/allocation',params=query)
+    from datetime import date
+    sDate = date.today()
+    eDate = date.today()+ timedelta(days=7)
+
+    query = {'show': show, 'vid' : venueId, 'startDate' : sDate, 'endDate' : eDate}
+    timeslotsCall = requests.get(BASE_URL+'/api/allocations/dateRange',params=query)
     timeslots = timeslotsCall.json()
     print(timeslots)
     slots = {}
+
+    vnCall = requests.get(BASE_URL+'/api/venue/'+venueId)
+    vn = vnCall.json()
+    venue = vn['name']
 
     if  timeslotsCall.status_code == 404 and timeslots['error_code'] == "AL011":
         return render_template("bookTimeslot.html",show=show,venue=venue,emptySlotList=True)
@@ -146,7 +154,7 @@ def bookTimeslot():
                     slots[item['date']].append((item['time'],item['avSeats'],item['price']))
 
         dateList, dayList = [],[]
-        from datetime import date
+
         curdate = date.today()
         for i in range(7): 
             dateList.append(curdate)
@@ -212,6 +220,7 @@ def showBookings():
 @login_required
 def addReview():
     show = request.form.get('showName')
+    showId =  request.form.get('showId')
     email = current_user.email
     gRating = request.form.get('userRating')
     comment = request.form.get('userComment')
@@ -221,13 +230,26 @@ def addReview():
     reviewsPostCall = requests.post(BASE_URL+'/api/review',json=reviewJson)
     response = reviewsPostCall.json()
 
-    if reviewsPostCall.status_code != 200:
-        if 'error_message' in response.keys():
-            flash(response['error_message'],'error')
-        else:
-            flash('Some error occured. Try Again...','error')
+    updateReviewJson = { 'show_id' : showId, 'rating' : gRating }
+    print(updateReviewJson)
+
+    statusCode = 404
+    i = 0
+    while statusCode != 200 and i<10:
+        i+=1
+        reviewUpdatePostCall = requests.post(BASE_URL+'/api/updateReview',json=updateReviewJson)
+        statusCode = reviewUpdatePostCall.status_code
+
+    if i==10:
+        flash('Could not process review','error')
     else:
-        flash('Succesfully added your review','success') 
+        if reviewsPostCall.status_code != 200:
+            if 'error_message' in response.keys():
+                flash(response['error_message'],'error')
+            else:
+                flash('Some error occured. Try Again...','error')
+        else:
+            flash('Succesfully added your review','success') 
 
     return redirect(url_for('user.showBookings'))
 
@@ -237,3 +259,27 @@ def getReviews(sname):
 
     reviewsCall = requests.get(BASE_URL+'/api/review/'+sname)
     reviews = reviewsCall.json()
+
+
+@user.route('/filterShows', methods=["POST"])
+@login_required
+def filterShows():
+    tags = request.form.getlist('tags')
+    langs = request.form.getlist('languages')
+    rating = request.form.get('userRating')
+    runningShows = request.form.get('runShows')
+
+    filterData = { 'tags' : tags, 'languages' : langs, 'rating' : rating, 'runningShows' : runningShows}
+
+    filterCall = requests.post(BASE_URL+'/api/filterShows',json=filterData)
+    shows = filterCall.json()
+
+    cityCall = requests.get(BASE_URL+'/api/city/all')
+    cities = cityCall.json()
+
+    if filterCall.status_code == 404:
+        return render_template('userShows.html',heading="Shows with filters : ",showListEmpty=True, user=current_user)
+    else:
+        return render_template('userShows.html',shows=shows,heading="Shows with filters : ",cities=cities, user=current_user)
+
+

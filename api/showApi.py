@@ -40,6 +40,11 @@ create_show_parser.add_argument('tags', type=str, action='append', location='jso
 create_show_parser.add_argument('languages', type=str, action='append', location='json')
 create_show_parser.add_argument('duration')
 
+filter_show_parser = reqparse.RequestParser()
+filter_show_parser.add_argument('rating',type=int)
+filter_show_parser.add_argument('runningShows')
+filter_show_parser.add_argument('tags', type=str, action='append', location='json')
+filter_show_parser.add_argument('languages', type=str, action='append', location='json')
 
 class ShowAPI(Resource):
 
@@ -206,8 +211,8 @@ class ShowAPI(Resource):
 class ListShowByVenueApi(Resource):
 
     @marshal_with(userShow_output_fields)
-    def get(self,venue):
-        venue = db.session.query(Venue).filter(Venue.name == venue).first()
+    def get(self,vid):
+        venue = db.session.query(Venue).filter(Venue.id == vid).first()
         shows = venue.shows
         
         if len(shows) == 0:
@@ -259,6 +264,61 @@ class PopularShowsApi(Resource):
 
         if shows:
             return shows
+        else:
+            raise NotFoundError(error_message='No Shows found',status_code=404,error_code="SW013")
+        
+class FilterShowsApi(Resource):
+
+    @marshal_with(userShow_output_fields)
+    def post(self):
+        vn_args = filter_show_parser.parse_args()
+        tags = vn_args.get('tags',[])
+        languages = vn_args.get('languages',[])
+        rating = vn_args.get('rating',None)
+        runShows = vn_args.get('runningShows',None)
+        print(runShows,tags,languages)
+        
+        tagList = []
+        langList = []
+        shows = []
+
+        if tags != [] and tags is not None:
+            for tagName in tags:
+                tag = db.session.query(Tag).filter(Tag.name == tagName).first()
+                if not tag:
+                    raise BusinessValidationError(status_code=400,error_code="SW0021",error_message="Tag "+tagName+" not found")
+                tagList.append(tag)
+
+            for tag in tagList:
+                for show in tag.show:
+                    if show not in shows:
+                        shows.append(show)
+
+        if languages != [] and languages is not None:
+            for langName in languages:
+                lng = db.session.query(Language).filter(Language.name == langName).first()
+                if not lng:
+                    raise BusinessValidationError(status_code=400,error_code="SW0022",error_message="Language "+langName+" not found")
+                langList.append(lng)
+
+            for lang in langList:
+                for show in lang.show:
+                    if show not in shows:
+                        shows.append(show)
+
+        if rating is not None and rating != '':
+            for show in shows:
+                if show.rating < rating:
+                    shows.remove(show)
+        if runShows is not None and runShows == 'yes':
+            for show in shows:
+                if show.venues == []:
+                    shows.remove(show)
+
+        
+        # shows = db.session.query(Show).order_by(desc(Show.timestamp)).limit(10).all()
+        if shows:
+            return list(shows)
         else:
             raise NotFoundError(error_message='No Shows found',status_code=404,error_code="SW013")
         

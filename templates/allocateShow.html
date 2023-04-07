@@ -54,7 +54,7 @@
         <div id="searchBar">
             <div class="row">
                 <div class="col-4">
-                    <input class="form-control form-control-sm me-2" id="searchVenueName" type="search" placeholder="Search for venues" aria-label="Search">
+                    <input class="form-control form-control-sm me-2" id="searchVenueName" type="search" placeholder="Search for shows" aria-label="Search">
                 </div>
                 <div class="col-2">
                     <button class="btn btn-sm btn-outline-success" type="button" onclick="getShows();">Search</button>
@@ -109,13 +109,14 @@
     </div>
 </div>
 
-<div class="body" style="margin-top: 10%; margin-bottom: 10%;">
+<div class="body vh-100">
 
     <div class="container h-custom">
         <h2>Allocate Show</h2><hr/><br/>
         <div class="d-flex justify-content-center h-100">
           <form class="mt-4" action="/admin/allocation/add?venue={{ vname }}" method="post" enctype=multipart/form-data>  
             <!-- Name input -->
+            <input type="number" value="{{ vid }}" name="venue_id" style="display: none;">
             <div class="row mb-3">
                 <div class="col-12 col-sm-6">
                     <div class="input-group input-group-md mb-3">
@@ -129,7 +130,7 @@
                     <div class="input-group input-group-md mb-3">
                         <span class="input-group-text" name="showName">For Show</span>
                         <input type="text" class="form-control" name="showName" id="showName" 
-                        placeholder="Not choosen" aria-label="Show Name" value="" readonly>
+                        placeholder="Not choosen" aria-label="Show Name" readonly required>
                     </div>
                 </div>
                 <div class="col-12 col-sm-6">
@@ -155,7 +156,7 @@
                     <div class="input-group input-group-md mb-3">
                         <span class="input-group-text" >Release Date</span>
                         <input type="date" class="form-control" name="showReleaseDate" 
-                        id="showReleaseDate" aria-label="Show Release Date" required>
+                        id="showReleaseDate" aria-label="Show Release Date" min="{{ curDate }}" required>
                     </div>
                 </div>
             </div>

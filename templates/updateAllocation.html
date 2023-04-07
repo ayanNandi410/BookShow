@@ -109,19 +109,20 @@
     </div>
 </div>
 
-<div class="body" style="margin-top: 10%; margin-bottom: 10%;">
+<div class="body vh-100">
 
     <div class="container h-custom">
         <h2>Allocate Show</h2><hr/><br/>
         <div class="d-flex justify-content-center h-100">
-          <form class="mt-4" action="/admin/allocation/add?venue={{ vname }}" method="post" enctype=multipart/form-data>  
+          <form class="mt-4" action="/admin/allocation/update?aid={{ alloc['id'] }}" method="post" enctype=multipart/form-data>  
+            <input type="number" value="{{ vid }}" name="venue_id" style="display: none;">
             <!-- Name input -->
             <div class="row mb-3">
                 <div class="col-12 col-sm-6">
                     <div class="input-group input-group-md mb-3">
                         <span class="input-group-text" name="venueName">For Venue</span>
                         <input type="text" class="form-control" name="venueName" 
-                        id="venueName" value="{{ vname }}" aria-label="venueName" readonly>
+                        id="venueName" value="{{ alloc['venue'] }}" aria-label="venueName" readonly>
                     </div>
                 </div>
             <div class="row mb-3">
@@ -129,14 +130,15 @@
                     <div class="input-group input-group-md mb-3">
                         <span class="input-group-text" name="showName">For Show</span>
                         <input type="text" class="form-control" name="showName" id="showName" 
-                        placeholder="Not choosen" aria-label="Show Name" value="" readonly>
+                        placeholder="Not choosen" aria-label="Show Name" value="{{ alloc['show'] }}" readonly>
                     </div>
                 </div>
                 <div class="col-12 col-sm-6">
                     <div class="col-4">
                         <button type="button" class="btn btn-success btn-md"
                         style="padding-left: 2.5rem; padding-right: 2.5rem;" 
-                        data-bs-toggle="offcanvas" data-bs-target="#chShowCanvas" aria-controls="chShowCanvas">Choose Show</button>
+                        data-bs-toggle="offcanvas" data-bs-target="#chShowCanvas"
+                         aria-controls="chShowCanvas">Choose Show</button>
                     </div>
                 </div>
             </div>
@@ -155,7 +157,7 @@
                     <div class="input-group input-group-md mb-3">
                         <span class="input-group-text" >Release Date</span>
                         <input type="date" class="form-control" name="showReleaseDate" 
-                        id="showReleaseDate" aria-label="Show Release Date" required>
+                        id="showReleaseDate" aria-label="Show Release Date" value="{{ alloc['date'] }}" required>
                     </div>
                 </div>
             </div>
@@ -165,7 +167,7 @@
                     <div class="input-group input-group-md mb-3">
                         <span class="input-group-text" >Release Time</span>
                         <input type="time" class="form-control" name="showReleaseTime" 
-                        id="showReleaseTime" min="06:00" max="23:00" required>
+                        id="showReleaseTime" min="06:00" max="23:00" value="{{ alloc['time'] }}" required>
                     </div>
                 </div>
             </div>
@@ -175,7 +177,7 @@
                     <div class="input-group input-group-md mb-3">
                         <span class="input-group-text">Number of Seats</span>
                         <input type="number" class="form-control" name="allocSeats" 
-                        id="allocSeats" aria-label="allocSeats" required>
+                        id="allocSeats" aria-label="allocSeats" value="{{ alloc['totSeats'] }}" required>
                     </div>
             </div>
 
@@ -184,7 +186,7 @@
                     <div class="input-group input-group-md mb-3">
                         <span class="input-group-text" >Ticket Price</span>
                         <input type="number" step=".01" class="form-control" name="showTicketPrice" 
-                        id="showTicketPrice" placeholder="450.00" aria-label="Show Ticket Price" required>
+                        id="showTicketPrice" placeholder="450.00" aria-label="Show Ticket Price" value="{{ alloc['price'] }}" required>
                     </div>
                 </div>
             </div>
@@ -192,7 +194,7 @@
             <div class="row mb-3">
                 <div class="col-4 offset-5">
                     <button type="submit" class="btn btn-primary btn-md"
-                    style="padding-left: 2.5rem; padding-right: 2.5rem;">Allocate Show Timings</button>
+                    style="padding-left: 2.5rem; padding-right: 2.5rem;">Update Timings</button>
                 </div>
             </div>
           </form>

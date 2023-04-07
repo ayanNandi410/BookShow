@@ -20,6 +20,7 @@ venue_output_fields = {
 }
 
 show_output_fields = {
+    "id" : fields.Integer,
     "name" : fields.String
 }
 

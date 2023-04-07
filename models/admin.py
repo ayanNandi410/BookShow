@@ -104,3 +104,15 @@ class MovieReview(db.Model):
 
     def __repr__(self):
         return "< Review : "+str(self.comment)+","+str(self.gRating)+","+self.user_email+">"
+
+class CalcReview(db.Model):
+    __tablename__ = 'CalcReview'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    show_id = db.Column(db.Integer, nullable=False)
+    oneStarRatings = db.Column(db.Integer, nullable=False)
+    twoStarRatings = db.Column(db.Integer, nullable=False)
+    threeStarRatings = db.Column(db.Integer, nullable=False)
+    fourStarRatings = db.Column(db.Integer, nullable=False)
+    fiveStarRatings = db.Column(db.Integer, nullable=False)
+    totalRatings = db.Column(db.Integer, nullable=False)
+    avRating = db.Column(db.String, nullable=False)

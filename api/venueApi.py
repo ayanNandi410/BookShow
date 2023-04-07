@@ -19,6 +19,7 @@ venue_output_fields = {
 
 # for POST and PUT request
 create_venue_parser = reqparse.RequestParser()
+create_venue_parser.add_argument('id',type=int)
 create_venue_parser.add_argument('name')
 create_venue_parser.add_argument('location')
 create_venue_parser.add_argument('city')
@@ -209,3 +210,17 @@ class VenueListByShowApi(Resource):
             return venues
         else:
             raise NotFoundError(error_message='No Venues found for show',status_code=404,error_code="VN011")
+        
+
+# Get Venue List by Venue Name
+class GetVenueByNameApi(Resource):
+
+    @marshal_with(venue_output_fields)
+    def get(self,name):
+        venue = db.session.query(Venue).filter(Venue.name == name).first()
+
+        if venue:
+            return venue
+        else:
+            raise NotFoundError(error_message='No Venue found for this name',status_code=404,error_code="VN010")
+        

@@ -84,11 +84,11 @@ def addData(db):
         allocDetails4 = Allocation(venue_id=2,show_id=2,timeslot=datetime(2020, 2, 8, 8, 5, 00),totSeats=210,avSeats=20,price=330.50)
         allocDetails5 = Allocation(venue_id=2,show_id=4,timeslot=datetime(2020, 2, 8, 9, 5, 00),totSeats=210,avSeats=20,price=330.50)
         
-        allocDetails6 = Allocation(venue_id=2,show_id=1,timeslot=datetime(2023, 3, 28, 10, 5, 00),totSeats=210,avSeats=20,price=330.50)
-        allocDetails8 = Allocation(venue_id=2,show_id=1,timeslot=datetime(2023, 3, 29, 11, 5, 00),totSeats=210,avSeats=20,price=330.50)
-        allocDetails9 = Allocation(venue_id=2,show_id=1,timeslot=datetime(2023, 3, 31, 12, 5, 00),totSeats=210,avSeats=20,price=330.50)
-        allocDetails10 = Allocation(venue_id=2,show_id=1,timeslot=datetime(2023, 3, 27, 9, 5, 00),totSeats=210,avSeats=0,price=330.50)
-        allocDetails11 = Allocation(venue_id=2,show_id=1,timeslot=datetime(2023, 3, 28, 9, 5, 00),totSeats=210,avSeats=20,price=330.50)
+        allocDetails6 = Allocation(venue_id=2,show_id=1,timeslot=datetime(2023, 4, 10, 10, 5, 00),totSeats=210,avSeats=20,price=330.50)
+        allocDetails8 = Allocation(venue_id=2,show_id=1,timeslot=datetime(2023, 4, 11, 11, 5, 00),totSeats=210,avSeats=20,price=330.50)
+        allocDetails9 = Allocation(venue_id=2,show_id=1,timeslot=datetime(2023, 4, 12, 12, 5, 00),totSeats=210,avSeats=20,price=330.50)
+        allocDetails10 = Allocation(venue_id=2,show_id=1,timeslot=datetime(2023, 4, 13, 9, 5, 00),totSeats=210,avSeats=0,price=330.50)
+        allocDetails11 = Allocation(venue_id=2,show_id=1,timeslot=datetime(2023, 4, 15, 9, 5, 00),totSeats=210,avSeats=20,price=330.50)
         
         allocDetails7 = Allocation(venue_id=2,show_id=6, timeslot=datetime(2020, 2, 8, 11, 5, 00),totSeats=210,avSeats=20,price=330.50)
         db.session.add(allocDetails1)
@@ -103,15 +103,15 @@ def addData(db):
         db.session.add(allocDetails10)
         db.session.add(allocDetails11)
 
-        allocDetails1 = Allocation(venue_id=1,show_id=2,timeslot=datetime(2023, 3, 30, 11, 00, 00),totSeats=120,avSeats=100,price=234.50)
-        allocDetails2 = Allocation(venue_id=1,show_id=2,timeslot=datetime(2021, 3, 31, 9, 5, 00),totSeats=150,avSeats=80,price=430.50)
-        allocDetails3 = Allocation(venue_id=3,show_id=3,timeslot=datetime(2020, 3, 30, 7, 5, 00),totSeats=210,avSeats=20,price=330.50)
-        allocDetails4 = Allocation(venue_id=3,show_id=3,timeslot=datetime(2020, 3, 29, 8, 5, 00),totSeats=210,avSeats=20,price=330.50)
+        allocDetails1 = Allocation(venue_id=1,show_id=2,timeslot=datetime(2023, 4, 8, 11, 00, 00),totSeats=120,avSeats=100,price=234.50)
+        allocDetails2 = Allocation(venue_id=1,show_id=2,timeslot=datetime(2021, 4, 8, 9, 5, 00),totSeats=150,avSeats=80,price=430.50)
+        allocDetails3 = Allocation(venue_id=3,show_id=3,timeslot=datetime(2020, 4, 9, 7, 5, 00),totSeats=210,avSeats=20,price=330.50)
+        allocDetails4 = Allocation(venue_id=3,show_id=3,timeslot=datetime(2020, 4, 12, 8, 5, 00),totSeats=210,avSeats=20,price=330.50)
         allocDetails5 = Allocation(venue_id=1,show_id=4,timeslot=datetime(2020, 3, 28, 9, 5, 00),totSeats=210,avSeats=20,price=330.50)
         
         allocDetails6 = Allocation(venue_id=3,show_id=2,timeslot=datetime(2023, 3, 28, 10, 5, 00),totSeats=210,avSeats=20,price=330.50)
-        allocDetails8 = Allocation(venue_id=3,show_id=3,timeslot=datetime(2023, 3, 29, 11, 5, 00),totSeats=210,avSeats=20,price=330.50)
-        allocDetails9 = Allocation(venue_id=1,show_id=2,timeslot=datetime(2023, 3, 31, 12, 5, 00),totSeats=210,avSeats=20,price=330.50)
+        allocDetails8 = Allocation(venue_id=3,show_id=3,timeslot=datetime(2023, 4, 13, 11, 5, 00),totSeats=210,avSeats=20,price=330.50)
+        allocDetails9 = Allocation(venue_id=1,show_id=2,timeslot=datetime(2023, 4, 14, 12, 5, 00),totSeats=210,avSeats=20,price=330.50)
         allocDetails10 = Allocation(venue_id=1,show_id=3,timeslot=datetime(2023, 3, 27, 9, 5, 00),totSeats=210,avSeats=0,price=330.50)
         allocDetails11 = Allocation(venue_id=1,show_id=4,timeslot=datetime(2023, 3, 28, 9, 5, 00),totSeats=210,avSeats=20,price=330.50)
         

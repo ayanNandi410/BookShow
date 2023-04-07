@@ -48,7 +48,6 @@
 {% endwith %}
 
 <div class="container body">
-    
     <div class="row">
       <div class="col-12 col-sm-4"><h2>&emsp;Shows</h2></div>
       <div class="col-12 col-sm-8 d-flex flex-row-reverse">
@@ -118,21 +117,24 @@
             </div>
             <div class="card-body">
               <h5 class="card-title">{{ show['name'] }}</h5>
-              <div class="card-text">
+              <div class="card-text mt-3">
                 {% for tag in show['tags'] %}
                 <span class="badge bg-success">{{ tag['name'] }}</span>&nbsp;
-                {% endfor %}<br/>
+                {% endfor %}
+              </div>
+              <div class="card-text mt-2">
                 {% for lng in show['languages'] %}
                 <span class="badge bg-dark text-white">{{ lng['name'] }}</span>&nbsp;
                 {% endfor %}
                 <span class="badge bg-info text-white">{{ show['duration'] }}</span>&nbsp;
-              </div><br/>
+              </div>
             </div>
             <div class="card-footer text-muted">
-              <a href="#" class="card-link" data-columns="2" data-sname="{{ show['name'] }}" 
+              <p>Added on {{ (show['timestamp'] | string )[:19] }}</p>
+              <a href="#" class="btn btn-sm btn-danger" data-columns="2" data-sname="{{ show['name'] }}" 
               data-vdur="{{ show['duration'] }}" onclick="setShowName();" data-bs-toggle="modal" 
-              data-bs-target="#deleteModal">Delete</a>
-              <a href="/admin/show/update?name={{ show['name'] }}" class="card-link">Update</a>
+              data-bs-target="#deleteModal">Delete</a>&emsp14;
+              <a href="/admin/show/update?name={{ show['name'] }}" class="btn btn-sm btn-warning">Update</a>
             </div>
           </div>
         </div>

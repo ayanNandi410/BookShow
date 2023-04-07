@@ -42,32 +42,33 @@
 {% endif %}
 {% endwith %}
 
-<div class="body" style="margin-top: 10%; margin-bottom: 10%;">
+<div class="body">
     <div class="container h-custom">
         <h2>Add new Show</h2><hr/><br/>
       <div class="d-flex justify-content-center align-items-center h-100">
 
-          <form class="mt-4" action="/admin/show/add" method="post" enctype=multipart/form-data>  
+          <form class="mt-4" action="/admin/show/add" method="post" onsubmit="return formValidate();">  
             <div class="row mb-3">
                 <div class="col-12 col-sm-6">
                     <div class="input-group input-group-md mb-3">
                         <span class="input-group-text" name="showName">Name</span>
                         <input type="text" class="form-control" name="showName" id="showName" 
-                        placeholder="Show Name" aria-label="Show Name">
+                        placeholder="Show Name" aria-label="Show Name" required>
                     </div>
                 </div>
-                <div class="col-12 col-sm-6">
-                    <div class="input-group input-group-md mb-3">
+                <div class="col-12 col-sm-6 mb-3">
+                    <div class="input-group input-group-md">
                         <span class="input-group-text">Initial Rating</span>
                         <input type="text" class="form-control" name="showRating" id="showRating" 
-                        placeholder="Out of 10" aria-label="Show Rating">
+                        placeholder="Out of 10" aria-label="Show Rating" required>
+                        <div id="ratingCheck" class="invalid-feedback">&emsp;Invalid value for rating</div>
                     </div>
                 </div>
             </div>
 
             <div class="row mb-3">
                 <div class="col-12">
-                    <div class="input-group input-group-md mb-3">
+                    <div class="input-group input-group-md">
                         <span class="input-group-text">Tags</span>
                         <div class="form-control">
                             <div class="form-check form-check-inline">
@@ -108,11 +109,12 @@
                         </div>
                     </div>
                 </div>
+                <div id="tagCheck" class="invalid-feedback">&emsp;One tag must be selected</div>
             </div>
 
             <div class="row mb-3">
                 <div class="col-12">
-                    <div class="input-group input-group-md mb-3">
+                    <div class="input-group input-group-md">
                         <span class="input-group-text">Languages</span>
                         <div class="form-control">
                             <div class="form-check form-check-inline">
@@ -148,6 +150,7 @@
                         </div>
                     </div>
                 </div>
+                <div id="langCheck" class="invalid-feedback">&emsp;One Language must be selected</div>
             </div>
 
             <div class="row mb-3">
@@ -155,7 +158,7 @@
                     <div class="input-group input-group-md mb-3">
                         <span class="input-group-text" >Duration</span>
                         <input type="text" class="form-control" name="showDuration" 
-                        id="showDuration" placeholder="2 hrs 3 min" aria-label="Show Duration">
+                        id="showDuration" placeholder="2 hrs 3 min" aria-label="Show Duration"  required>
                     </div>
                 </div>
             </div>
@@ -171,4 +174,63 @@
       </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function formValidate(){
+        let result = true;
+
+        let rating = document.getElementById('showRating');
+        if((rating.value>10) ||(rating.value<0))
+        {
+            document.getElementById('ratingCheck').style.display = "block";
+            result = false;
+        }
+        else{
+            document.getElementById('ratingCheck').style.display = "none";
+        }
+
+
+        let tags = document.getElementsByName('tags');
+        let count = 0;
+        for(var i=0; tags[i]; ++i)
+        {
+            if(tags[i].checked)
+            {
+                count++;
+                break;
+            }
+        }
+        if(count==0)
+        {
+            document.getElementById('tagCheck').style.display = "block";
+            result = false;
+        }
+        else{
+            document.getElementById('tagCheck').style.display = "none";
+        }
+
+        let lngs = document.getElementsByName('languages');
+        count = 0;
+        for(var i=0; lngs[i]; ++i)
+        {
+            if(lngs[i].checked)
+            {
+                count++;
+                break;
+            }
+        }
+        if(count==0)
+        {
+            document.getElementById('langCheck').style.display = "block";
+            result = false;
+        }
+        else{
+            document.getElementById('langCheck').style.display = "none";
+        }
+
+        return result;
+    }
+</script>
 {% endblock %}

@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template,request, redirect, url_for, flash, session
 from flask_login import login_required, current_user
 from sqlalchemy import desc
-from datetime import datetime
+from datetime import datetime, date
 from models.admin import Venue, Show
 from models.users import User
 #from ..models.Image import Image
@@ -131,7 +131,7 @@ def updateVenue():
         else:
             flash('Succesfully Updated','success') 
 
-        return render_template('updateVenue.html',vname=name, user=current_user)
+        return render_template('updateVenue.html',venue=venue, user=current_user)
     else:
         id = request.args.get('id')
 
@@ -258,17 +258,19 @@ def addShowForVenue(vname):
 @admin_login_required
 def allocateShow():
     vname = request.args.get('venue')
+    vid = request.args.get('vid')
     if request.method == "GET":
-        return render_template('allocateShow.html',vname=vname, user=current_user)
+        dateToday = date.today()
+        return render_template('allocateShow.html',vname=vname,vid=str(vid),curDate=dateToday, user=current_user)
     else:
+        vid = request.form.get('venue_id')
         sname = request.form.get('showName')
-        venue = request.form.get('venueName')
         rlDate = request.form.get('showReleaseDate')
         rlTime = request.form.get('showReleaseTime')
         allcSeats = request.form.get('allocSeats')
         ticketPrice = request.form.get('showTicketPrice',type=float)
 
-        showWithAllocation = { 'show_name' : sname, 'venue_name' : venue, 'releaseDate' : rlDate, 
+        showWithAllocation = { 'show_name' : sname, 'venue_id' : vid, 'releaseDate' : rlDate, 
                               'releaseTime' : rlTime, 'allocSeats' : int(allcSeats), 'price' : float(ticketPrice) }
         print(showWithAllocation)
 
@@ -291,18 +293,19 @@ def allocateShow():
 def getAllocations():
     show = request.args.get('show')
     venue = request.args.get('venue')
+    vid = request.args.get('vid')
     if request.method == 'GET':
-        return render_template('adminTimings.html',show=show,venue=venue,emptyAlloc=True,user=current_user), 200
+        return render_template('adminTimings.html',show=show,venue=venue,vid=vid,user=current_user), 200
     else:
         sDate = request.form.get('startDate')
         eDate = request.form.get('endDate')
-        resA = requests.get(BASE_URL+'/api/allocations/dateRange?show='+show+'&venue='+venue+'&startDate='+sDate+'&endDate='+eDate)
+        resA = requests.get(BASE_URL+'/api/allocations/dateRange?show='+show+'&vid='+str(vid)+'&startDate='+sDate+'&endDate='+eDate)
         response=resA.json()
 
     if resA.status_code != 200:
-        return render_template('adminTimings.html',show=show,venue=venue,emptyAlloc=True,user=current_user), 200
+        return render_template('adminTimings.html',show=show,venue=venue,vid=vid,emptyAlloc=True,user=current_user), 200
     else:
-        return render_template('adminTimings.html',show=show,venue=venue,sDate=sDate,eDate=eDate,allocations=response,user=current_user), 200
+        return render_template('adminTimings.html',show=show,venue=venue,vid=vid,sDate=sDate,eDate=eDate,allocations=response,user=current_user), 200
 
 
 @admin.route('/allocation/delete', methods=['GET'])
@@ -310,7 +313,8 @@ def getAllocations():
 def deleteAllocation():
     
     id = request.args.get('aid')
-    
+    vid = request.args.get('vid')
+
     resA = requests.delete(BASE_URL+'/api/allocation/'+str(id))
     response=resA.json()
 
@@ -327,22 +331,43 @@ def deleteAllocation():
     sDate = request.args.get('sDate')
     eDate = request.args.get('eDate')
 
-    return render_template('adminTimings.html',show=show,venue=venue,sDate=sDate,eDate=eDate,emptyAlloc=True,user=current_user), 200
+    return render_template('adminTimings.html',show=show,vid=vid,venue=venue,sDate=sDate,eDate=eDate,emptyAlloc=True,user=current_user), 200
 
 
-@admin.route('/allocation/update', methods=['GET'])
+@admin.route('/allocation/update', methods=['GET','POST'])
 @admin_login_required
 def updateAllocation():
-
     id = request.args.get('aid')
-    
-    resA = requests.update(BASE_URL+'/api/allocation/'+str(id))
-    response=resA.json()
+    vid = request.args.get('vid')
+    print(vid)
+    if request.method == 'GET':
+        resA = requests.get(BASE_URL+'/api/allocation/'+str(id))
+        response=resA.json()
 
-    if resA.status_code != 200:
-        if 'error_message' in response.keys():
-            flash(response['error_message'],'error')
-        else:
-             flash('Some error occured. Try Aagain...','error')
+        return render_template('updateAllocation.html',vid=response['venue_id'],alloc=response,user=current_user)
+
     else:
-        flash('Succesfully Deleted','success')
+        sname = request.form.get('showName')
+        venueName = request.form.get('venueName')
+        vid = request.form.get('venue_id')
+        rlDate = request.form.get('showReleaseDate')
+        rlTime = request.form.get('showReleaseTime')
+        allcSeats = request.form.get('allocSeats')
+        ticketPrice = request.form.get('showTicketPrice',type=float)
+
+        showWithAllocation = { 'show_name' : sname, 'venue_id' : int(vid), 'releaseDate' : rlDate, 
+                              'releaseTime' : rlTime, 'allocSeats' : int(allcSeats), 'price' : float(ticketPrice) }
+        print(showWithAllocation)
+
+        resA = requests.put(BASE_URL+'/api/allocation/'+str(id), json=showWithAllocation)
+        response=resA.json()
+
+        if resA.status_code != 201:
+            if 'error_message' in response.keys():
+                flash(response['error_message'],'error')
+            else:
+                flash('Some error occured. Try Again...','error')
+        else:
+            flash('Succesfully Updated','success') 
+        
+        return render_template('adminTimings.html',show=sname,vid=vid,venue=venueName,response=response,user=current_user), 201

@@ -11,7 +11,7 @@
 
 {% block content %}
 
-<div class="body container">
+<div class="body container" style="margin-bottom: 20%;">
     <div class="row">
       <div class="col-12 col-sm-4">
         {% if name is not defined %}
@@ -38,7 +38,10 @@
           <p class="card-text">
             <span class="badge rounded-pill bg-secondary" style="padding: 8px 10px;">{{ venue['location'] }}</span>
           </p>   
-          <a href="/user/venueHome/{{ venue['name'] }}" class="btn btn-primary">Explore</a>
+          <form method="post" action="/user/venueHome">
+              <input type="number" name="vid" value="{{ venue['id'] }}" style="display: none;">
+              <button type="submit" class="btn btn-primary">Explore</a>
+          </form>
         </div>
       </div>
     </div>

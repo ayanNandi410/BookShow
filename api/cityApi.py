@@ -11,7 +11,7 @@ class GetAllCitiesApi(Resource):
 
     @marshal_with(city_output_fields)
     def get(self):
-        cities = db.session.query(Venue.city).all()
+        cities = db.session.query(Venue.city).distinct()
 
         if cities:
             return DictToList(cities)

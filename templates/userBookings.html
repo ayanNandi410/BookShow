@@ -36,6 +36,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body" id="reviewModalBody">
+            <input type="number" id="showId" name="showId" style="display: none;">
             <div class="col-12 mb-4">
               <div class="form-floating">
                 <input type="text" class="form-control" name="showName" id="showName" readonly/>
@@ -87,7 +88,7 @@
                 </div>
                 <div class="text-center">
                     <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#reviewModal"
-                    onclick="setShowName();" data-colums="1" data-sname="{{ booking['show'][0]['name'] }}" ">Add Review</button>
+                    onclick="setShowName();" data-colums="1" data-sname="{{ booking['show'][0]['name'] }}" data-sid="{{ booking['show'][0]['id'] }}">Add Review</button>
                 </div>
             </div>
             {% endfor %}
@@ -100,7 +101,10 @@
     function setShowName(){
       sNameEvent = event.target;
       sname = sNameEvent.dataset.sname;
+      sid = sNameEvent.dataset.sid;
+      
       document.getElementById('showName').value = sname;
+      document.getElementById('showId').value = sid;
     }
 
     function updateRating(val) {
