@@ -234,7 +234,7 @@
         <span class="visually-hidden">Loading...</span></div>`;
 
     query = document.getElementById('searchVenueName').value; 
-        fetch('http://127.0.0.1:5000/api/choose/allShows?name='+query)
+        fetch('http://127.0.0.1:5000/api/shows/byName/'+query)
     .then(async (response) => {
 
         const data = await response.json();

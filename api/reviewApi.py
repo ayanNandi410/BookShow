@@ -7,6 +7,8 @@ from db import db
 from validation import NotFoundError, BusinessValidationError
 from sqlalchemy import desc, exc
 
+# Api to handle user reviews
+
 user_field = {
     "name" : fields.String
 }

@@ -8,6 +8,8 @@ from db import db
 from validation import NotFoundError, BusinessValidationError
 from datetime import datetime as dt
 
+# Api for working with show-venue allocations alongwith timing details
+
 allocation_output_fields = {
     "id" : fields.Integer,
     "venue_id" : fields.Integer,
@@ -20,6 +22,7 @@ allocation_output_fields = {
     "venue" : fields.String
 }
 
+# details visible to user
 userallocation_output_fields = {
     "id" : fields.Integer,
     "venue_id" : fields.Integer,
@@ -30,6 +33,7 @@ userallocation_output_fields = {
     "price" : fields.Float
 }
 
+# Parser details for post and put request
 create_allocation_parser = reqparse.RequestParser()
 create_allocation_parser.add_argument('venue_id',type=int)
 create_allocation_parser.add_argument('show_name')
@@ -42,6 +46,7 @@ create_allocation_parser.add_argument('price', type=float, help="Not a valid num
 
 class AllocationAPI(Resource):
 
+    # get an allocation by its id
     @marshal_with(allocation_output_fields)
     def get(self,aid):
 
@@ -55,6 +60,7 @@ class AllocationAPI(Resource):
                             "show" : timeslot.show.name, "venue" : timeslot.venue.name }
             return slot, 200
 
+    # create a new allocation
     def post(self):
         vn_args = create_allocation_parser.parse_args()
         venueId = vn_args.get('venue_id',None)
@@ -124,6 +130,7 @@ class AllocationAPI(Resource):
         db.session.commit()
         return "Success", 201
 
+    # update existing allocation
     def put(self,aid):
         vn_args = create_allocation_parser.parse_args()
         venueId = vn_args.get('venue_id',None)
@@ -194,6 +201,7 @@ class AllocationAPI(Resource):
         db.session.commit()
         return "Success", 201
     
+    # delete existing allocation
     def delete(self,aid):
 
         try:
@@ -207,7 +215,7 @@ class AllocationAPI(Resource):
             raise BusinessValidationError(status_code=500,error_code="AL017",error_message="Delete Transaction failed. Try again")
 
 
-
+# get allocations for a range of dates
 class AllocationBetweenDatesAPI(Resource):
 
     @marshal_with(userallocation_output_fields)

@@ -7,6 +7,7 @@ from db import db
 from validation import NotFoundError, BusinessValidationError
 from sqlalchemy import desc, exc
 
+# Api to update show rating 
 
 calcreview_output_fields = {
     "show_id": fields.Integer,
@@ -19,7 +20,7 @@ create_calcreview_parser.add_argument('show_id')
 create_calcreview_parser.add_argument('rating',type=int, help="Rating must be an integer")
 
 class CalcReviewAPI(Resource):
-
+    # get rating for a particular show
     @marshal_with(calcreview_output_fields)
     def get(self,sid):
 
@@ -30,7 +31,7 @@ class CalcReviewAPI(Resource):
         else:
             return rating, 200
 
-
+    # update rating for a particular show
     def post(self):
         bk_args = create_calcreview_parser.parse_args()
         showId = bk_args.get('show_id',None)
@@ -90,7 +91,7 @@ class CalcReviewAPI(Resource):
             db.session.rollback()
             raise BusinessValidationError(status_code=500,error_code="RW020",error_message="Update Rating Transaction failed. Try again")
 
-
+    # other requests
     def put(self,name):
         raise BusinessValidationError(status_code=405,error_code="CR010",error_message="Method not allowed")
     

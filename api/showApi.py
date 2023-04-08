@@ -7,6 +7,8 @@ from db import db
 from validation import NotFoundError, BusinessValidationError
 from datetime import datetime as dt
 
+# api for handling shows
+
 tag_output_fields = {
     "id" : fields.Integer,
     "name" : fields.String
@@ -48,6 +50,7 @@ filter_show_parser.add_argument('languages', type=str, action='append', location
 
 class ShowAPI(Resource):
 
+    # get a show by show name. Show names are assumed to be unique
     @marshal_with(userShow_output_fields)
     def get(self,name):
         shows = db.session.query(Show).filter(Show.name == name).first()
@@ -57,7 +60,7 @@ class ShowAPI(Resource):
         else:
             raise NotFoundError(error_message='Show not found',status_code=404,error_code="SW001")
 
-
+    # create a new show
     def post(self):
         vn_args = create_show_parser.parse_args()
         name = vn_args.get('name',None)
@@ -120,7 +123,7 @@ class ShowAPI(Resource):
             db.session.rollback()
             raise BusinessValidationError(status_code=500,error_code="SW017",error_message="Add Transaction failed. Try again")
 
-
+    # update existing show
     def put(self):
         vn_args = create_show_parser.parse_args()
         name = vn_args.get('name',None)
@@ -186,7 +189,7 @@ class ShowAPI(Resource):
             db.session.rollback()
             raise BusinessValidationError(status_code=500,error_code="SW018",error_message="Update Transaction failed. Try again")
 
-    
+    # delete existing show
     def delete(self,name):
         show = db.session.query(Show).filter(Show.name == name).first()
 
@@ -207,7 +210,7 @@ class ShowAPI(Resource):
             db.session.rollback()
             raise BusinessValidationError(status_code=500,error_code="VN013",error_message="Delete Transaction failed. Try again")
 
-    
+# get shows for a particular venue
 class ListShowByVenueApi(Resource):
 
     @marshal_with(userShow_output_fields)
@@ -223,6 +226,7 @@ class ListShowByVenueApi(Resource):
     def post(self):
         pass
 
+# get shows by name substring
 class ListShowByNameApi(Resource):
 
     @marshal_with(userShow_output_fields)
@@ -232,41 +236,23 @@ class ListShowByNameApi(Resource):
         if shows:
             return shows
         else:
-            raise NotFoundError(error_message='No Venues found for this name',status_code=404,error_code="SW010")
+            raise NotFoundError(error_message='No Shows found for this name',status_code=404,error_code="SW010")
         
 
-class ChooseShowApi(Resource):
-
-    @marshal_with(chooseShow_output_fields)
-    def get(self):
-        query = request.args.get('name')
-
-        shows = db.session.query(Show).filter(Show.name.ilike(f'%{query}%')).order_by(desc(Show.timestamp)).all()
-
-        if shows:
-            return shows
-        else:
-            raise NotFoundError(error_message='No Shows found for this name',status_code=404,error_code="SW011")
-        
-
+# get all recently allocated shows
 class PopularShowsApi(Resource):
 
     @marshal_with(userShow_output_fields)
     def get(self, email):
 
-        #popshows = db.session.query(BookTicket.show, func.sum(BookTicket.id).label('bookings')).filter(BookTicket.user_email == email).order_by(func.sum(BookTicket.id)).all()
         shows = db.session.query(Show).order_by(desc(Show.timestamp)).limit(10).all()
-
-        #showids = []
-        #for row in popshows:
-        #    showids.append(row.id)
-        #shows = db.session.query(Show).filter(Show.id._in(showids)).limit(10).all()
 
         if shows:
             return shows
         else:
             raise NotFoundError(error_message='No Shows found',status_code=404,error_code="SW013")
-        
+
+# filter on all shows       
 class FilterShowsApi(Resource):
 
     @marshal_with(userShow_output_fields)
@@ -315,8 +301,6 @@ class FilterShowsApi(Resource):
                 if show.venues == []:
                     shows.remove(show)
 
-        
-        # shows = db.session.query(Show).order_by(desc(Show.timestamp)).limit(10).all()
         if shows:
             return list(shows)
         else:

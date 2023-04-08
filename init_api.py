@@ -1,7 +1,7 @@
 # Api initialization
 from flask_restful import Resource, Api
 from api.venueApi import VenueAPI, VenueListByCityApi, VenueListByNameApi, VenueListByShowApi, GetVenueByNameApi
-from api.showApi import ShowAPI, ListShowByNameApi, ListShowByVenueApi, ChooseShowApi, PopularShowsApi, FilterShowsApi
+from api.showApi import ShowAPI, ListShowByNameApi, ListShowByVenueApi, PopularShowsApi, FilterShowsApi
 from api.cityApi import  GetAllCitiesApi
 from api.allocationApi import AllocationAPI, AllocationBetweenDatesAPI
 from api.bookingApi import BookTicketAPI
@@ -22,7 +22,6 @@ def getConfiguredApi(app):
     apiV.add_resource(ShowAPI,"/api/show","/api/show/<string:name>",endpoint="/show")
     apiV.add_resource(ListShowByVenueApi,"/api/shows/byVenue/<string:vid>",endpoint="/shows/byVenue/<vid>")
     apiV.add_resource(ListShowByNameApi,"/api/shows/byName/<string:name>",endpoint="/shows/byName/<name>")
-    apiV.add_resource(ChooseShowApi,"/api/choose/allShows",endpoint="/allShows")
     apiV.add_resource(PopularShowsApi,"/api/popShows/<string:email>",endpoint="/popShows")
     apiV.add_resource(FilterShowsApi,"/api/filterShows",endpoint="/filterShows")
 

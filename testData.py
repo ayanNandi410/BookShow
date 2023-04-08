@@ -22,15 +22,19 @@ def addData(db):
         malayalam = Language(name='Malayalam')
 
         
-        venue1 = Venue(name='Inox Forum Mall',location='Kasba',city='Kolkata',capacity=340,description='One of the biggest malls in Kolkata',timestamp=datetime(2023,3,1,11,21,00))
+        venue1 = Venue(name='Inox Forum Mall',location='Kasba',city='Kolkata',capacity=340,description='10/3, Elgin Rd, Sreepally | One of the most popular malls',timestamp=datetime(2023,3,1,11,21,00))
         db.session.add(venue1)
-        venue2 = Venue(name='Inox Acropolis Mall',location='Rabindra Sadan',city='Kolkata',capacity=210,description='One of the most popular malls in Kolkata',timestamp=datetime(2023,2,18,9,21,00))
+        venue2 = Venue(name='Inox Acropolis Mall',location='Rabindra Sadan',city='Kolkata',capacity=210,description='212, Girish Ghosh Rd | One of the most exotic malls in Kolkata',timestamp=datetime(2023,2,18,9,21,00))
         db.session.add(venue2)
-        venue3 = Venue(name='Inox Rangoli Mall',location='Liluah',city='Howrah',capacity=400,description='One of the most unique malls in Kolkata',timestamp=datetime(2023,1,13,18,21,00))
+        venue3 = Venue(name='Inox Rangoli Mall',location='Liluah',city='Howrah',capacity=400,description='22, Giri Ranjan Rd | One of the most unique malls in Kolkata',timestamp=datetime(2022,1,13,18,21,00))
         db.session.add(venue3)
 
-        for i in range(50):
-            venueNew = Venue(name='Mall Number '+str(i),location='Loc'+str(i),city='Howrah',capacity=400,description='One of the most unique malls in Kolkata',timestamp=datetime(2022,1,10,11,2,00))
+        for i in range(10):
+            venueNew = Venue(name='Mall Number '+str(i),location='Loc'+str(i),city='Chennai',capacity=300+i,description='21, Giri Ranjan Rd | One of the most unique malls in Kolkata',timestamp=datetime(2021,1,10,11,2,00))
+            db.session.add(venueNew)
+        
+        for i in range(11,30):
+            venueNew = Venue(name='Mall Number '+str(i),location='Loc'+str(i),city='Mumbai',capacity=400+i,description='11, Giri Ranjan Rd | One of the most unique malls in Kolkata',timestamp=datetime(2020,1,10,11,2,00))
             db.session.add(venueNew)
 
         db.session.add(action)
@@ -69,7 +73,7 @@ def addData(db):
         show3.languages.append(hindi)
         db.session.add(show3)
 
-        for i in range(100):
+        for i in range(50):
             show4 = Show(name='Anthem'+str(i),rating=2,duration='2 hrs 50 min',timestamp=datetime.now())
             show4.tags.append(drama)
             show4.tags.append(fantasy)

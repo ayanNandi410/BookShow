@@ -112,8 +112,8 @@
     function formValidate(){
         result = true;
 
-        let passwd = document.getElementByName('signup_passwd').value;
-        let repasswd = document.getElementByName('signup_check_passwd').value;
+        passwd = document.getElementById("signup_passwd").value;
+        repasswd = document.getElementById("signup_check_passwd").value;
 
         if((passwd.localeCompare(repasswd))!=0)
         {
@@ -122,7 +122,6 @@
         }
         else{
             document.getElementById('passwdCheck').style.display = "none";
-            result = false;
         }
 
         return result;
