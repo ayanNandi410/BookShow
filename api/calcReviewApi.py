@@ -3,8 +3,8 @@ from flask import request, jsonify
 from flask_login import current_user
 from datetime import datetime as dt
 from models.admin import  Show, MovieReview, CalcReview
-from db import db
-from validation import NotFoundError, BusinessValidationError
+from main.db import db
+from main.validation import NotFoundError, BusinessValidationError
 from sqlalchemy import desc, exc
 
 # Api to update show rating 

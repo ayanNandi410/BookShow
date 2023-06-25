@@ -3,7 +3,7 @@ from flask import render_template, request, redirect, url_for, flash
 from flask_login import logout_user, login_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from models.users import User
-from db import db
+from main.db import db
 
 authn = Blueprint('authn', __name__)
 

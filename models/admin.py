@@ -1,4 +1,4 @@
-from db import db
+from main.db import db
 from sqlalchemy.sql import func
 from datetime import datetime
 from models.users import User

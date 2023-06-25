@@ -1,7 +1,9 @@
 from flask_restful import Resource, fields, marshal_with, reqparse
 from models.admin import Venue
-from db import db
-from validation import NotFoundError, BusinessValidationError
+from main.db import db
+from main.validation import NotFoundError, BusinessValidationError
+
+# get all cities where venues exist
 
 city_output_fields = {
     "city": fields.String

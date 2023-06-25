@@ -1,6 +1,6 @@
 import os
 import secrets
-baseDir = os.path.abspath(os.path.dirname(__file__))
+baseDir = os.path.abspath(os.getcwd())
 
 class Config():
     DEBUG = False

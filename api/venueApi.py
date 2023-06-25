@@ -1,8 +1,8 @@
 from flask_restful import Resource, fields, marshal_with, reqparse
 from flask import request
 from models.admin import Venue, Allocation, Show
-from db import db
-from validation import NotFoundError, BusinessValidationError
+from main.db import db
+from main.validation import NotFoundError, BusinessValidationError
 from sqlalchemy import desc, exc
 
 # Output JSON format

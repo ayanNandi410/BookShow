@@ -4,8 +4,8 @@ from models.admin import Show, Venue, Allocation
 from datetime import date, timedelta
 from flask import request
 from sqlalchemy import desc, exc
-from db import db
-from validation import NotFoundError, BusinessValidationError
+from main.db import db
+from main.validation import NotFoundError, BusinessValidationError
 from datetime import datetime as dt
 
 # Api for working with show-venue allocations alongwith timing details

@@ -3,9 +3,11 @@ from flask import request, jsonify
 from flask_login import current_user
 from datetime import datetime as dt
 from models.admin import BookTicket, Show, Venue, Allocation
-from db import db
-from validation import NotFoundError, BusinessValidationError
+from main.db import db
+from main.validation import NotFoundError, BusinessValidationError
 from sqlalchemy import desc, exc
+
+# Api for handling user booking
 
 class MyDate(fields.Raw):
     def format(self, value):
@@ -49,6 +51,7 @@ create_booking_parser.add_argument('totPrice', type=float, help="Not a valid num
 
 class BookTicketAPI(Resource):
 
+    # get booking details for a given user
     @marshal_with(booking_output_fields)
     def get(self,email):
 
@@ -59,7 +62,7 @@ class BookTicketAPI(Resource):
         else:
             return bookings, 200
 
-
+    # create a new booking
     def post(self):
         bk_args = create_booking_parser.parse_args()
         venueName = bk_args.get('venue_name',None)

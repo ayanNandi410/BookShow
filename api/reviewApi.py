@@ -3,8 +3,8 @@ from flask import request, jsonify
 from flask_login import current_user
 from datetime import datetime as dt
 from models.admin import BookTicket, Show, Venue, Allocation, MovieReview
-from db import db
-from validation import NotFoundError, BusinessValidationError
+from main.db import db
+from main.validation import NotFoundError, BusinessValidationError
 from sqlalchemy import desc, exc
 
 # Api to handle user reviews
@@ -29,6 +29,7 @@ create_review_parser.add_argument('comment')
 
 class MovieReviewAPI(Resource):
 
+    # get user reviews by show name
     @marshal_with(review_output_fields)
     def get(self,sname):
         print(sname)
@@ -44,7 +45,7 @@ class MovieReviewAPI(Resource):
         else:
             return reviews, 200
 
-
+    # submit user review for a show
     def post(self):
         bk_args = create_review_parser.parse_args()
         showName = bk_args.get('show_name',None)
@@ -89,7 +90,7 @@ class MovieReviewAPI(Resource):
             db.session.rollback()
             raise BusinessValidationError(status_code=500,error_code="RW020",error_message="Add Transaction failed. Try again")
 
-
+    # other requests
     def put(self,name):
         raise BusinessValidationError(status_code=405,error_code="RW010",error_message="Method not allowed")
     

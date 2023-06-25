@@ -7,9 +7,9 @@ from models.users import User
 #from ..models.Image import Image
 from functools import wraps
 from werkzeug.utils import secure_filename
-from db import db
+from main.db import db
 import requests
-from constants import BASE_URL, PER_PAGE_SIZE
+from main.constants import BASE_URL, PER_PAGE_SIZE
 
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}

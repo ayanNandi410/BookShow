@@ -3,8 +3,8 @@ from flask import request
 import json
 from models.admin import Show, Venue, Tag, Language, Allocation, BookTicket
 from sqlalchemy import select, join, func, exc, desc
-from db import db
-from validation import NotFoundError, BusinessValidationError
+from main.db import db
+from main.validation import NotFoundError, BusinessValidationError
 from datetime import datetime as dt
 
 # api for handling shows
